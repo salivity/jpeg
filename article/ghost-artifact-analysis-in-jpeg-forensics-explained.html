@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Artifact Analysis in JPEG Forensics Explained - jpeg</title>
+    <meta name="description" content="Ghost artifact analysis is a digital image forensic technique used to detect whether an image has been compressed multiple times and to estimate the quality levels of previous JPEG compressions. When an image is modified and resaved, the underlying Discr">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/ghost-artifact-analysis-in-jpeg-forensics-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ghost Artifact Analysis in JPEG Forensics Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/ghost-artifact-analysis-in-jpeg-forensics-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Ghost artifact analysis is a digital image forensic technique used to detect whether an image has been compressed multiple times and to estimate the quality levels of previous JPEG compressions. When an image is modified and resaved, the underlying Discr" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ghost-artifact-analysis-in-jpeg-forensics-explained">Ghost
+Artifact Analysis in JPEG Forensics Explained</h1>
+<p>Ghost artifact analysis is a digital image forensic technique used to
+detect whether an image has been compressed multiple times and to
+estimate the quality levels of previous JPEG compressions. When an image
+is modified and resaved, the underlying Discrete Cosine Transform (DCT)
+coefficients retain traces of earlier compression stages. By
+systematically recompressing the suspected image at varying quality
+factors and measuring the resulting differences, forensic examiners can
+identify specific local minima known as "ghosts," which reveal both
+previous compression qualities and tampered regions.</p>
+<h3 id="how-jpeg-compression-creates-forensics-traces">How JPEG
+Compression Creates Forensics Traces</h3>
+<p>JPEG compression is a lossy process that divides an image into 8x8
+pixel blocks, transforms these blocks using the Discrete Cosine
+Transform, and quantizes the resulting frequency coefficients using a
+specific quantization table determined by a compression quality factor
+(typically scaled from 1 to 100). Quantization rounds off frequency
+values, discarding high-frequency details that the human eye is less
+likely to perceive.</p>
+<p>When a JPEG image is decompressed, edited, and saved again, it
+undergoes double JPEG compression. Unless the exact same quantization
+parameters and grid alignments are used, this subsequent round
+introduces subtle mathematical irregularities into the DCT coefficient
+distribution.</p>
+<h3 id="the-mechanics-of-ghost-artifact-analysis">The Mechanics of Ghost
+Artifact Analysis</h3>
+<p>Ghost artifact analysis exposes these irregularities through a
+systematic process:</p>
+<ol type="1">
+<li><strong>Iterative Recompression:</strong> The analyzed image is
+recompressed multiple times across a full spectrum of JPEG quality
+factors, usually ranging from 1 to 100.</li>
+<li><strong>Difference Calculation:</strong> For each tested quality
+factor, the algorithm computes the pixel-by-pixel difference between the
+recompressed image and the input image. This is typically calculated
+using the sum of squared differences (SSD) or normalized absolute
+differences across localized blocks.</li>
+<li><strong>Error Curve Plotting:</strong> The average difference across
+the image (or localized regions) is plotted against the tested quality
+levels, generating an error curve.</li>
+</ol>
+<h3 id="identifying-past-quality-levels">Identifying Past Quality
+Levels</h3>
+<p>When an image originally compressed at quality <span
+class="math inline">\(Q_1\)</span> is recompressed at a test quality
+<span class="math inline">\(q\)</span>, the error behaves predictably
+based on the relationship between <span class="math inline">\(q\)</span>
+and <span class="math inline">\(Q_1\)</span>:</p>
+<ul>
+<li><strong>When <span class="math inline">\(q = Q_1\)</span>:</strong>
+The quantization steps match the original compression. Because the data
+was already quantized to these specific intervals, applying them again
+introduces minimal new distortion. This creates a distinct dip or local
+minimum in the error metric.</li>
+<li><strong>When <span class="math inline">\(q \neq
+Q_1\)</span>:</strong> The mismatch in quantization steps forces the
+coefficients to be rounded into different intervals, yielding
+significantly higher difference values.</li>
+</ul>
+<p>The dip that occurs when <span class="math inline">\(q\)</span>
+matches <span class="math inline">\(Q_1\)</span> is the "ghost
+artifact." By locating this minimum on the error curve, analysts can
+determine the original compression quality factor applied to the file,
+even if the file was later saved at a different quality level (<span
+class="math inline">\(Q_2\)</span>).</p>
+<h3 id="detecting-image-forgeries">Detecting Image Forgeries</h3>
+<p>Ghost artifact analysis is particularly effective for detecting image
+splices. If a composite image is created by pasting an object from an
+image compressed at quality <span class="math inline">\(Q_A\)</span>
+into a background compressed at quality <span
+class="math inline">\(Q_B\)</span>, and the entire composition is then
+saved at quality <span class="math inline">\(Q_C\)</span>, each section
+will exhibit different ghost artifacts.</p>
+<p>By analyzing the difference maps spatially rather than globally, the
+spliced object will display a minimum difference at quality <span
+class="math inline">\(Q_A\)</span>, while the rest of the image reaches
+its minimum at <span class="math inline">\(Q_B\)</span>. The spliced
+area will visually stand out as a dark or bright "ghost" silhouette
+against the surrounding background at specific quality thresholds,
+providing clear forensic evidence of localized manipulation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

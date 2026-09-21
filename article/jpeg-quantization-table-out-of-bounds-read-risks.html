@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Quantization Table Out-of-Bounds Read Risks - jpeg</title>
+    <meta name="description" content="A maliciously formatted quantization table can cause an out-of-bounds read in vulnerable JPEG decoders. This security risk occurs when a decoder fails to validate the metadata within the Define Quantization Table (DQT) marker segment, allowing an attacke">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-quantization-table-out-of-bounds-read-risks">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Quantization Table Out-of-Bounds Read Risks - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-quantization-table-out-of-bounds-read-risks" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A maliciously formatted quantization table can cause an out-of-bounds read in vulnerable JPEG decoders. This security risk occurs when a decoder fails to validate the metadata within the Define Quantization Table (DQT) marker segment, allowing an attacke" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-quantization-table-out-of-bounds-read-risks">JPEG
+Quantization Table Out-of-Bounds Read Risks</h1>
+<p>A maliciously formatted quantization table can cause an out-of-bounds
+read in vulnerable JPEG decoders. This security risk occurs when a
+decoder fails to validate the metadata within the Define Quantization
+Table (DQT) marker segment, allowing an attacker to manipulate table
+indices, precision values, or payload lengths. When the decoder
+processes image blocks during the dequantization stage, reading outside
+the allocated table memory can lead to application crashes, denial of
+service, or sensitive memory disclosure.</p>
+<h2 id="understanding-the-jpeg-dqt-marker">Understanding the JPEG DQT
+Marker</h2>
+<p>In the JPEG standard (ITU-T T.81), quantization tables are defined
+using the <code>0xFFDB</code> (DQT) marker. This segment contains:</p>
+<ul>
+<li>A two-byte length field specifying the total size of the marker
+segment.</li>
+<li>A four-bit precision value indicating whether the table uses 8-bit
+or 16-bit sample precision.</li>
+<li>A four-bit identifier assigning the table a destination index,
+conventionally restricted to values 0 through 3.</li>
+<li>An array of 64 entries corresponding to the 8x8 block transform
+values.</li>
+</ul>
+<p>A single DQT segment can define multiple tables sequentially if the
+segment length permits.</p>
+<h2 id="how-the-out-of-bounds-read-occurs">How the Out-of-Bounds Read
+Occurs</h2>
+<p>Vulnerabilities arise when the JPEG parsing logic places implicit
+trust in user-supplied values rather than strictly enforcing format
+specifications. An out-of-bounds read typically manifests in two
+distinct phases of the decoding pipeline:</p>
+<h3 id="1-header-parsing-and-index-validation-failure">1. Header Parsing
+and Index Validation Failure</h3>
+<p>If an attacker crafts a DQT segment where the destination identifier
+exceeds the expected bounds (for example, specifying an ID greater than
+3 when the decoder only allocates an array of four table pointers), a
+poorly implemented parser may write or map the table to an out-of-bounds
+memory offset. Later, when the Start of Scan (<code>0xFFDA</code>) or
+Start of Frame (<code>0xFFC0</code>) references this invalid index, the
+decoder attempts to dereference memory outside the intended buffer.</p>
+<h3 id="2-dequantization-and-truncated-buffers">2. Dequantization and
+Truncated Buffers</h3>
+<p>During the dequantization step prior to the Inverse Discrete Cosine
+Transform (IDCT), the decoder multiplies the DCT coefficients of each
+block by the corresponding values in the assigned quantization table. If
+the parser allows a truncated DQT marker—where the length field
+indicates 64 elements but the file ends prematurely—the memory buffer
+storing the table may remain partially uninitialized or under-allocated.
+As the decoding loop iterates through all 64 coefficients, it reads
+beyond the boundary of the allocated buffer.</p>
+<h2 id="security-implications">Security Implications</h2>
+<p>The primary impacts of an out-of-bounds read in a JPEG decoder
+include:</p>
+<ul>
+<li><strong>Denial of Service (DoS):</strong> If the decoder reads into
+unmapped memory addresses, the host operating system raises a
+segmentation fault or memory access violation, crashing the application
+or service processing the image.</li>
+<li><strong>Information Disclosure:</strong> If the out-of-bounds read
+accesses adjacent heap or stack memory containing sensitive information
+(such as cryptographic keys, session tokens, or other user data), that
+data may inadvertently be encoded into the decoded image canvas or
+leaked through error logs.</li>
+</ul>
+<h2 id="prevention-and-mitigation">Prevention and Mitigation</h2>
+<p>To prevent quantization table vulnerabilities, decoders must
+implement rigorous input validation before memory access occurs:</p>
+<ul>
+<li><strong>Enforce Identifier Limits:</strong> Reject any DQT segment
+specifying an identifier outside the standardized 0–3 range.</li>
+<li><strong>Validate Segment Lengths:</strong> Verify that the declared
+marker length matches the actual bytes available and corresponds exactly
+to the expected payload size (65 bytes for 8-bit precision, 129 bytes
+for 16-bit precision, including the header byte).</li>
+<li><strong>Verify Association:</strong> Ensure that all table
+references declared in the frame headers point only to fully parsed and
+validated quantization tables before initiating coefficient
+decoding.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

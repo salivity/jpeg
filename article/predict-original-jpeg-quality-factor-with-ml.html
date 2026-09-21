@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Original JPEG Quality Factor with ML - jpeg</title>
+    <meta name="description" content="Machine learning models can accurately predict the original, pre-compression quality factor (QF) of a modified JPEG image. By analyzing subtle quantization artifacts, discrete cosine transform (DCT) coefficient distributions, and compression inconsistenc">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/predict-original-jpeg-quality-factor-with-ml">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Predict Original JPEG Quality Factor with ML - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/predict-original-jpeg-quality-factor-with-ml" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Machine learning models can accurately predict the original, pre-compression quality factor (QF) of a modified JPEG image. By analyzing subtle quantization artifacts, discrete cosine transform (DCT) coefficient distributions, and compression inconsistenc" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="predict-original-jpeg-quality-factor-with-ml">Predict Original
+JPEG Quality Factor with ML</h1>
+<p>Machine learning models can accurately predict the original,
+pre-compression quality factor (QF) of a modified JPEG image. By
+analyzing subtle quantization artifacts, discrete cosine transform (DCT)
+coefficient distributions, and compression inconsistencies, modern
+machine learning and deep learning architectures can reverse-engineer an
+image's compression history. This forensic capability remains effective
+even when the image has undergone subsequent editing, cropping, or
+re-compression.</p>
+<h3 id="the-mechanics-of-jpeg-compression-artifacts">The Mechanics of
+JPEG Compression Artifacts</h3>
+<p>JPEG compression operates in the frequency domain. An image is
+divided into 8x8 pixel blocks, transformed using the Discrete Cosine
+Transform (DCT), and quantized using a specific quantization table
+determined by the Quality Factor (ranging from 1 to 100).</p>
+<p>Quantization is inherently lossy and rounds DCT coefficients to
+specific integer steps. This rounding leaves behind a distinct
+mathematical footprint:</p>
+<ul>
+<li><strong>DCT Histogram Periodicities:</strong> Re-compressing or
+modifying an image creates periodic patterns or comb-like structures in
+the histogram of DCT coefficients.</li>
+<li><strong>Quantization Error Residuals:</strong> Subtle high-frequency
+noise profiles remain tied to the primary quantization step sizes, even
+after spatial modifications.</li>
+</ul>
+<h3 id="how-machine-learning-detects-the-primary-quality-factor">How
+Machine Learning Detects the Primary Quality Factor</h3>
+<p>When an image is modified—such as being edited and saved again at a
+different quality level—it undergoes "double compression." Machine
+learning systems predict the primary QF by recognizing the interaction
+between the original and secondary compression stages.</p>
+<h4 id="1-feature-based-classifiers">1. Feature-Based Classifiers</h4>
+<p>Traditional machine learning methods extract engineered features from
+the image:</p>
+<ul>
+<li><strong>Benford’s Law Violations:</strong> Natural images follow
+Benford's Law regarding the distribution of first digits in DCT
+coefficients. Prior compression disrupts this distribution in ways
+unique to the primary QF.</li>
+<li><strong>Block Artifact Grid (BAG) Alignment:</strong> Measuring the
+strength and alignment of the 8x8 block boundaries identifies whether
+spatial operations like cropping have shifted the grid. Classifiers such
+as Support Vector Machines (SVMs) and Random Forests use these
+statistical features to categorize or regress the original QF
+value.</li>
+</ul>
+<h4 id="2-deep-convolutional-neural-networks-cnns">2. Deep Convolutional
+Neural Networks (CNNs)</h4>
+<p>Deep learning models typically outperform traditional feature-based
+methods by operating directly on raw pixels or unquantized DCT
+domains:</p>
+<ul>
+<li><strong>High-Pass Pre-filtering:</strong> Forensics-focused CNNs
+often use fixed or trainable high-pass filters (such as Spatial Rich
+Model filters) in their initial layers to suppress image content and
+expose compression noise residuals.</li>
+<li><strong>Dual-Domain Networks:</strong> Advanced architectures
+analyze both the spatial domain (to detect pixel-level boundaries and
+interpolation artifacts) and the frequency domain (to inspect DCT
+coefficients directly).</li>
+</ul>
+<h3 id="key-challenges-in-modified-jpegs">Key Challenges in Modified
+JPEGs</h3>
+<p>While prediction is reliable under controlled conditions, several
+modifications complicate the prediction process:</p>
+<ul>
+<li><strong>Non-Aligned Re-compression:</strong> If an image is cropped
+by an offset that is not a multiple of 8, the original 8x8 block grid
+shifts. The secondary compression creates a new grid, obscuring the
+primary frequency-domain artifacts. Specialized CNNs must first identify
+the grid offset before predicting the original QF.</li>
+<li><strong>Lower-to-Higher Quality Compression:</strong> If the
+original QF was low (e.g., QF 50) and the modified QF is high (e.g., QF
+95), detection is straightforward because the coarse quantization
+footprints are preserved. Conversely, if a high-quality original (e.g.,
+QF 95) is re-compressed at a low quality (e.g., QF 30), the second
+compression step discards the subtle high-frequency data from the
+original, making accurate prediction significantly harder.</li>
+<li><strong>Aggressive Spatial Filtering:</strong> Blurring, resizing,
+or intense color grading can erase high-frequency quantization
+traces.</li>
+</ul>
+<h3 id="real-world-applications">Real-World Applications</h3>
+<p>Predicting the original quality factor plays a vital role in digital
+media verification:</p>
+<ul>
+<li><strong>Digital Forensics:</strong> Establishing whether an image
+presented as evidence has been altered or degraded from a higher-quality
+source.</li>
+<li><strong>Tamper Localization:</strong> Identifying regions of an
+image that have different compression histories, which highlights
+cut-and-paste splices.</li>
+<li><strong>Image Restoration:</strong> Knowing the original compression
+parameters allows de-blocking and enhancement algorithms to invert
+compression artifacts more effectively.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How AUVs Transmit Acoustic JPEG Images to the Surface - jpeg</title>
+    <meta name="description" content="Autonomous Underwater Vehicles (AUVs) rely on acoustic modems to transmit data to surface vessels because seawater rapidly attenuates traditional radio frequency and optical signals. Due to the severe physical limitations of sound waves underwater—resu">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-au-vs-transmit-acoustic-jpeg-images-to-the-surface">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How AUVs Transmit Acoustic JPEG Images to the Surface - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-au-vs-transmit-acoustic-jpeg-images-to-the-surface" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Autonomous Underwater Vehicles (AUVs) rely on acoustic modems to transmit data to surface vessels because seawater rapidly attenuates traditional radio frequency and optical signals. Due to the severe physical limitations of sound waves underwater—resu" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-auvs-transmit-acoustic-jpeg-images-to-the-surface">How AUVs
+Transmit Acoustic JPEG Images to the Surface</h1>
+<p>Autonomous Underwater Vehicles (AUVs) rely on acoustic modems to
+transmit data to surface vessels because seawater rapidly attenuates
+traditional radio frequency and optical signals. Due to the severe
+physical limitations of sound waves underwater—resulting in extremely
+low bandwidth, high latency, and multipath interference—transmitting
+standard imagery is a significant technical challenge. To overcome this,
+AUVs heavily compress visual data into specialized JPEG formats, package
+the data into error-resilient packets, and convert digital bits into
+acoustic pressure waves that travel through the water column to be
+decoded by a surface receiver.</p>
+<h3 id="the-underwater-acoustic-channel">The Underwater Acoustic
+Channel</h3>
+<p>Radio frequencies cannot travel more than a few meters through
+conductive seawater, and optical communication requires clear water and
+direct line-of-sight over short distances. Consequently, acoustics
+remain the only viable method for long-range wireless underwater
+communication.</p>
+<p>However, acoustic transmission speeds are limited to approximately
+1,500 meters per second (about five orders of magnitude slower than
+light in air). The available frequency spectrum is typically limited to
+between a few kilohertz and tens of kilohertz. This results in standard
+data transfer rates ranging from just a few hundred bits per second
+(bps) up to around 10 to 20 kilobits per second (kbps) under optimal,
+short-range conditions.</p>
+<h3 id="image-optimization-and-compression">Image Optimization and
+Compression</h3>
+<p>Because a standard uncompressed image would take hours to transmit
+acoustically, the AUV’s onboard computer applies aggressive data
+compression before sending the file to the modem:</p>
+<ul>
+<li><strong>Resolution Downscaling:</strong> High-resolution sensor
+images are downscaled to thumbnail or modest resolutions, such as
+320x240 or 640x480 pixels.</li>
+<li><strong>Progressive JPEG Encoding:</strong> Images are often encoded
+using progressive JPEG or discrete wavelet transforms (similar to JPEG
+2000). This allows the surface operator to see a low-resolution preview
+immediately, which sharpens as more data packets arrive.</li>
+<li><strong>Region-of-Interest (ROI) Encoding:</strong> Many modern AUV
+algorithms isolate the most relevant section of an image—such as a
+pipeline defect, mine, or biological feature—and compress the background
+aggressively while preserving higher fidelity for the target area.</li>
+<li><strong>Grayscale Conversion:</strong> If color is not critical to
+the mission, the image is converted to an 8-bit grayscale format,
+cutting file size by two-thirds immediately.</li>
+</ul>
+<p>Through these methods, a multi-megabyte photo is often reduced to a
+payload between 2 and 10 kilobytes.</p>
+<h3 id="packetization-and-error-correction">Packetization and Error
+Correction</h3>
+<p>Acoustic channels are plagued by multipath reflections (sound
+bouncing off the seabed and surface) and ambient noise from waves,
+marine life, and ship propellers. If an AUV sent an entire JPEG file as
+a single stream, a brief burst of noise would corrupt the entire
+file.</p>
+<p>To prevent this, the AUV splits the compressed JPEG into small
+chunks, often between 32 and 256 bytes each. Each packet includes:</p>
+<ul>
+<li>A header containing sequence numbers and position offsets.</li>
+<li>Forward Error Correction (FEC) codes, such as Reed-Solomon or
+convolutional codes, which allow the receiver to detect and fix bit
+errors without requesting a slow retransmission.</li>
+<li>Independent tile markers, ensuring that if a packet is lost
+permanently, only a small square of the image is missing rather than the
+whole picture.</li>
+</ul>
+<h3 id="acoustic-modulation-and-physical-transmission">Acoustic
+Modulation and Physical Transmission</h3>
+<p>Once the data is packetized, it is sent to the AUV's acoustic modem.
+The modem converts the binary data into analog electrical signals, which
+are driven through a piezoelectric transducer. The transducer vibrates,
+creating mechanical sound waves in the water.</p>
+<p>Modems use robust digital modulation schemes to encode the data onto
+sound carriers:</p>
+<ul>
+<li><strong>Frequency-Shift Keying (FSK):</strong> Often used in noisy
+environments for its high reliability, representing bits by switching
+between discrete sound frequencies.</li>
+<li><strong>Phase-Shift Keying (PSK):</strong> Used to achieve higher
+data rates by altering the phase of the acoustic wave.</li>
+<li><strong>Orthogonal Frequency-Division Multiplexing (OFDM):</strong>
+Employs multiple closely spaced subcarriers simultaneously to maximize
+throughput and combat severe multipath distortion.</li>
+</ul>
+<h3 id="reception-and-reconstruction-at-the-surface">Reception and
+Reconstruction at the Surface</h3>
+<p>The surface vessel deploys an acoustic transducer or hydrophone array
+into the water, typically suspended over the side of the ship, mounted
+to the hull, or towed behind the vessel.</p>
+<p>The surface modem receives the acoustic pulses, filters out ambient
+ocean noise, compensates for Doppler shift caused by the moving vehicle,
+and demodulates the sound back into binary packets. A surface computer
+decodes the error-correction layers and stitches the packets back into
+the JPEG format. Operators see the image render on their monitors line
+by line or layer by layer, providing near-real-time verification of
+underwater targets without waiting for the AUV to surface.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

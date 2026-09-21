@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless JPEG vs Lossy DCT JPEG: Key Differences - jpeg</title>
+    <meta name="description" content="This article examines the fundamental technical differences between standard lossy DCT-based JPEG and lossless JPEG. While both standards bear the JPEG name, they rely on entirely different mathematical foundations, data pipelines, and compression strate">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/lossless-jpeg-vs-lossy-dct-jpeg-key-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossless JPEG vs Lossy DCT JPEG: Key Differences - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/lossless-jpeg-vs-lossy-dct-jpeg-key-differences" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the fundamental technical differences between standard lossy DCT-based JPEG and lossless JPEG. While both standards bear the JPEG name, they rely on entirely different mathematical foundations, data pipelines, and compression strate" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossless-jpeg-vs-lossy-dct-jpeg-key-differences">Lossless JPEG
+vs Lossy DCT JPEG: Key Differences</h1>
+<p>This article examines the fundamental technical differences between
+standard lossy DCT-based JPEG and lossless JPEG. While both standards
+bear the JPEG name, they rely on entirely different mathematical
+foundations, data pipelines, and compression strategies. The core
+distinction lies in how they handle image data: lossy JPEG transforms
+spatial data into frequency components and intentionally discards
+imperceptible information, whereas lossless JPEG uses predictive spatial
+coding to ensure bit-for-bit mathematical recreation of the original
+image.</p>
+<h3
+id="mathematical-foundation-frequency-transform-vs-spatial-prediction">Mathematical
+Foundation: Frequency Transform vs. Spatial Prediction</h3>
+<p>Standard lossy JPEG operates in the frequency domain. It divides an
+image into 8x8-pixel blocks and applies the Discrete Cosine Transform
+(DCT). The DCT converts spatial pixel data into a sum of cosine
+functions representing different spatial frequencies, separating smooth
+color transitions (low frequencies) from fine details and edges (high
+frequencies).</p>
+<p>In contrast, lossless JPEG operates entirely in the spatial domain
+without using DCT. Instead, it relies on predictive coding, specifically
+a technique called Differential Pulse Code Modulation (DPCM). For each
+pixel, the encoder predicts its value based on already-encoded
+neighboring pixels (above, to the left, and diagonally). The standard
+defines seven different prediction formulas (plus a point-transform
+option). Lossless JPEG then calculates the difference—known as the
+prediction error or residual—between the actual pixel value and the
+predicted value.</p>
+<h3 id="the-role-of-quantization">The Role of Quantization</h3>
+<p>Quantization is the sole reason standard JPEG is lossy. After the DCT
+converts an 8x8 block into 64 frequency coefficients, a quantization
+matrix divides these coefficients by predefined step sizes and rounds
+them to the nearest integer. Because human vision is less sensitive to
+high-frequency details, higher-frequency coefficients are quantized
+aggressively, often rounding to zero. This step irreversibly discards
+image data to achieve high compression rates.</p>
+<p>Lossless JPEG completely eliminates the quantization step. Because
+there is no division or rounding of data, no information is lost. The
+prediction residual is preserved exactly as an integer value.</p>
+<h3 id="entropy-coding-and-reconstruction">Entropy Coding and
+Reconstruction</h3>
+<p>Both formats use entropy coding—typically Huffman coding or
+Arithmetic coding—as their final compression stage to minimize file size
+by encoding frequent values with shorter bit sequences:</p>
+<ul>
+<li><strong>In lossy JPEG:</strong> The entropy encoder compresses the
+quantized DCT coefficients arranged in a zigzag sequence to maximize
+runs of trailing zeros. When decoding, the inverse DCT reconstructs an
+approximation of the original image.</li>
+<li><strong>In lossless JPEG:</strong> The entropy encoder compresses
+the raw prediction residuals directly. When decoding, the algorithm
+reproduces the exact same prediction, adds the decoded residual, and
+perfectly reconstructs the original pixel value without any mathematical
+error.</li>
+</ul>
+<h3 id="compression-ratios-and-practical-application">Compression Ratios
+and Practical Application</h3>
+<p>Because standard lossy JPEG can discard visual data that the human
+eye struggles to perceive, it regularly achieves compression ratios
+between 10:1 and 20:1 without significant perceptual degradation. This
+makes it the industry standard for digital photography, consumer media,
+and web publishing.</p>
+<p>Lossless JPEG cannot discard data, limiting its compression ratio to
+roughly 2:1 on typical continuous-tone photographic images.
+Consequently, it is not used for standard web delivery. Instead, it is
+predominantly utilized in specialized domains where bit-level accuracy
+is mandatory, such as medical archiving (DICOM imaging), scientific
+analysis, and archival preservation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

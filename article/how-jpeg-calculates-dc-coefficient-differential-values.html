@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How JPEG Calculates DC Coefficient Differential Values - jpeg</title>
+    <meta name="description" content="This article explains how the JPEG compression standard calculates and encodes the differential values for Direct Current (DC) coefficients across consecutive 8x8 image blocks. Because neighboring blocks in an image typically share similar average bright">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpeg-calculates-dc-coefficient-differential-values">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How JPEG Calculates DC Coefficient Differential Values - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpeg-calculates-dc-coefficient-differential-values" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the JPEG compression standard calculates and encodes the differential values for Direct Current (DC) coefficients across consecutive 8x8 image blocks. Because neighboring blocks in an image typically share similar average bright" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpeg-calculates-dc-coefficient-differential-values">How JPEG
+Calculates DC Coefficient Differential Values</h1>
+<p>This article explains how the JPEG compression standard calculates
+and encodes the differential values for Direct Current (DC) coefficients
+across consecutive 8x8 image blocks. Because neighboring blocks in an
+image typically share similar average brightness and color, JPEG uses
+Differential Pulse Code Modulation (DPCM) rather than storing absolute
+values. You will learn the mathematical formula behind this calculation,
+how the predictor initializes and resets, how color components are
+separated, and how the resulting differences are mapped for final
+entropy encoding.</p>
+<h3 id="the-role-of-the-dc-coefficient">The Role of the DC
+Coefficient</h3>
+<p>When an 8x8 block of image samples undergoes the Discrete Cosine
+Transform (DCT) and subsequent quantization, the resulting 64
+coefficients represent different spatial frequencies. The coefficient at
+the top-left position <span class="math inline">\((0, 0)\)</span> is the
+DC coefficient. It represents the average value of all 64 pixels in that
+block. The remaining 63 terms are Alternating Current (AC) coefficients,
+which capture higher-frequency details.</p>
+<p>Because the DC coefficient contains a substantial portion of the
+total block energy, it is typically a large number. However, physical
+images generally transition smoothly, meaning the average brightness of
+one 8x8 block is usually very close to the average brightness of the
+block right next to it.</p>
+<h3 id="the-differential-calculation-dpcm">The Differential Calculation
+(DPCM)</h3>
+<p>To eliminate spatial redundancy between adjacent blocks, JPEG encodes
+DC coefficients differentially using Differential Pulse Code Modulation
+(DPCM).</p>
+<p>Instead of storing the quantized DC value directly, the encoder
+calculates the difference (<span class="math inline">\(\Delta
+DC\)</span>) between the current block's quantized DC coefficient and
+that of the immediately preceding block:</p>
+<p><span class="math display">\[\Delta DC_i = DC_i -
+DC_{i-1}\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(DC_i\)</span> is the quantized DC
+coefficient of the current block.</li>
+<li><span class="math inline">\(DC_{i-1}\)</span> is the quantized DC
+coefficient of the previous block (used as the predictor).</li>
+<li><span class="math inline">\(\Delta DC_i\)</span> is the differential
+value that will be transmitted.</li>
+</ul>
+<p>During decoding, the process is reversed:</p>
+<p><span class="math display">\[DC_i = DC_{i-1} + \Delta
+DC_i\]</span></p>
+<h3 id="predictor-initialization-and-reset-rules">Predictor
+Initialization and Reset Rules</h3>
+<p>The differential calculation relies on a persistent state variable
+(the predictor) that updates from block to block. The encoder and
+decoder must remain synchronized through specific initialization
+rules:</p>
+<ol type="1">
+<li><strong>Start of Scan:</strong> At the beginning of an image scan,
+the predictor is initialized to zero (<span class="math inline">\(DC_0 =
+0\)</span>). The differential for the very first block is simply its own
+value minus zero (<span class="math inline">\(\Delta DC_1 = DC_1 -
+0\)</span>).</li>
+<li><strong>Restart Markers:</strong> If the JPEG stream includes
+restart intervals (indicated by RST markers used for error resilience),
+the DC predictor is reset to zero immediately after each restart
+marker.</li>
+<li><strong>Independent Color Channels:</strong> DC differences are
+never calculated across different color components. In a standard YCbCr
+image, the encoder maintains separate predictors for Luminance (<span
+class="math inline">\(Y\)</span>), Chrominance Blue (<span
+class="math inline">\(Cb\)</span>), and Chrominance Red (<span
+class="math inline">\(Cr\)</span>). The DC value of a <span
+class="math inline">\(Y\)</span> block is only subtracted from the
+previous <span class="math inline">\(Y\)</span> block, never from a
+chroma block.</li>
+</ol>
+<h3 id="example-walkthrough">Example Walkthrough</h3>
+<p>Consider a sequence of three consecutive quantized luminance (<span
+class="math inline">\(Y\)</span>) blocks with the following raw DC
+coefficients:</p>
+<ul>
+<li><strong>Block 1:</strong> <span class="math inline">\(DC_1 =
+45\)</span></li>
+<li><strong>Block 2:</strong> <span class="math inline">\(DC_2 =
+47\)</span></li>
+<li><strong>Block 3:</strong> <span class="math inline">\(DC_3 =
+41\)</span></li>
+</ul>
+<p>The calculations proceed as follows:</p>
+<ol type="1">
+<li><strong>Block 1:</strong> The predictor starts at <span
+class="math inline">\(0\)</span>.<br />
+<span class="math display">\[\Delta DC_1 = 45 - 0 = +45\]</span><br />
+The predictor updates to <span class="math inline">\(45\)</span>.</li>
+<li><strong>Block 2:</strong> The current value is <span
+class="math inline">\(47\)</span>.<br />
+<span class="math display">\[\Delta DC_2 = 47 - 45 = +2\]</span><br />
+The predictor updates to <span class="math inline">\(47\)</span>.</li>
+<li><strong>Block 3:</strong> The current value is <span
+class="math inline">\(41\)</span>.<br />
+<span class="math display">\[\Delta DC_3 = 41 - 47 = -6\]</span><br />
+The predictor updates to <span class="math inline">\(41\)</span>.</li>
+</ol>
+<p>Instead of transmitting <span class="math inline">\(45\)</span>,
+<span class="math inline">\(47\)</span>, and <span
+class="math inline">\(41\)</span>, the encoder transmits <span
+class="math inline">\(+45\)</span>, <span
+class="math inline">\(+2\)</span>, and <span
+class="math inline">\(-6\)</span>. Because <span
+class="math inline">\(+2\)</span> and <span
+class="math inline">\(-6\)</span> are small numbers centered near zero,
+they require significantly fewer bits to encode.</p>
+<h3 id="encoding-the-differential-value">Encoding the Differential
+Value</h3>
+<p>Once <span class="math inline">\(\Delta DC\)</span> is calculated, it
+is not written directly as a plain binary integer. JPEG categorizes the
+difference by its bit-length (referred to as its magnitude category or
+size) and encodes it in two parts:</p>
+<ol type="1">
+<li><strong>Category Code:</strong> The number of bits needed to
+represent the magnitude of <span class="math inline">\(\Delta
+DC\)</span> is encoded using a Huffman table. For example, a difference
+of <span class="math inline">\(0\)</span> is category <span
+class="math inline">\(0\)</span>; differences of <span
+class="math inline">\(-1\)</span> and <span
+class="math inline">\(+1\)</span> belong to category <span
+class="math inline">\(1\)</span>; differences of <span
+class="math inline">\(-3, -2, 2, 3\)</span> belong to category <span
+class="math inline">\(2\)</span>, and so on up to category <span
+class="math inline">\(15\)</span>.</li>
+<li><strong>Additional Bits:</strong> Immediately following the Huffman
+code for the category, the encoder appends the raw variable-length
+integer bits that specify the exact value and sign within that category.
+Positive values are written using their standard binary representation,
+while negative values are written as their ones' complement.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

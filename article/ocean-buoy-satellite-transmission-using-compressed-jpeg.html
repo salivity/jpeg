@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocean Buoy Satellite Transmission Using Compressed JPEG - jpeg</title>
+    <meta name="description" content="Oceanographic buoys monitor remote marine environments by capturing visual data of sea state, weather, and surface conditions, then compressing these snapshots into lightweight JPEG files for transmission over constrained satellite networks. Because open">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/ocean-buoy-satellite-transmission-using-compressed-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ocean Buoy Satellite Transmission Using Compressed JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/ocean-buoy-satellite-transmission-using-compressed-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Oceanographic buoys monitor remote marine environments by capturing visual data of sea state, weather, and surface conditions, then compressing these snapshots into lightweight JPEG files for transmission over constrained satellite networks. Because open" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ocean-buoy-satellite-transmission-using-compressed-jpeg">Ocean
+Buoy Satellite Transmission Using Compressed JPEG</h1>
+<p>Oceanographic buoys monitor remote marine environments by capturing
+visual data of sea state, weather, and surface conditions, then
+compressing these snapshots into lightweight JPEG files for transmission
+over constrained satellite networks. Because open-ocean platforms
+operate under strict energy and bandwidth limitations, converting raw
+sensor images into optimized JPEGs allows crucial environmental
+observations to reach ground stations quickly and reliably. This article
+details the end-to-end technical process of image capture, compression,
+satellite packetization, and reception.</p>
+<h3 id="visual-capture-and-edge-processing">Visual Capture and Edge
+Processing</h3>
+<p>Oceanographic buoys are equipped with rugged, low-power marine
+cameras mounted on their superstructures, encased in weatherproof and
+anti-fouling housings. These cameras are programmed to capture snapshots
+at scheduled intervals—such as hourly, during daylight, or triggered by
+specific sensor thresholds like high wave events. Once an image is
+captured, the buoy's onboard single-board computer or microcontroller
+receives the raw pixel data and prepares it for processing, prioritizing
+low power draw to preserve solar battery reserves.</p>
+<h3 id="optimized-jpeg-compression">Optimized JPEG Compression</h3>
+<p>Transmitting uncompressed raw images over satellite telemetry is
+prohibitively expensive and energy-intensive. To overcome this, the
+onboard processor applies JPEG compression, a lossy compression
+algorithm well-suited for photographic data:</p>
+<ul>
+<li><strong>Color Space Conversion:</strong> The raw RGB image is
+converted to the YCbCr color model, separating luminance (brightness)
+from chrominance (color).</li>
+<li><strong>Chroma Subsampling:</strong> Human vision is more sensitive
+to variations in brightness than color. The system reduces color
+resolution (commonly using 4:2:0 subsampling), immediately eliminating a
+large portion of redundant data.</li>
+<li><strong>Discrete Cosine Transform (DCT) and Quantization:</strong>
+The image is divided into 8x8 pixel blocks, converted from the spatial
+domain into frequency components, and quantized. Higher-frequency visual
+details that are imperceptible or non-critical for identifying sea
+states are discarded.</li>
+<li><strong>Entropy Encoding:</strong> The resulting data is encoded
+using Huffman coding, reducing a multi-megabyte raw capture down to a
+compact file, often between 10 KB and 50 KB, while preserving
+recognizable details such as wave crests, floating debris, or sea
+ice.</li>
+</ul>
+<h3 id="packetization-and-satellite-uplink">Packetization and Satellite
+Uplink</h3>
+<p>Once compressed, the JPEG binary is prepared for satellite
+transmission. Due to the bandwidth restrictions of satellite networks
+(such as Iridium Short Burst Data, Iridium Certus, or Inmarsat), the
+buoy’s modem cannot always send the file as a single stream:</p>
+<ol type="1">
+<li><strong>Segmentation:</strong> The onboard software splits the JPEG
+binary into manageable, numbered chunks that fit the maximum payload
+size of the satellite service protocol (often a few hundred bytes to
+several kilobytes per packet).</li>
+<li><strong>Error Correction and Metadata:</strong> Each packet is
+tagged with a sequence index, timestamp, buoy identifier, and checksum
+(such as CRC32) to ensure data integrity.</li>
+<li><strong>Uplink Transmission:</strong> The low-power satellite
+transceiver activates, negotiates an uplink handshake with an orbiting
+satellite constellation, and transmits the packets in sequential bursts.
+If a transmission fails due to antenna wash or signal obstruction from
+heavy waves, the system queues and retransmits the missing
+fragments.</li>
+</ol>
+<h3 id="ground-station-reception-and-reconstruction">Ground Station
+Reception and Reconstruction</h3>
+<p>Once the satellite constellation routes the data to a terrestrial
+ground station, the raw packets are forwarded to the oceanographic
+institution's data center via standard internet protocols. A server
+verifies the checksums of each incoming payload, reassembles the binary
+segments in the correct order, and writes the completed JPEG file to
+disk. The reconstructed images are then immediately processed for
+computer-vision analysis, archived for climate research, or published to
+public maritime forecasting dashboards.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

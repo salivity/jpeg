@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Panorama Stitching from Multiple JPEGs - jpeg</title>
+    <meta name="description" content="Real-time panorama stitching from sequential JPEG frames requires overcoming computational bottlenecks associated with image decompression, feature matching, motion estimation, and blending. By leveraging compressed-domain processing, hardware-accelerate">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/real-time-panorama-stitching-from-multiple-jpe-gs">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Real-Time Panorama Stitching from Multiple JPEGs - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/real-time-panorama-stitching-from-multiple-jpe-gs" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Real-time panorama stitching from sequential JPEG frames requires overcoming computational bottlenecks associated with image decompression, feature matching, motion estimation, and blending. By leveraging compressed-domain processing, hardware-accelerate" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="real-time-panorama-stitching-from-multiple-jpegs">Real-Time
+Panorama Stitching from Multiple JPEGs</h1>
+<p>Real-time panorama stitching from sequential JPEG frames requires
+overcoming computational bottlenecks associated with image
+decompression, feature matching, motion estimation, and blending. By
+leveraging compressed-domain processing, hardware-accelerated feature
+extraction, predictive spatial alignment, and lightweight blending
+shaders, modern imaging pipelines can seamlessly stitch high-resolution
+images on the fly. This article examines the core computational
+techniques and algorithmic optimizations that make zero-latency,
+real-time photographic stitching possible.</p>
+<h3 id="compressed-domain-and-partial-decoding">Compressed-Domain and
+Partial Decoding</h3>
+<p>Decompressing standard JPEG files using full inverse Discrete Cosine
+Transform (IDCT) introduces significant latency and memory overhead.
+Real-time pipelines often bypass full-scale decompression by utilizing
+partial IDCT decoding, which directly extracts low-resolution DC and
+low-frequency AC coefficients. This produces instant, downsampled
+representations used exclusively for feature detection and rough
+registration. Full-resolution decoding is deferred or localized solely
+to the overlapping boundaries needed for final composition.</p>
+<h3 id="fast-scale-invariant-feature-detection">Fast, Scale-Invariant
+Feature Detection</h3>
+<p>Traditional detectors like SIFT and SURF are too computationally
+expensive for 30+ frames-per-second processing. Real-time systems rely
+on binary keypoint algorithms:</p>
+<ul>
+<li><strong>FAST (Features from Accelerated Segment Test):</strong>
+Rapidly identifies corner points using simple intensity comparisons
+along a circular ring of pixels.</li>
+<li><strong>ORB (Oriented FAST and Rotated BRIEF):</strong> Adds
+orientation to FAST corners and pairs them with binary BRIEF
+descriptors, which can be compared using bitwise XOR operations (Hamming
+distance) via dedicated CPU vector instructions.</li>
+<li><strong>Sparse Optical Flow:</strong> When frames are captured
+sequentially in real time, algorithms like pyramidal Lucas-Kanade track
+features across adjacent frames without requiring global re-detection,
+radically lowering latency.</li>
+</ul>
+<h3 id="optimized-motion-estimation-and-ransac">Optimized Motion
+Estimation and RANSAC</h3>
+<p>To map images onto a shared canvas, the system computes a homography
+matrix from matched keypoint pairs. Standard RANSAC (Random Sample
+Consensus) is optimized into faster variants:</p>
+<ul>
+<li><strong>PROSAC (Progressive Sample Consensus):</strong> Samples
+keypoints based on match quality rather than random selection,
+decreasing iterations by orders of magnitude.</li>
+<li><strong>Sensor-Assisted Initialization:</strong> Hardware sensors
+(gyroscopes and accelerometers) provide an initial inertial estimate of
+camera rotation, narrowing down the homography search space and
+eliminating false matches.</li>
+</ul>
+<h3 id="precomputed-warping-grids">Precomputed Warping Grids</h3>
+<p>Projecting planar images onto cylindrical or spherical coordinate
+spaces requires intensive trigonometric calculations. Real-time
+stitchers avoid computing these per-pixel formulas during runtime by
+utilizing precomputed Look-Up Tables (LUTs) or low-resolution mesh
+warping. In mesh-based warping, transformations are calculated at coarse
+grid intersections, and intermediate pixels are mapped using
+hardware-accelerated bilinear interpolation on the GPU.</p>
+<h3 id="dynamic-seam-finding-and-fast-blending">Dynamic Seam Finding and
+Fast Blending</h3>
+<p>Combining frames without visible boundaries or ghosting artifacts
+involves two stages:</p>
+<ul>
+<li><strong>Dynamic Programming for Seam Carving:</strong> Instead of
+expensive graph cuts, simple 1D dynamic programming determines an
+optimal, low-contrast seam path along the overlapping area to avoid
+cutting through moving objects.</li>
+<li><strong>Multi-Band Linear Blending:</strong> Rather than computing
+full Laplacian pyramids for each frame, real-time pipelines implement
+two-band blending directly inside GPU fragment shaders. High-frequency
+details are swapped along the seam, while low-frequency illumination
+variations are smoothly transitioned using linear weights.</li>
+</ul>
+<h3 id="pipelining-and-heterogeneous-computing">Pipelining and
+Heterogeneous Computing</h3>
+<p>The end-to-end stitching pipeline relies on asynchronous
+multithreading across heterogeneous hardware architectures:</p>
+<ol type="1">
+<li><strong>Direct Memory Access (DMA):</strong> Offloads JPEG buffer
+acquisition directly to GPU or neural processing unit (NPU) memory.</li>
+<li><strong>Thread Concurrency:</strong> Frame <span
+class="math inline">\(N\)</span> undergoes feature tracking on the CPU
+while Frame <span class="math inline">\(N-1\)</span> is warped and
+composited on the GPU.</li>
+<li><strong>SIMD Parallelism:</strong> Vector intrinsics (such as ARM
+NEON or x86 AVX) accelerate binary descriptor matching across hundreds
+of points concurrently.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

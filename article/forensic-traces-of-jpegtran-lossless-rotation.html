@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forensic Traces of Jpegtran Lossless Rotation - jpeg</title>
+    <meta name="description" content="While jpegtran performs lossless transformations by rearranging existing Discrete Cosine Transform (DCT) coefficients rather than decompressing and re-encoding the image, the process is not completely invisible to digital forensic analysis. Executing a l">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/forensic-traces-of-jpegtran-lossless-rotation">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Forensic Traces of Jpegtran Lossless Rotation - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/forensic-traces-of-jpegtran-lossless-rotation" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While jpegtran performs lossless transformations by rearranging existing Discrete Cosine Transform (DCT) coefficients rather than decompressing and re-encoding the image, the process is not completely invisible to digital forensic analysis. Executing a l" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="forensic-traces-of-jpegtran-lossless-rotation">Forensic Traces
+of Jpegtran Lossless Rotation</h1>
+<p>While <code>jpegtran</code> performs lossless transformations by
+rearranging existing Discrete Cosine Transform (DCT) coefficients rather
+than decompressing and re-encoding the image, the process is not
+completely invisible to digital forensic analysis. Executing a lossless
+rotation alters file-level structures, quantization properties, boundary
+blocks, and metadata in predictable ways. Forensic examiners can
+identify these changes by inspecting quantization table symmetry,
+Huffman coding structures, Minimum Coded Unit (MCU) edge alignments, and
+the layout of JPEG markers.</p>
+<h3 id="transposed-quantization-tables">Transposed Quantization
+Tables</h3>
+<p>In baseline JPEG compression, quantization matrices are frequently
+asymmetric because the human visual system perceives horizontal and
+vertical frequencies differently. When <code>jpegtran</code> rotates an
+image by 90 or 270 degrees, the spatial axes swap. To preserve visual
+fidelity losslessly, the 8x8 quantization table must also be transposed
+(swapping rows and columns). If an image contains quantization matrices
+typical of a specific camera sensor or software profile, but those
+matrices are transposed relative to the expected orientation, it
+indicates a 90- or 270-degree rotation.</p>
+<h3 id="huffman-coding-and-table-standardization">Huffman Coding and
+Table Standardization</h3>
+<p><code>jpegtran</code> by default generates optimal Huffman tables for
+the transformed coefficient streams. Most digital cameras write
+standard, non-optimal Huffman tables defined in the JPEG specification
+to save processing time. If an image purports to be straight from a
+camera but contains optimized Huffman tables matching the algorithms of
+the Independent JPEG Group (IJG) library, it strongly suggests
+post-processing with <code>jpegtran</code> or a related tool.
+Additionally, custom or camera-specific DHT (Define Huffman Table)
+markers are typically replaced with standard IJG markers.</p>
+<h3 id="boundary-truncation-and-partial-mcus">Boundary Truncation and
+Partial MCUs</h3>
+<p>JPEG images are divided into MCUs, typically 8x8 or 16x16 pixel
+blocks depending on the chroma subsampling (such as 4:2:0 or 4:2:2). If
+an image's dimensions are not exact multiples of the MCU size, partial
+blocks exist on the right and bottom edges.</p>
+<ul>
+<li>When rotated, these partial blocks move to the top or left edges,
+where JPEG syntax does not permit non-standard alignment.</li>
+<li>By default, <code>jpegtran</code> handles this by either dropping
+incomplete edge blocks (when using the <code>-trim</code> parameter) or
+moving partial blocks using zero-padding.</li>
+<li>Discrepancies in image dimensions relative to the expected sensor
+resolution, unexpected MCU padding bytes, or missing edge pixels provide
+direct physical evidence of a lossless transformation.</li>
+</ul>
+<h3 id="jpeg-marker-sequencing">JPEG Marker Sequencing</h3>
+<p>Different cameras and editing tools write structural markers in
+distinct sequences. Digital cameras commonly insert proprietary
+<code>APP</code> markers (such as <code>APP2</code> for color profiles
+or camera-specific MakerNotes) directly after the Start of Image
+(<code>SOI</code>) marker. <code>jpegtran</code> standardizes marker
+order according to IJG library conventions:</p>
+<ol type="1">
+<li><code>SOI</code> (Start of Image)</li>
+<li><code>APP0</code> (JFIF) or <code>APP1</code> (Exif)</li>
+<li><code>DQT</code> (Define Quantization Table)</li>
+<li><code>SOF0</code> (Start of Frame)</li>
+<li><code>DHT</code> (Define Huffman Table)</li>
+<li><code>SOS</code> (Start of Scan)</li>
+</ol>
+<p>Reordering, omitting, or standardizing these markers flags the file
+as processed, even if the primary pixel data was not re-quantized.</p>
+<h3 id="exif-and-orientation-metadata-inconsistencies">EXIF and
+Orientation Metadata Inconsistencies</h3>
+<p>When rotating an image losslessly, the physical pixel matrix is
+reordered. A forensic inconsistency arises if:</p>
+<ul>
+<li>The Exif <code>Orientation</code> tag is reset to <code>1</code>
+(Normal) while other camera-original metadata remains intact.</li>
+<li>Software flags like <code>Software</code> or
+<code>ProcessingSoftware</code> are wiped, overwritten, or inconsistent
+with the EXIF payload.</li>
+<li>Thumbnail images embedded inside the Exif <code>APP1</code> segment
+remain unrotated, showing the original orientation while the
+full-resolution scan reflects the rotated state.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

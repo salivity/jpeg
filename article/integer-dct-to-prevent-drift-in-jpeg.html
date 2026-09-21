@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integer DCT to Prevent Drift in JPEG - jpeg</title>
+    <meta name="description" content="Integer-based approximations of the Discrete Cosine Transform (DCT) can effectively prevent transform mismatch and drift in JPEG implementations by replacing non-deterministic floating-point math with standardized, bit-exact integer arithmetic. While the">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/integer-dct-to-prevent-drift-in-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Integer DCT to Prevent Drift in JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/integer-dct-to-prevent-drift-in-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Integer-based approximations of the Discrete Cosine Transform (DCT) can effectively prevent transform mismatch and drift in JPEG implementations by replacing non-deterministic floating-point math with standardized, bit-exact integer arithmetic. While the" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="integer-dct-to-prevent-drift-in-jpeg">Integer DCT to Prevent
+Drift in JPEG</h1>
+<p>Integer-based approximations of the Discrete Cosine Transform (DCT)
+can effectively prevent transform mismatch and drift in JPEG
+implementations by replacing non-deterministic floating-point math with
+standardized, bit-exact integer arithmetic. While the original JPEG
+specification defines the DCT mathematically in floating-point,
+variations in hardware architectures, rounding modes, and compiler
+optimizations cause subtle reconstruction differences between encoders
+and decoders. By enforcing fixed-point or integer-to-integer DCT
+algorithms, implementations ensure that every compliant decoder produces
+identical pixel values from the same quantized coefficients, thereby
+eliminating IDCT drift.</p>
+<h3 id="understanding-dct-drift-in-jpeg">Understanding DCT Drift in
+JPEG</h3>
+<p>In transform-based compression, drift occurs when the Inverse
+Discrete Cosine Transform (IDCT) performed by the decoder does not
+perfectly replicate the inverse of the forward DCT used by the encoder.
+The standard JPEG specification (ISO/IEC 10918-1) defines the forward
+and inverse DCT using continuous real-number mathematics:</p>
+<p><span class="math display">\[X_k = \sum_{n=0}^{N-1} x_n \cos \left[
+\frac{\pi}{N} \left( n + \frac{1}{2} \right) k \right]\]</span></p>
+<p>Because computers cannot represent irrational numbers with infinite
+precision, implementations use floating-point or fixed-point
+approximations. Historically, IEEE Standard 1180 established error
+tolerances for IDCT implementations, but it permitted slight
+discrepancies. When an image is repeatedly decompressed, edited, and
+recompressed (multi-generation encoding), these small floating-point
+rounding errors compound, creating visible degradation known as drift.
+Drift also manifests across distributed systems when an image encoded on
+one architecture (e.g., x86) yields different pixel outputs on another
+(e.g., ARM).</p>
+<h3 id="how-integer-dct-prevents-transform-mismatch">How Integer DCT
+Prevents Transform Mismatch</h3>
+<p>Integer DCT transforms eliminate rounding ambiguity by mapping
+integers to integers using scaled integer matrices and basic operations
+such as additions, subtractions, and bitwise shifts.</p>
+<ol type="1">
+<li><strong>Deterministic Arithmetic:</strong> Floating-point operations
+can yield divergent results depending on the order of operations, CPU
+instruction sets (such as FMA vs. separate multiply-accumulate), and
+register widths (32-bit, 64-bit, or 80-bit extended precision). Integer
+arithmetic, defined with explicit bit-depths and exact rounding rules
+(e.g., adding a fixed bias before a right-shift), behaves identically
+across all processing architectures.</li>
+<li><strong>Reversibility and Factorization:</strong> Techniques such as
+the BinDCT (binary DCT) or IntDCT factor the DCT matrix into lifting
+steps (planar rotations). Each lifting step is reversible, ensuring that
+the forward and inverse transforms can be structured to have exact
+mathematical symmetry without loss of precision outside of
+quantization.</li>
+<li><strong>Integrated Scaling:</strong> Modern integer transform
+designs integrate the irrational scaling factors directly into the
+quantization and dequantization stages. This keeps the core transform
+purely additive and shift-based, removing multiplication-induced
+truncation errors from the transform phase entirely.</li>
+</ol>
+<h3
+id="standardization-and-compatibility-considerations">Standardization
+and Compatibility Considerations</h3>
+<p>While integer DCTs successfully eliminate drift within closed or
+controlled software ecosystems, their efficacy across the broader web
+depends on specification compliance:</p>
+<ul>
+<li><strong>Legacy JPEG Limitations:</strong> The legacy baseline JPEG
+standard does not define a mandatory bit-exact integer transform. If an
+encoder uses an integer-based forward transform, an arbitrary
+third-party decoder using a floating-point IDCT will still introduce
+slight mismatch. Consequently, integer DCTs prevent drift only if both
+the encoding and decoding software agree on the exact transform
+algorithm.</li>
+<li><strong>Modern Standards Precedent:</strong> Later standards
+resolved this issue definitively. JPEG XR, H.264, HEVC, and AV1 mandate
+specific, bit-exact integer core transforms in their normative
+specifications. By removing floating-point operations from the transform
+step altogether, these standards achieve zero drift between any
+compliant encoder and decoder.</li>
+</ul>
+<p>Integer-based DCT approximations fully solve the technical problem of
+transform drift in JPEG systems by guaranteeing reproducible, bit-level
+parity across all hardware platforms, provided the integer
+implementation is used symmetrically at both ends of the compression
+pipeline.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

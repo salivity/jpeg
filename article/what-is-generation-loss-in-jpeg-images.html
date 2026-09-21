@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is Generation Loss in JPEG Images? - jpeg</title>
+    <meta name="description" content="Generation loss is the progressive decline in digital quality that occurs whenever a file is repeatedly edited, compressed, and resaved using a lossy format. In JPEG images, this process causes irreversible visual degradation because the format discards">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-is-generation-loss-in-jpeg-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is Generation Loss in JPEG Images? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-is-generation-loss-in-jpeg-images" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Generation loss is the progressive decline in digital quality that occurs whenever a file is repeatedly edited, compressed, and resaved using a lossy format. In JPEG images, this process causes irreversible visual degradation because the format discards" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-generation-loss-in-jpeg-images">What Is Generation Loss
+in JPEG Images?</h1>
+<p>Generation loss is the progressive decline in digital quality that
+occurs whenever a file is repeatedly edited, compressed, and resaved
+using a lossy format. In JPEG images, this process causes irreversible
+visual degradation because the format discards visual data each time it
+encodes an image to reduce file size. Understanding how generation loss
+works is essential for photographers, designers, and web developers who
+want to preserve the fidelity of their visual assets across multiple
+edits.</p>
+<h2 id="what-is-generation-loss">What Is Generation Loss?</h2>
+<p>Generation loss refers to the reduction in quality between successive
+copies or generations of data. The concept originally applied to analog
+media, such as making a cassette tape recording of another cassette
+tape, where background noise and distortion compounded with each pass.
+In the digital realm, generation loss does not occur when simply copying
+and pasting a file, as identical 1:1 bit copies are created. Instead,
+digital generation loss occurs specifically when a file is opened,
+re-encoded through a lossy compression algorithm, and resaved.</p>
+<h2 id="why-jpeg-files-suffer-from-generation-loss">Why JPEG Files
+Suffer From Generation Loss</h2>
+<p>JPEG is inherently a lossy file format designed to prioritize smaller
+file sizes over absolute visual fidelity. Its compression process relies
+on several steps that permanently discard data:</p>
+<ol type="1">
+<li><strong>Color Space Conversion and Downsampling:</strong> The image
+is converted from RGB to YCbCr, separating luminance (brightness) from
+chrominance (color). Because human eyes are less sensitive to fine color
+details, the color channels are often downsampled (reduced in
+resolution).</li>
+<li><strong>Discrete Cosine Transform (DCT):</strong> The image is
+divided into small blocks, typically 8x8 pixels. The DCT converts the
+pixel values of each block into a frequency domain representing changes
+in brightness and color.</li>
+<li><strong>Quantization:</strong> This is the primary lossy step.
+High-frequency details—which human vision struggles to detect—are
+divided by quantization values and rounded to whole numbers. Information
+rounded to zero is permanently discarded.</li>
+<li><strong>Entropy Encoding:</strong> The remaining values are
+compressed using lossless encoding to create the final file.</li>
+</ol>
+<p>When you open a JPEG, your software decompresses this simplified data
+back into an array of pixels. When you save it again, the software runs
+the quantization step a second time. The algorithm cannot distinguish
+between original image detail and compression artifacts created during
+the previous save, so it treats those artifacts as image data and
+applies another layer of lossy compression.</p>
+<h2 id="the-visible-effects-of-repeatedly-saving-a-jpeg">The Visible
+Effects of Repeatedly Saving a JPEG</h2>
+<p>Saving a JPEG repeatedly accelerates visual degradation in distinct
+ways:</p>
+<ul>
+<li><strong>Blocking Artifacts:</strong> The boundaries of the 8x8 pixel
+blocks become increasingly rigid and noticeable, turning smooth
+gradients into a checkerboard-like grid.</li>
+<li><strong>Ringing and Mosquito Noise:</strong> High-contrast edges,
+such as dark text on a white background, develop fuzzy, noisy
+halos.</li>
+<li><strong>Loss of Fine Detail and Texture:</strong> Subtle textures,
+like skin pores, foliage, and fabric weaves, are smoothed out and
+lost.</li>
+<li><strong>Color Shifting and Banding:</strong> Repeated color
+subsampling leads to noticeable steps or "banding" across skies and
+gradients, alongside slight shifts in hue and saturation.</li>
+</ul>
+<p>Even if you set the export quality to 100%, generation loss still
+occurs. While saving at high quality minimizes the rate of degradation,
+rounding errors during repeated mathematical transformations will still
+compound over time.</p>
+<h2 id="how-to-prevent-jpeg-generation-loss">How to Prevent JPEG
+Generation Loss</h2>
+<p>To maintain pristine image quality throughout your workflow, apply
+these best practices:</p>
+<ul>
+<li><strong>Keep a Lossless Master File:</strong> Always retain an
+uncompressed or losslessly compressed original, such as a RAW, TIFF, or
+PSD file. Make all adjustments to this master file.</li>
+<li><strong>Use Lossless Formats During Intermediate Stages:</strong> If
+you must save and reopen an image multiple times across different
+programs, use PNG or TIFF until editing is complete.</li>
+<li><strong>Export to JPEG Only Once:</strong> Treat JPEG as a final
+delivery format. Only export to JPEG as the very last step for web
+publishing, email sharing, or client delivery.</li>
+<li><strong>Use Non-Destructive Editors:</strong> Modern software like
+Adobe Lightroom or Capture One records edit instructions in a database
+or sidecar file rather than modifying the original pixel data,
+eliminating generation loss during the creative process.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

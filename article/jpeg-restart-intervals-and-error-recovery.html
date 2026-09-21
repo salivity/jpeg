@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Restart Intervals and Error Recovery - jpeg</title>
+    <meta name="description" content="Restart interval signaling provides a vital mechanism for fault tolerance in JPEG images by periodically resetting the entropy decoding pipeline. In standard JPEG encoding, entropy-coded data relies on variable-length codes and differential pulse-code mo">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-restart-intervals-and-error-recovery">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Restart Intervals and Error Recovery - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-restart-intervals-and-error-recovery" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Restart interval signaling provides a vital mechanism for fault tolerance in JPEG images by periodically resetting the entropy decoding pipeline. In standard JPEG encoding, entropy-coded data relies on variable-length codes and differential pulse-code mo" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-restart-intervals-and-error-recovery">JPEG Restart
+Intervals and Error Recovery</h1>
+<p>Restart interval signaling provides a vital mechanism for fault
+tolerance in JPEG images by periodically resetting the entropy decoding
+pipeline. In standard JPEG encoding, entropy-coded data relies on
+variable-length codes and differential pulse-code modulation, meaning a
+single corrupted bit can desynchronize the decoder and ruin the
+remainder of the image. By placing standardized restart markers at fixed
+intervals throughout the bitstream, the encoder creates isolated data
+boundaries. This overview explains how restart markers halt error
+propagation, restore bitstream alignment, and reset predictive states
+during entropy decoding.</p>
+<h3 id="the-vulnerability-of-entropy-coding">The Vulnerability of
+Entropy Coding</h3>
+<p>JPEG compression relies heavily on entropy coding—most commonly
+Huffman coding—to compress quantized DCT (Discrete Cosine Transform)
+coefficients into a compact bitstream. Because Huffman codes are
+variable in length, the decoder must know the exact bit boundary of
+every symbol to decode subsequent symbols correctly.</p>
+<p>If transmission noise or storage corruption flips or drops a single
+bit, two primary failures occur:</p>
+<ol type="1">
+<li><strong>Loss of Synchronization:</strong> The decoder misinterprets
+symbol boundaries, decoding incorrect coefficients and falling
+completely out of sync with the true bitstream structure.</li>
+<li><strong>Predictive Drift:</strong> DC coefficients (the average
+color/brightness of each 8x8 block) are encoded differentially, meaning
+each block's DC value depends on the previous block's value. A single
+error permanently skews the color and brightness of every subsequent
+block in the image.</li>
+</ol>
+<p>Without an intervention mechanism, an error occurring near the top of
+an image typically destroys the visual integrity of everything below
+it.</p>
+<h3 id="the-structure-of-restart-intervals">The Structure of Restart
+Intervals</h3>
+<p>A restart interval divides the image into independent sequences of
+Minimum Coded Units (MCUs). The signaling involves two core
+components:</p>
+<ul>
+<li><strong>DRI (Define Restart Interval) Marker:</strong> Embedded in
+the JPEG header (<code>0xFFDD</code>), this marker specifies the
+interval length as a fixed number of MCUs (denoted as <span
+class="math inline">\(R_i\)</span>).</li>
+<li><strong>RST (Restart) Markers:</strong> Inserted directly into the
+entropy-coded scan data, these markers range sequentially from
+<code>0xFFD0</code> through <code>0xFFD7</code> and wrap around
+modulo-8.</li>
+</ul>
+<p>Every <span class="math inline">\(R_i\)</span> MCUs, the encoder
+emits the next sequential restart marker, providing an explicit roadmap
+through the compressed data.</p>
+<h3 id="how-restart-intervals-enable-recovery">How Restart Intervals
+Enable Recovery</h3>
+<p>When a decoder encounters bitstream corruption, restart markers allow
+it to recover via three specific actions:</p>
+<h4 id="1-byte-and-marker-resynchronization">1. Byte and Marker
+Resynchronization</h4>
+<p>Huffman-coded data is a continuous sequence of bits that do not
+strictly end on byte boundaries. When a restart interval concludes, the
+encoder pads any remaining bits in the current byte with <code>1</code>
+bits (fill bits) to align the next marker to a byte boundary. Because
+restart markers begin with the distinct byte prefix <code>0xFF</code>
+followed by <code>0xD0</code>–<code>0xD7</code>, a desynchronized
+decoder can simply scan forward through the bitstream for the next valid
+<code>0xFFDn</code> marker, immediately regaining correct byte and bit
+alignment.</p>
+<h4 id="2-resetting-the-dc-predictor">2. Resetting the DC Predictor</h4>
+<p>At every restart marker, the baseline prediction state is cleared.
+The differential DC predictor for all color components (luminance and
+chrominance) is reset to zero. Consequently, even if the preceding
+interval suffered severe color shifts, the newly started interval
+calculates its DC coefficients from a clean baseline, preventing color
+corruption from bleeding past the marker boundary.</p>
+<h4 id="3-entropy-decoder-state-initialization">3. Entropy Decoder State
+Initialization</h4>
+<p>The internal state of the entropy decoder resets at the beginning of
+each interval. For baseline Huffman decoding, this means parsing fresh
+symbols from a clean bit boundary; for arithmetic decoding, the
+statistical conditioning and probability estimation registers are
+reinitialized.</p>
+<h3 id="visual-impact-on-corrupted-images">Visual Impact on Corrupted
+Images</h3>
+<p>Through restart interval signaling, errors are confined strictly to
+the specific interval in which they occur. While the corrupted interval
+may display visual artifacts—such as horizontal bands of distortion,
+displaced blocks, or missing pixels—the decoder resumes normal rendering
+as soon as it hits the subsequent restart marker. This containment
+converts what would otherwise be a total image loss into a localized,
+often tolerable visual flaw.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

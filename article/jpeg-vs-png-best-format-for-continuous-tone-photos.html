@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG vs PNG: Best Format for Continuous-Tone Photos - jpeg</title>
+    <meta name="description" content="When saving continuous-tone photographs, JPEG compression is vastly superior to PNG compression in terms of storage efficiency and transmission speed. JPEG utilizes a lossy algorithm specifically engineered to discard visual data that the human eye strug">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-vs-png-best-format-for-continuous-tone-photos">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG vs PNG: Best Format for Continuous-Tone Photos - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-vs-png-best-format-for-continuous-tone-photos" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When saving continuous-tone photographs, JPEG compression is vastly superior to PNG compression in terms of storage efficiency and transmission speed. JPEG utilizes a lossy algorithm specifically engineered to discard visual data that the human eye strug" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-vs-png-best-format-for-continuous-tone-photos">JPEG vs PNG:
+Best Format for Continuous-Tone Photos</h1>
+<p>When saving continuous-tone photographs, JPEG compression is vastly
+superior to PNG compression in terms of storage efficiency and
+transmission speed. JPEG utilizes a lossy algorithm specifically
+engineered to discard visual data that the human eye struggles to
+perceive in complex, natural scenes, resulting in significantly smaller
+file sizes with minimal perceptible loss in quality. Conversely, PNG
+uses a lossless compression algorithm designed to preserve exact pixel
+data, which results in excessively large file sizes when applied to the
+smooth gradients and subtle variations typical of photographic
+images.</p>
+<h3 id="understanding-continuous-tone-imagery">Understanding
+Continuous-Tone Imagery</h3>
+<p>Continuous-tone photographs consist of virtually unlimited gradations
+of color and tone. Unlike digital illustrations, logos, or line art, a
+photograph of a natural scene contains millions of subtle color
+transitions, fine textures, and slight digital noise across its pixel
+grid. Compressing this type of visual data requires algorithms capable
+of handling high-entropy information without bloating the underlying
+file size.</p>
+<h3 id="how-jpeg-handles-continuous-tone-photographs">How JPEG Handles
+Continuous-Tone Photographs</h3>
+<p>JPEG relies on the Discrete Cosine Transform (DCT) combined with
+chroma subsampling and quantization:</p>
+<ul>
+<li><strong>Chroma Subsampling:</strong> Because the human visual system
+is much more sensitive to variations in brightness (luminance) than
+color (chrominance), JPEG reduces the resolution of color information
+while keeping brightness intact.</li>
+<li><strong>Frequency Transformation and Quantization:</strong> The DCT
+converts blocks of pixels from the spatial domain into frequency
+components. High-frequency details—such as microscopic noise and
+imperceptible texture shifts—are heavily compressed or discarded
+entirely through quantization.</li>
+</ul>
+<p>Because continuous-tone photos naturally mask minor frequency losses
+within their complex visual structures, JPEG can reduce an image's raw
+data size by 80% to 90% without an untrained viewer noticing any
+degradation.</p>
+<h3 id="how-png-handles-continuous-tone-photographs">How PNG Handles
+Continuous-Tone Photographs</h3>
+<p>PNG employs a two-stage, lossless compression scheme consisting of
+pre-compression predictive filtering followed by the DEFLATE algorithm
+(a combination of LZ77 and Huffman coding):</p>
+<ul>
+<li><strong>Predictive Filtering:</strong> PNG attempts to predict a
+pixel's color based on neighboring pixels and records only the
+difference between the predicted and actual value.</li>
+<li><strong>DEFLATE Algorithm:</strong> The algorithm searches for
+repeated sequences of byte patterns across the image data and replaces
+them with shorter references.</li>
+</ul>
+<p>While this approach excels on images with solid colors, repeating
+patterns, and hard boundaries (such as diagrams or screenshots), it
+fails to compress continuous-tone photographs effectively. Natural
+photography lacks the exact, repeated byte sequences that DEFLATE
+requires. The subtle noise and micro-gradients inherent in photographs
+prevent the filters from creating compressible patterns, forcing PNG to
+store almost every pixel variation.</p>
+<h3 id="file-size-and-quality-comparison">File Size and Quality
+Comparison</h3>
+<p>The functional difference between the two formats comes down to
+compression ratio and visual fidelity:</p>
+<ul>
+<li><strong>Storage Overhead:</strong> A high-resolution continuous-tone
+photo saved as an uncompressed 24-bit PNG can easily be five to ten
+times larger than the same photo saved as a high-quality JPEG (e.g.,
+quality level 85–90).</li>
+<li><strong>Perceptual Quality:</strong> At standard viewing distances
+and resolutions, a high-quality JPEG is visually indistinguishable from
+an identical lossless PNG, despite the massive difference in file
+weight.</li>
+<li><strong>Artifacts:</strong> JPEG only introduces visible
+degradation—such as 8x8 pixel block boundaries, color banding, and
+ringing artifacts—when compressed aggressively at low-quality settings.
+PNG introduces zero visual artifacts regardless of the setting, as it
+retains absolute pixel fidelity.</li>
+</ul>
+<h3 id="practical-application">Practical Application</h3>
+<p>JPEG is the industry standard for distributing, displaying, and
+archiving finished continuous-tone photographs across the web and mobile
+platforms due to its optimal balance between file size and perceptual
+quality. PNG should only be used for photographic content if alpha
+transparency (translucent backgrounds) is strictly required, or as a
+non-lossy intermediate working format where avoiding generational loss
+from repeated saves is necessary.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

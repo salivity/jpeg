@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How jpegtran Losslessly Rotates and Crops JPEGs - jpeg</title>
+    <meta name="description" content="The command-line utility jpegtran performs lossless image operations like rotation, flipping, and cropping by manipulating raw Discrete Cosine Transform (DCT) coefficients directly rather than decoding an image back into raw pixels and recompressing it.">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpegtran-losslessly-rotates-and-crops-jpe-gs">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How jpegtran Losslessly Rotates and Crops JPEGs - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpegtran-losslessly-rotates-and-crops-jpe-gs" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The command-line utility jpegtran performs lossless image operations like rotation, flipping, and cropping by manipulating raw Discrete Cosine Transform (DCT) coefficients directly rather than decoding an image back into raw pixels and recompressing it." />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpegtran-losslessly-rotates-and-crops-jpegs">How jpegtran
+Losslessly Rotates and Crops JPEGs</h1>
+<p>The command-line utility <code>jpegtran</code> performs lossless
+image operations like rotation, flipping, and cropping by manipulating
+raw Discrete Cosine Transform (DCT) coefficients directly rather than
+decoding an image back into raw pixels and recompressing it. Standard
+image editors unpack a JPEG into RGB bitmaps, apply transformations, and
+re-quantize the data, which introduces irreversible generation loss and
+artifacts. In contrast, <code>jpegtran</code> temporarily reverses only
+the entropy-coding step, rearranges and mathematically adjusts the
+existing quantized frequency values inside their respective 8x8
+frequency blocks, and re-encodes the stream without touching the
+underlying image quality.</p>
+<h3 id="the-jpeg-storage-model">The JPEG Storage Model</h3>
+<p>To understand <code>jpegtran</code>, it is essential to understand
+how standard JPEG images store data:</p>
+<ol type="1">
+<li><strong>Color Conversion and Subsampling:</strong> The image is
+converted to the YCbCr color space, and color channels are often
+subsampled into Minimum Coded Units (MCUs), typically grids of 8x8 or
+16x16 pixels.</li>
+<li><strong>Discrete Cosine Transform (DCT):</strong> Each 8x8 block is
+transformed from spatial pixel data into frequency-domain data, yielding
+an 8x8 matrix of DCT coefficients. The top-left value represents the
+average brightness (DC coefficient), while the remaining 63 values
+represent progressively higher frequencies (AC coefficients).</li>
+<li><strong>Quantization:</strong> The coefficients are divided by
+values in a quantization table and rounded to integers. This step is the
+sole source of lossy degradation in a JPEG.</li>
+<li><strong>Entropy Encoding:</strong> The quantized integer
+coefficients are compressed losslessly using Huffman or arithmetic
+encoding.</li>
+</ol>
+<p>When <code>jpegtran</code> modifies an image, it skips the lossy
+stages entirely. It decodes the entropy layer to access the quantized
+DCT coefficients, alters them algebraically, and applies entropy
+encoding back to the file.</p>
+<h3 id="lossless-rotation-and-flipping-via-dct-matrix-symmetry">Lossless
+Rotation and Flipping via DCT Matrix Symmetry</h3>
+<p>A 2D DCT represents spatial patterns using orthogonal cosine basis
+functions. Because of the mathematical symmetry of these basis
+functions, geometric transformations on the spatial pixel block
+correlate directly to predictable permutations of the 8x8 coefficient
+matrix:</p>
+<ul>
+<li><strong>Horizontal Flip:</strong> Flipping an 8x8 spatial block
+horizontally changes the phase of the horizontal frequencies. For
+odd-numbered columns (<span class="math inline">\(u = 1, 3, 5,
+7\)</span>), the cosine wave is inverted. Therefore, a horizontal flip
+requires merely negating the sign of every coefficient in the odd
+columns of the 8x8 block.</li>
+<li><strong>Vertical Flip:</strong> Similarly, a vertical flip inverts
+the phase of vertical frequencies. This is achieved by negating the sign
+of all coefficients located in odd-numbered rows (<span
+class="math inline">\(v = 1, 3, 5, 7\)</span>).</li>
+<li><strong>Transposition (Diagonal Flip):</strong> Transposing an image
+(swapping horizontal and vertical axes) corresponds to transposing the
+8x8 matrix of DCT coefficients (<span
+class="math inline">\(C_{u,v}\)</span> becomes <span
+class="math inline">\(C_{v,u}\)</span>).</li>
+<li><strong>Rotations (90°, 180°, 270°):</strong> Rotations are
+combinations of transposition and sign-inversion. For example, a
+90-degree clockwise rotation transposes the 8x8 coefficient matrix and
+negates the signs of the odd-indexed rows.</li>
+</ul>
+<p>In addition to transforming the coefficients inside each 8x8 block,
+<code>jpegtran</code> permutes the spatial order of the blocks
+themselves within the larger image grid to place them in their new
+global positions.</p>
+<h3 id="lossless-cropping-and-mcu-alignment">Lossless Cropping and MCU
+Alignment</h3>
+<p>Cropping in <code>jpegtran</code> works by discarding entire unneeded
+blocks from the compressed bitstream. Because entropy-encoded data is
+grouped into MCUs (typically 8x8, 16x8, or 16x16 pixel blocks, depending
+on chroma subsampling like 4:2:0 or 4:2:2), lossless cropping must
+respect these MCU boundaries:</p>
+<ul>
+<li><strong>Boundary Constraints:</strong> The upper-left corner of the
+crop region must align perfectly with an MCU boundary (<span
+class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span> offsets must be multiples of the MCU
+dimensions). If they do not align, spatial pixels would need to be
+divided inside an existing DCT block, which cannot be done without
+decoding and re-quantizing.</li>
+<li><strong>Stream Truncation:</strong> To crop, <code>jpegtran</code>
+simply skips the entropy decoding for blocks outside the target region,
+resets the DC coefficient prediction baseline at the start of each new
+cropped row, and packs only the selected MCUs into the new output
+stream.</li>
+</ul>
+<h3 id="edge-block-handling-and-constraints">Edge Block Handling and
+Constraints</h3>
+<p>Standard image dimensions are not always exact multiples of the MCU
+size. JPEGs handle this by padding the partial blocks along the right
+and bottom edges.</p>
+<p>During operations like a 90-degree rotation, these incomplete edge
+blocks would end up on the top or left edges, where standard JPEG
+decoders cannot accommodate fractional blocks. To maintain strict
+lossless integrity, <code>jpegtran</code> provides options to either
+trim non-conforming edge blocks (<code>-trim</code>) or abort the
+operation (<code>-perfect</code>) to prevent partial data
+corruption.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

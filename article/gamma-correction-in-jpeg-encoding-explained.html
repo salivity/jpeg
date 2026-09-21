@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamma Correction in JPEG Encoding Explained - jpeg</title>
+    <meta name="description" content="Gamma correction transforms linear optical signals into a non-linear, perceptually uniform representation before color space conversion in the JPEG encoding pipeline. Because camera sensors record raw light linearly while human eyes perceive brightness l">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/gamma-correction-in-jpeg-encoding-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gamma Correction in JPEG Encoding Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/gamma-correction-in-jpeg-encoding-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Gamma correction transforms linear optical signals into a non-linear, perceptually uniform representation before color space conversion in the JPEG encoding pipeline. Because camera sensors record raw light linearly while human eyes perceive brightness l" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="gamma-correction-in-jpeg-encoding-explained">Gamma Correction in
+JPEG Encoding Explained</h1>
+<p>Gamma correction transforms linear optical signals into a non-linear,
+perceptually uniform representation before color space conversion in the
+JPEG encoding pipeline. Because camera sensors record raw light linearly
+while human eyes perceive brightness logarithmically, applying a gamma
+curve directly shapes how digital values are distributed. By
+establishing gamma-corrected RGB values prior to generating YCbCr
+components, JPEG ensures that downsampling and lossy quantization
+discard visual information the human eye cannot detect while preserving
+critical shadow and midtone details.</p>
+<h3 id="bridging-linear-light-and-human-perception">Bridging Linear
+Light and Human Perception</h3>
+<p>Digital image sensors measure light linearly: doubling the number of
+incoming photons doubles the digital value recorded by the sensor. Human
+vision, however, does not perceive brightness in a linear fashion. The
+human visual system is significantly more sensitive to variations in
+low-light and shadow tones than to equal variations in bright
+highlights.</p>
+<p>If raw, linear RGB data were directly encoded, a disproportionate
+amount of bandwidth and bit depth would be allocated to highlights where
+human vision cannot differentiate fine steps. Conversely, dark regions
+would lack sufficient bit allocation, resulting in visible banding and
+quantization noise. Gamma correction applies a power-law transfer
+function to map physical light intensities to values that correspond
+linearly to human perceptual brightness.</p>
+<h3 id="preparing-rgb-for-ycbcr-color-conversion">Preparing RGB for
+YCbCr Color Conversion</h3>
+<p>JPEG compression relies on separating brightness information from
+color information by transforming RGB values into the YCbCr color space.
+This conversion requires non-linear input (<span
+class="math inline">\(R&#39;G&#39;B&#39;\)</span>) rather than linear
+RGB:</p>
+<ol type="1">
+<li><strong>Luma vs. Luminance:</strong> Converting linear RGB produces
+true physical luminance (<span class="math inline">\(Y\)</span>).
+Converting gamma-corrected <span
+class="math inline">\(R&#39;G&#39;B&#39;\)</span> produces luma (<span
+class="math inline">\(Y&#39;\)</span>). Luma represents perceptual
+brightness rather than raw radiant power.</li>
+<li><strong>Chroma Separation:</strong> The chrominance channels (<span
+class="math inline">\(C_b\)</span> and <span
+class="math inline">\(C_r\)</span>) are derived by subtracting the luma
+component from the gamma-corrected blue and red components (<span
+class="math inline">\(B&#39; - Y&#39;\)</span> and <span
+class="math inline">\(R&#39; - Y&#39;\)</span>).</li>
+</ol>
+<p>Because gamma correction is executed before this conversion, the luma
+channel captures brightness variations in a scale that accurately
+reflects human sight, leaving the chroma channels to carry purely
+perceptual color difference information.</p>
+<h3 id="maximizing-compression-efficiency">Maximizing Compression
+Efficiency</h3>
+<p>The separation of perceptually uniform luma and chroma components
+enables the lossy compression stages of JPEG to function
+effectively:</p>
+<ul>
+<li><strong>Chroma Subsampling:</strong> The human eye has lower spatial
+acuity for color than for brightness. JPEG exploits this via chroma
+subsampling (such as 4:2:0), which reduces the resolution of the <span
+class="math inline">\(C_b\)</span> and <span
+class="math inline">\(C_r\)</span> channels. Gamma correction ensures
+that color difference values remain balanced across all exposure levels,
+preventing luminance distortion when chroma channels are averaged and
+decimated.</li>
+<li><strong>Frequency Quantization:</strong> During the Discrete Cosine
+Transform (DCT) and quantization stages, high-frequency details are
+systematically discarded. Because the underlying data represents
+perceptual brightness steps rather than raw photon counts, quantization
+noise is evenly distributed across shadows and highlights.</li>
+</ul>
+<p>Without prior gamma correction, quantization would disproportionately
+degrade shadow regions, introducing harsh compression artifacts and
+posterization where human vision is most critical. By preconditioning
+the signal to match human biology, gamma correction guarantees that JPEG
+compression maximizes perceptual quality per bit of data.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

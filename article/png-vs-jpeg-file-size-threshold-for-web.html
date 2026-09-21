@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG vs JPEG File Size Threshold for Web - jpeg</title>
+    <meta name="description" content="Choosing between PNG and JPEG formats directly impacts page load speed, bandwidth usage, and visual fidelity. While PNG offers lossless compression ideal for graphics with text and sharp lines, JPEG provides lossy compression suited for complex imagery.">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/png-vs-jpeg-file-size-threshold-for-web">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PNG vs JPEG File Size Threshold for Web - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/png-vs-jpeg-file-size-threshold-for-web" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Choosing between PNG and JPEG formats directly impacts page load speed, bandwidth usage, and visual fidelity. While PNG offers lossless compression ideal for graphics with text and sharp lines, JPEG provides lossy compression suited for complex imagery." />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="png-vs-jpeg-file-size-threshold-for-web">PNG vs JPEG File Size
+Threshold for Web</h1>
+<p>Choosing between PNG and JPEG formats directly impacts page load
+speed, bandwidth usage, and visual fidelity. While PNG offers lossless
+compression ideal for graphics with text and sharp lines, JPEG provides
+lossy compression suited for complex imagery. This article outlines the
+specific file size thresholds and visual criteria that justify replacing
+a static PNG graphic with a web JPEG to optimize website
+performance.</p>
+<h3 id="the-100-kb-file-size-benchmark">The 100 KB File Size
+Benchmark</h3>
+<p>For general web performance, a file size threshold of <strong>100
+KB</strong> is the standard benchmark where converting a PNG to a JPEG
+becomes necessary. When an uncompressed or high-color PNG exceeds 100 KB
+to 150 KB, switching to a well-compressed JPEG (typically between 75%
+and 85% quality) often reduces the file size by 50% to 80% without
+perceptible visual loss.</p>
+<p>If converting a PNG to a JPEG saves less than 10 KB to 20 KB, the
+switch is rarely worth the loss in compression fidelity. However, if the
+savings exceed 30% of the total asset weight—or roughly 40 KB to 50 KB
+on a single asset—converting to JPEG is justified to improve Core Web
+Vitals, specifically Largest Contentful Paint (LCP).</p>
+<h3 id="image-characteristics-that-dictate-the-switch">Image
+Characteristics That Dictate the Switch</h3>
+<p>File size alone does not dictate format selection; the visual
+structure of the graphic determines whether JPEG compression is
+appropriate:</p>
+<ul>
+<li><strong>Photographic Content and Continuous Tones:</strong> If a
+static graphic contains photographs, gradients, complex textures, or
+photorealistic elements, saving it as a PNG-24 quickly inflates the size
+past 200 KB or even several megabytes. Replacing these files with a JPEG
+immediately yields massive size reductions with minimal
+artifacting.</li>
+<li><strong>Flat Graphics and Vector-Style Imagery:</strong> Logos,
+screenshots of user interfaces, typography, and illustrations with
+limited color palettes compress efficiently in PNG-8 or PNG-24 formats.
+Converting these to JPEG often results in visible noise and edge blur
+around text and high-contrast boundaries, even if the file size drops
+slightly.</li>
+</ul>
+<h3 id="when-to-retain-png-regardless-of-file-size">When to Retain PNG
+Regardless of File Size</h3>
+<p>There are two primary conditions where a PNG should not be converted
+to a JPEG, regardless of the size threshold:</p>
+<ol type="1">
+<li><strong>Alpha Transparency:</strong> JPEG does not support
+transparency. If a graphic requires a transparent or semi-transparent
+background to sit over varying design elements, it must remain a PNG (or
+be converted to a modern format like WebP).</li>
+<li><strong>Fine Line Work and UI Text:</strong> When an image contains
+critical small text or fine diagrams, JPEG's discrete cosine transform
+(DCT) compression introduces noticeable artifacts, making text blurry
+and difficult to read. In these cases, optimizing the PNG using tools
+like palette quantization (PNG-8) is preferable to switching to
+JPEG.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

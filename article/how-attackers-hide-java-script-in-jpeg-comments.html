@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Attackers Hide JavaScript in JPEG Comments - jpeg</title>
+    <meta name="description" content="Attackers frequently exploit the binary structure of image formats to hide malicious JavaScript inside JPEG comment markers, creating structurally valid images that double as payload carriers. This technique leverages the COM marker defined by the JPEG s">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-attackers-hide-java-script-in-jpeg-comments">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Attackers Hide JavaScript in JPEG Comments - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-attackers-hide-java-script-in-jpeg-comments" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Attackers frequently exploit the binary structure of image formats to hide malicious JavaScript inside JPEG comment markers, creating structurally valid images that double as payload carriers. This technique leverages the COM marker defined by the JPEG s" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-attackers-hide-javascript-in-jpeg-comments">How Attackers
+Hide JavaScript in JPEG Comments</h1>
+<p>Attackers frequently exploit the binary structure of image formats to
+hide malicious JavaScript inside JPEG comment markers, creating
+structurally valid images that double as payload carriers. This
+technique leverages the <code>COM</code> marker defined by the JPEG
+specification to store arbitrary text without breaking the visual
+integrity of the graphic. While image tags do not execute this code
+natively, attackers chain this stealthy injection method with secondary
+vulnerabilities—such as polyglot execution, cross-site scripting (XSS),
+or metadata-parsing flaws—to achieve client-side code execution.</p>
+<h3 id="the-structure-of-the-jpeg-com-marker">The Structure of the JPEG
+COM Marker</h3>
+<p>JPEG files consist of a sequence of segments, each beginning with a
+two-byte marker starting with <code>0xFF</code>. The comment marker,
+designated as <code>COM</code>, uses the byte sequence
+<code>0xFF 0xFE</code>.</p>
+<p>Immediately following the <code>0xFF 0xFE</code> marker is a two-byte
+value specifying the length of the comment payload (including the two
+bytes of the length field itself). Following the length indicator, the
+JPEG standard allows arbitrary binary or ASCII data up to 65,535 bytes.
+Image decoders parse this segment, recognize the length, and safely skip
+over the content to continue rendering the visual image data.</p>
+<h3 id="the-embedding-process">The Embedding Process</h3>
+<p>To inject a payload into the comment field, an attacker carries out a
+sequence of binary modifications:</p>
+<ol type="1">
+<li><strong>Locating or Appending the Marker:</strong> An attacker opens
+a valid JPEG file using a hex editor or an automated script (such as a
+Python script utilizing <code>struct</code>). They search for an
+existing <code>0xFF 0xFE</code> sequence or identify the Start of Image
+marker (<code>0xFF 0xD8</code>) to insert a new comment block
+immediately after it.</li>
+<li><strong>Calculating Segment Length:</strong> The attacker determines
+the byte length of their JavaScript payload, adds two bytes to account
+for the length field itself, and converts this value into a two-byte,
+big-endian integer.</li>
+<li><strong>Injecting the Payload:</strong> The attacker writes the
+<code>0xFF 0xFE</code> marker, inserts the calculated length bytes, and
+appends the raw JavaScript code (for example:
+<code>/* */=alert(1);</code>).</li>
+<li><strong>Finalizing the File:</strong> The rest of the image data
+remains untouched. Because the image rendering engine only looks for
+visual markers (such as Start of Scan, <code>0xFF 0xDA</code>), the
+embedded script does not trigger parsing errors or corrupt the visual
+output.</li>
+</ol>
+<h3 id="execution-mechanisms">Execution Mechanisms</h3>
+<p>Placing JavaScript inside a JPEG does not automatically trigger
+execution when loaded via standard
+<code>&lt;img src="image.jpg"&gt;</code> tags. Attackers rely on
+specific delivery contexts to run the payload:</p>
+<ul>
+<li><strong>Polyglot Script Execution:</strong> An attacker crafts the
+file so it is simultaneously a valid JPEG and valid JavaScript. By
+carefully placing comment indicators (like <code>/*</code> and
+<code>*/</code>) around the binary headers, the attacker can load the
+image via a script tag:
+<code>&lt;script src="avatar.jpg"&gt;&lt;/script&gt;</code>. The
+browser's JavaScript engine parses the entire image file as a script,
+ignores the binary portions wrapped in comments, and executes the
+payload stored in the <code>COM</code> segment.</li>
+<li><strong>MIME Sniffing and Misconfiguration:</strong> If a web
+application allows users to upload JPEG files and subsequently serves
+them with missing or incorrect headers (such as <code>text/html</code>
+instead of <code>image/jpeg</code>), a browser with MIME-sniffing
+enabled may interpret the file as an HTML/JavaScript document rather
+than an image.</li>
+<li><strong>Client-Side EXIF and Metadata Parsers:</strong> Web
+applications often use client-side JavaScript libraries to extract
+metadata from uploaded images. If an application extracts the
+<code>COM</code> field and writes its contents directly to the DOM using
+insecure methods (such as <code>innerHTML</code>), the embedded
+JavaScript executes in the context of the user's session.</li>
+</ul>
+<h3 id="mitigation-strategies">Mitigation Strategies</h3>
+<p>Defending against malicious metadata embedding requires proactive
+image sanitization and strict HTTP header enforcement:</p>
+<ul>
+<li><strong>Image Re-encoding:</strong> Applications should process all
+uploaded images using server-side graphics libraries (such as
+ImageMagick or Sharp) to strip out all non-essential metadata and
+re-encode the pixel data before saving.</li>
+<li><strong>Header Enforcement:</strong> Ensure all served media files
+include the explicit, correct MIME type
+(<code>Content-Type: image/jpeg</code>) alongside the
+<code>X-Content-Type-Options: nosniff</code> header to prevent browsers
+from interpreting image files as executable scripts.</li>
+<li><strong>Content Security Policy (CSP):</strong> Implement strict CSP
+directives, such as limiting <code>script-src</code> to trusted domains
+and disallowing <code>unsafe-inline</code>, which blocks the browser
+from executing scripts originating from arbitrary file formats.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

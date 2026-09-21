@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F5 Steganography: Hiding Data in JPEG AC Coefficients - jpeg</title>
+    <meta name="description" content="The F5 steganographic algorithm is an advanced method designed to hide confidential data within the Discrete Cosine Transform (DCT) coefficients of JPEG images without creating detectable statistical anomalies. This article explores how F5 targets quanti">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/f-5-steganography-hiding-data-in-jpeg-ac-coefficients">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="F5 Steganography: Hiding Data in JPEG AC Coefficients - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/f-5-steganography-hiding-data-in-jpeg-ac-coefficients" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The F5 steganographic algorithm is an advanced method designed to hide confidential data within the Discrete Cosine Transform (DCT) coefficients of JPEG images without creating detectable statistical anomalies. This article explores how F5 targets quanti" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="f5-steganography-hiding-data-in-jpeg-ac-coefficients">F5
+Steganography: Hiding Data in JPEG AC Coefficients</h1>
+<p>The F5 steganographic algorithm is an advanced method designed to
+hide confidential data within the Discrete Cosine Transform (DCT)
+coefficients of JPEG images without creating detectable statistical
+anomalies. This article explores how F5 targets quantized alternating
+current (AC) coefficients, utilizes permutative straddling to uniformly
+distribute data, implements matrix encoding to minimize image
+distortion, and overcomes the challenge of shrinkage to preserve message
+integrity.</p>
+<h3 id="quantized-ac-coefficients-as-the-carrier">Quantized AC
+Coefficients as the Carrier</h3>
+<p>During standard JPEG compression, an image is divided into 8x8 pixel
+blocks. Each block undergoes a Discrete Cosine Transform (DCT),
+resulting in 64 frequency coefficients: one direct current (DC)
+coefficient representing the average block brightness, and 63
+alternating current (AC) coefficients representing progressively higher
+spatial frequencies.</p>
+<p>These coefficients are subsequently divided by a quantization table
+and rounded to the nearest integer. F5 operates directly on these
+quantized integer values. It completely excludes the DC coefficients and
+any AC coefficients quantized to zero. DC coefficients are omitted
+because even minor modifications to low-frequency baseline brightness
+introduce visible blocking artifacts. Pre-existing zero AC coefficients
+are ignored to preserve the sparse structure of the compressed file,
+which keeps the file size stable and avoids suspicious statistical
+shifts.</p>
+<h3 id="permutative-straddling">Permutative Straddling</h3>
+<p>Traditional steganography algorithms often embed data sequentially
+across the image blocks, leading to localized clusters of modified
+coefficients that can be easily detected via spatial or statistical
+analysis. F5 resolves this through permutative straddling.</p>
+<p>Using a pseudo-random number generator initialized with a
+user-defined stego-key, F5 creates a pseudo-random permutation of the
+non-zero AC coefficient indices across the entire image. The payload is
+then embedded along this permuted sequence. This technique ensures that
+modifications are scattered uniformly throughout the image, preventing
+localized degradation and defeating first-order structural attacks.</p>
+<h3 id="matrix-encoding-for-maximum-efficiency">Matrix Encoding for
+Maximum Efficiency</h3>
+<p>To reduce the number of modifications required to embed a payload, F5
+incorporates matrix encoding based on <span class="math inline">\((1,
+2^k - 1, k)\)</span> Hamming codes. Matrix encoding allows the sender to
+hide <span class="math inline">\(k\)</span> message bits into <span
+class="math inline">\(n = 2^k - 1\)</span> usable AC coefficients while
+modifying at most one coefficient.</p>
+<p>Given a group of <span class="math inline">\(n\)</span> coefficients
+represented by a vector <span class="math inline">\(a\)</span> and a
+desired <span class="math inline">\(k\)</span>-bit sub-message <span
+class="math inline">\(m\)</span>, the embedding mechanism evaluates the
+parity condition:</p>
+<p><span class="math display">\[m = H \cdot a\]</span></p>
+<p>where <span class="math inline">\(H\)</span> is a predefined check
+matrix. If the parity condition matches <span
+class="math inline">\(m\)</span>, no changes are made. If it does not
+match, the difference vector indicates the exact single coefficient in
+<span class="math inline">\(a\)</span> that must be modified to satisfy
+the equation. By minimizing the total number of altered coefficients, F5
+substantially lowers the modification rate, significantly improving
+resistance against steganalysis.</p>
+<h3 id="absolute-value-decrementing">Absolute Value Decrementing</h3>
+<p>Unlike earlier steganographic tools (such as Jsteg) that relied on
+Least Significant Bit (LSB) replacement, F5 alters coefficients by
+decrementing their absolute value.</p>
+<p>In LSB replacement, an even number can change to an odd number and
+vice-versa, creating an artificial symmetry between even and odd pairs
+(known as "Pairs of Values") that is detectable using chi-square (<span
+class="math inline">\(\chi^2\)</span>) analysis. F5 prevents this
+vulnerability. If a coefficient must be altered, its magnitude is
+reduced toward zero: a positive value is decremented (<span
+class="math inline">\(x - 1\)</span>) and a negative value is
+incremented (<span class="math inline">\(x + 1\)</span>). This operation
+shifts the histogram naturally toward zero, mimicking the natural decay
+seen in JPEG quantization.</p>
+<h3 id="managing-coefficient-shrinkage">Managing Coefficient
+Shrinkage</h3>
+<p>A fundamental challenge in F5's design occurs when a coefficient with
+an absolute value of 1 (<span class="math inline">\(\pm 1\)</span>) is
+decremented to 0. This phenomenon is called "shrinkage."</p>
+<p>Because the receiver naturally skips all zero coefficients to
+reconstruct the sequence, a coefficient that shrinks to zero will not be
+read by the recipient. This would shift the alignment of all subsequent
+bits and corrupt the message.</p>
+<p>F5 handles shrinkage dynamically:</p>
+<ol type="1">
+<li>When a coefficient becomes zero due to an embedding modification, it
+is considered invalid for that code word.</li>
+<li>The entire code group must be re-embedded: the same <span
+class="math inline">\(k\)</span> message bits are preserved, the newly
+created zero coefficient is permanently skipped, a new non-zero
+coefficient is appended from the permuted sequence, and the matrix
+encoding process is repeated for the updated group.</li>
+</ol>
+<p>Through the combination of selective AC coefficient targeting,
+permutative straddling, matrix encoding, and shrinkage compensation, the
+F5 algorithm embeds information securely while maintaining baseline JPEG
+compliance and visual fidelity.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

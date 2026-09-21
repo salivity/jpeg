@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Uses Separate Quantization Tables - jpeg</title>
+    <meta name="description" content="JPEG encoders use separate quantization tables for luminance and chrominance primarily because the human visual system perceives brightness and color differently. The human eye is significantly more sensitive to fine spatial variations in brightness (lum">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-uses-separate-quantization-tables">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Uses Separate Quantization Tables - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-uses-separate-quantization-tables" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG encoders use separate quantization tables for luminance and chrominance primarily because the human visual system perceives brightness and color differently. The human eye is significantly more sensitive to fine spatial variations in brightness (lum" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-uses-separate-quantization-tables">Why JPEG Uses
+Separate Quantization Tables</h1>
+<p>JPEG encoders use separate quantization tables for luminance and
+chrominance primarily because the human visual system perceives
+brightness and color differently. The human eye is significantly more
+sensitive to fine spatial variations in brightness (luminance) than in
+color (chrominance). By decoupling these components into distinct
+channels and applying tailored quantization matrices, JPEG algorithms
+can aggressively discard color information while preserving critical
+brightness details, maximizing compression efficiency without noticeable
+visual degradation.</p>
+<h3 id="the-human-visual-system-and-color-space-separation">The Human
+Visual System and Color Space Separation</h3>
+<p>Before quantization occurs, JPEG converts standard RGB image data
+into the YCbCr color space:</p>
+<ul>
+<li><strong>Y (Luminance):</strong> Represents the grayscale intensity
+or brightness.</li>
+<li><strong>Cb (Chrominance Blue):</strong> Represents the
+blue-difference relative to luminance.</li>
+<li><strong>Cr (Chrominance Red):</strong> Represents the red-difference
+relative to luminance.</li>
+</ul>
+<p>The human retina contains vastly more rods (which detect brightness)
+than cones (which detect color), and our optical system processes
+luminance with far higher spatial acuity. As a result, humans readily
+detect blurring, edge distortion, and noise in brightness patterns, but
+rarely notice subtle color shifts or high-frequency color loss in
+textured areas.</p>
+<h3 id="how-quantization-works-in-jpeg">How Quantization Works in
+JPEG</h3>
+<p>After converting an image to YCbCr, the encoder divides each channel
+into 8x8 pixel blocks and applies the Discrete Cosine Transform (DCT).
+The DCT converts spatial pixel data into frequency coefficients,
+isolating low-frequency components (overall shape and tone) from
+high-frequency components (sharp edges and fine textures).</p>
+<p>Quantization is the lossy step in JPEG compression where these
+frequency coefficients are divided by corresponding values from a
+quantization table and rounded to the nearest integer:</p>
+<p><span class="math display">\[\text{Quantized Value} =
+\text{round}\left(\frac{\text{DCT Coefficient}}{\text{Quantization
+Value}}\right)\]</span></p>
+<p>Higher divisors in the quantization table result in more coefficients
+being rounded to zero, which significantly improves data compression
+during entropy coding.</p>
+<h3 id="why-the-tables-must-be-different">Why the Tables Must Be
+Different</h3>
+<p>Because luminance and chrominance carry fundamentally different
+visual weights, using a single shared quantization table would result in
+an inefficient compromise: either wasting bandwidth by over-preserving
+color data or severely degrading image clarity by over-compressing
+brightness.</p>
+<ol type="1">
+<li><strong>The Luminance Table:</strong> Uses smaller divisors,
+especially across low and mid-frequencies. This retains sharp edges,
+distinct contrasts, and fine structural patterns that define image
+sharpness and recognizable shapes.</li>
+<li><strong>The Chrominance Table:</strong> Uses much larger divisors
+across the entire matrix. High-frequency color components are routinely
+reduced to zero. Even substantial quantization noise in the chrominance
+channels blends smoothly to the human eye when overlaid onto a sharp
+luminance foundation.</li>
+</ol>
+<h3 id="compression-synergy">Compression Synergy</h3>
+<p>Separate quantization tables operate alongside chroma subsampling
+(such as 4:2:0 or 4:2:2), which reduces the physical resolution of the
+chrominance planes before the DCT stage. By combining spatial
+downsampling with aggressive chrominance quantization tables, JPEG
+achieves its signature balance: dramatic file size reductions while
+retaining an image that appears sharp and natural to human viewers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

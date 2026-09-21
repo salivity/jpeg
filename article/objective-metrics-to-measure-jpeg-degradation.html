@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objective Metrics to Measure JPEG Degradation - jpeg</title>
+    <meta name="description" content="JPEG compression reduces file sizes by discarding high-frequency visual data, which often results in visible artifacts such as blocking, blurring, and ringing. Objective visual quality metrics provide mathematical and algorithmic frameworks to quantify t">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/objective-metrics-to-measure-jpeg-degradation">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Objective Metrics to Measure JPEG Degradation - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/objective-metrics-to-measure-jpeg-degradation" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG compression reduces file sizes by discarding high-frequency visual data, which often results in visible artifacts such as blocking, blurring, and ringing. Objective visual quality metrics provide mathematical and algorithmic frameworks to quantify t" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="objective-metrics-to-measure-jpeg-degradation">Objective Metrics
+to Measure JPEG Degradation</h1>
+<p>JPEG compression reduces file sizes by discarding high-frequency
+visual data, which often results in visible artifacts such as blocking,
+blurring, and ringing. Objective visual quality metrics provide
+mathematical and algorithmic frameworks to quantify this degradation
+without relying on human observers. This article examines the primary
+full-reference, reduced-reference, and no-reference metrics used to
+evaluate JPEG compression loss, detailing how traditional error
+calculations, structural formulas, and modern perceptual models detect
+compression artifacts.</p>
+<h3 id="traditional-error-based-metrics-full-reference">Traditional
+Error-Based Metrics (Full-Reference)</h3>
+<p>Full-reference metrics require both the uncompressed original image
+and the degraded JPEG image for comparison.</p>
+<ul>
+<li><strong>Mean Squared Error (MSE):</strong> MSE calculates the
+average squared difference between the pixel intensities of the original
+and compressed images. While mathematically straightforward, MSE treats
+all pixel errors equally, failing to account for how the human visual
+system perceives spatial structures or masking effects.</li>
+<li><strong>Peak Signal-to-Noise Ratio (PSNR):</strong> Expressed on a
+logarithmic decibel (dB) scale, PSNR relates the maximum possible power
+of a pixel value to the MSE of the degradation. While standard in
+engineering benchmarks, PSNR often correlates poorly with perceived
+visual quality because it does not isolate specific compression
+artifacts, such as block boundary discontinuities.</li>
+</ul>
+<h3 id="structural-and-perceptual-metrics-full-reference">Structural and
+Perceptual Metrics (Full-Reference)</h3>
+<p>Perceptual metrics simulate the human visual system (HVS) to better
+reflect human assessments of image fidelity.</p>
+<ul>
+<li><strong>Structural Similarity Index Measure (SSIM):</strong> SSIM
+compares local patterns of pixel intensities normalized for luminance,
+contrast, and structural correlation. Because JPEG operates on 8x8 pixel
+blocks, SSIM evaluates local degradation effectively and correlates
+significantly better with perceived quality than PSNR.</li>
+<li><strong>Multi-Scale SSIM (MS-SSIM):</strong> This extension
+evaluates structural similarity across multiple resolutions, capturing
+both fine blockiness and broad structural distortion caused by
+aggressive quantization.</li>
+<li><strong>Visual Information Fidelity (VIF):</strong> VIF approaches
+quality assessment from an information-theoretic standpoint, measuring
+the amount of information the human brain can extract from the degraded
+image relative to the original. It is particularly effective at
+penalizing the loss of high-frequency texture common in low-bitrate
+JPEGs.</li>
+</ul>
+<h3
+id="jpeg-specific-artifact-metrics-no-reference--specialized">JPEG-Specific
+Artifact Metrics (No-Reference / Specialized)</h3>
+<p>Because JPEG degradation exhibits predictable patterns—namely
+grid-like blocking along the discrete cosine transform (DCT) 8x8
+boundaries and ringing around sharp edges—specialized metrics quantify
+these specific flaws without needing the original image.</p>
+<ul>
+<li><strong>Generalized Block Impairment Metric (GBIM):</strong> GBIM
+measures inter-pixel differences across 8x8 block boundaries relative to
+the activity within the blocks, directly quantifying the prominence of
+the compression grid.</li>
+<li><strong>Wang-Bovik Blockiness Metric:</strong> A widely adopted
+no-reference model that measures both the cross-boundary steps generated
+by DCT quantization and the loss of spatial activity within blocks due
+to high-frequency coefficient zeroing.</li>
+<li><strong>Ringing and Blur Metrics:</strong> These algorithms isolate
+high-contrast edges to measure edge spread (blur) and localized
+high-frequency oscillations surrounding the edges (ringing/mosquito
+noise), which arise from coarse quantization of high-frequency DCT basis
+functions.</li>
+</ul>
+<h3
+id="learning-based-and-statistical-no-reference-metrics">Learning-Based
+and Statistical No-Reference Metrics</h3>
+<p>Modern quality assessment utilizes natural scene statistics (NSS) and
+deep neural features to assess JPEG degradation without an original
+reference.</p>
+<ul>
+<li><strong>BRISQUE (Blind/Referenceless Image Spatial Quality
+Evaluator):</strong> BRISQUE computes locally normalized luminance
+coefficients. Because natural images have regular statistical
+distributions that are disrupted by JPEG artifacts, deviations from
+these distributions yield an accurate score of compression
+degradation.</li>
+<li><strong>LPIPS (Learned Perceptual Image Patch Similarity):</strong>
+A deep-learning-based metric that measures the distance between feature
+activations across layers of a convolutional network. LPIPS captures
+complex perceptual degradations and aligns closely with human judgments
+of severe compression artifacts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

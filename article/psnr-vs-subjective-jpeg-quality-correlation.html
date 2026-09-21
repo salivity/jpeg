@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSNR vs Subjective JPEG Quality Correlation - jpeg</title>
+    <meta name="description" content="Peak Signal-to-Noise Ratio (PSNR) is one of the most widely used mathematical metrics for evaluating image reconstruction quality, yet its correlation with subjective human perception in JPEG compression is inconsistent. While a higher PSNR generally sug">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/psnr-vs-subjective-jpeg-quality-correlation">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PSNR vs Subjective JPEG Quality Correlation - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/psnr-vs-subjective-jpeg-quality-correlation" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Peak Signal-to-Noise Ratio (PSNR) is one of the most widely used mathematical metrics for evaluating image reconstruction quality, yet its correlation with subjective human perception in JPEG compression is inconsistent. While a higher PSNR generally sug" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="psnr-vs-subjective-jpeg-quality-correlation">PSNR vs Subjective
+JPEG Quality Correlation</h1>
+<p>Peak Signal-to-Noise Ratio (PSNR) is one of the most widely used
+mathematical metrics for evaluating image reconstruction quality, yet
+its correlation with subjective human perception in JPEG compression is
+inconsistent. While a higher PSNR generally suggests a cleaner image, it
+measures absolute pixel error rather than visual significance. This
+article explores how PSNR aligns with human visual perception, where the
+metric fails to reflect subjective JPEG quality, and why structural
+distortions often evade simple numerical evaluation.</p>
+<h3 id="the-mechanics-of-psnr-in-jpeg-compression">The Mechanics of PSNR
+in JPEG Compression</h3>
+<p>PSNR measures the ratio between the maximum possible power of an
+image signal and the power of corrupting noise, expressed on a
+logarithmic decibel (dB) scale. It relies directly on Mean Squared Error
+(MSE), which calculates the squared differences between corresponding
+pixels in the original and compressed JPEG images:</p>
+<p><span class="math display">\[\text{MSE} = \frac{1}{MN}
+\sum_{i=0}^{M-1} \sum_{j=0}^{N-1} [I(i,j) - K(i,j)]^2\]</span></p>
+<p><span class="math display">\[\text{PSNR} = 10 \cdot \log_{10} \left(
+\frac{MAX_I^2}{\text{MSE}} \right)\]</span></p>
+<p>Because JPEG compression utilizes the Discrete Cosine Transform (DCT)
+and quantizes frequency coefficients, error is not distributed uniformly
+across the image. PSNR aggregates these errors into a single scalar
+value without considering spatial arrangement or visual relevance.</p>
+<h3 id="where-psnr-correlates-well-with-subjective-quality">Where PSNR
+Correlates Well with Subjective Quality</h3>
+<p>PSNR correlates reasonably well with subjective evaluations—such as
+Mean Opinion Scores (MOS)—under tightly controlled conditions:</p>
+<ul>
+<li><strong>Intra-Image Comparisons:</strong> When evaluating the
+<em>same</em> image across varying JPEG quality factors (e.g., Q10 vs.
+Q50 vs. Q90), PSNR tracks monotonically with perceived quality. As the
+quality factor increases, MSE decreases, PSNR rises, and human observers
+agree the image looks better.</li>
+<li><strong>Extreme Compression Ranges:</strong> At very low compression
+ratios (PSNR &gt; 38 dB), images appear nearly identical to the human
+eye. At severe compression ratios (PSNR &lt; 25 dB), artifacts are
+universally objectionable. In these extreme bands, PSNR reliably
+reflects perceived fidelity.</li>
+</ul>
+<h3 id="where-the-correlation-breaks-down">Where the Correlation Breaks
+Down</h3>
+<p>The correlation between PSNR and subjective quality weakens
+significantly when comparing different images or evaluating intermediate
+JPEG compression artifacts.</p>
+<h4 id="1-inability-to-penalize-structured-artifacts">1. Inability to
+Penalize Structured Artifacts</h4>
+<p>JPEG compression divides images into 8x8-pixel blocks. At
+moderate-to-low quality settings, this produces distinct block boundary
+discontinuities (blocking artifacts) and ringing around sharp edges. The
+Human Visual System (HVS) is exceptionally sensitive to regular,
+structural patterns like grid lines. PSNR treats a 5-unit pixel shift
+along an 8x8 block boundary the same as a 5-unit shift scattered
+randomly across textured grass, whereas a human observer will notice and
+penalize the block boundary immediately.</p>
+<h4 id="2-content-dependency-and-visual-masking">2. Content Dependency
+and Visual Masking</h4>
+<p>Human perception relies heavily on contrast masking and visual
+context:</p>
+<ul>
+<li><strong>High-Texture Images:</strong> Noise in busy areas (foliage,
+fabric, gravel) is masked by the existing texture. An image can suffer
+high MSE and a low PSNR in textured regions while remaining visually
+acceptable to a viewer.</li>
+<li><strong>Low-Frequency/Smooth Images:</strong> In flat areas like
+blue skies or skin tones, even minor luminance errors or color banding
+are immediately visible. An image can achieve a high PSNR despite
+containing noticeable false contours.</li>
+</ul>
+<p>Consequently, two distinct JPEG images with an identical PSNR of 32
+dB can yield drastically different subjective MOS ratings; one may
+appear visually clean, while the other exhibits glaring artifacts.</p>
+<h3 id="practical-implications">Practical Implications</h3>
+<p>While PSNR provides a fast, mathematically trackable benchmark for
+optimization algorithms, it should not be used in isolation to judge
+final visual output for human consumption. Metrics designed with human
+perceptual models—such as the Structural Similarity Index (SSIM),
+Multi-Scale SSIM (MS-SSIM), or learned perceptual metrics like
+LPIPS—correlate far more reliably with subjective human ratings by
+weighting edge degradation, contrast changes, and localized luminance
+masking.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

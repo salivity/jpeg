@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Lossless JPEG Cropping Works - jpeg</title>
+    <meta name="description" content="Standard image editing usually degrades JPEG quality because opening, editing, and saving a file requires decompressing and then re-compressing the image data. Lossless JPEG cropping avoids this generational loss by bypassing the full decompression cycle">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-lossless-jpeg-cropping-works">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Lossless JPEG Cropping Works - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-lossless-jpeg-cropping-works" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Standard image editing usually degrades JPEG quality because opening, editing, and saving a file requires decompressing and then re-compressing the image data. Lossless JPEG cropping avoids this generational loss by bypassing the full decompression cycle" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-lossless-jpeg-cropping-works">How Lossless JPEG Cropping
+Works</h1>
+<p>Standard image editing usually degrades JPEG quality because opening,
+editing, and saving a file requires decompressing and then
+re-compressing the image data. Lossless JPEG cropping avoids this
+generational loss by bypassing the full decompression cycle entirely.
+Instead of decoding pixels, an image editor manipulates the underlying
+compressed data stream directly, discarding unnecessary data blocks
+while copying the preserved regions without altering a single pixel
+value.</p>
+<h3 id="understanding-jpeg-block-structure">Understanding JPEG Block
+Structure</h3>
+<p>To perform a crop without recompressing, an editor relies on how
+JPEGs are structured. JPEGs divide an image into Minimum Coded Units
+(MCUs). An MCU consists of small blocks—typically 8x8 or 16x16 pixels
+depending on chroma subsampling (such as 4:2:0 or 4:4:4).</p>
+<p>Inside each MCU, the raw visual data is transformed using the
+Discrete Cosine Transform (DCT) and then quantized. Quantization is the
+only step in JPEG compression that causes irreversible data loss. The
+resulting quantized DCT coefficients are then serialized using lossless
+entropy encoding, such as Huffman coding.</p>
+<h3 id="the-lossless-cropping-process">The Lossless Cropping
+Process</h3>
+<p>When performing a lossless crop, the editor avoids the lossy
+quantization stage by working directly with the quantized DCT
+coefficients:</p>
+<ol type="1">
+<li><strong>Entropy Decoding:</strong> The editor reads the original
+JPEG bitstream and performs entropy (Huffman) decoding. This extracts
+the quantized DCT coefficients without executing the inverse DCT or
+converting the data back to visible RGB or YUV pixels.</li>
+<li><strong>Block Truncation:</strong> The editor identifies which MCUs
+fall outside the selected crop area and discards them. The MCUs within
+the selected boundaries remain bit-for-bit identical to the original
+file.</li>
+<li><strong>Header and Coordinate Updates:</strong> The editor modifies
+the JPEG headers (specifically the SOF, or Start of Frame, marker) to
+reflect the new width and height of the image, and strips or updates
+metadata such as EXIF orientations and thumbnails.</li>
+<li><strong>Entropy Re-encoding:</strong> The retained DCT coefficients
+are packed and re-encoded using Huffman compression to produce the new
+JPEG file. Because the coefficients themselves were never altered,
+rounded, or re-quantized, the remaining image data suffers zero quality
+loss.</li>
+</ol>
+<h3 id="the-alignment-constraint">The Alignment Constraint</h3>
+<p>Because the editor manipulates whole MCUs rather than individual
+pixels, true lossless cropping has an alignment requirement: the crop
+coordinates must snap to the MCU grid.</p>
+<p>For an image with 4:4:4 color sampling, boundaries must align to
+8-pixel increments. For images using 4:2:0 subsampling (the standard for
+most consumer cameras and web graphics), the boundaries must align to
+16-pixel increments horizontally and vertically. If a crop boundary
+falls between these grid lines, the editor must either adjust the crop
+area to the nearest MCU boundary or recompress only the partial edge
+blocks while leaving all interior blocks intact.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

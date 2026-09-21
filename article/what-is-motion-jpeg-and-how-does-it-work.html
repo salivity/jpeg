@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is Motion JPEG and How Does It Work? - jpeg</title>
+    <meta name="description" content="Motion JPEG (M-JPEG or MJPEG) is a video compression format where every single frame of a video sequence is compressed separately as a standard JPEG image. Unlike modern video codecs that analyze changes between consecutive frames to save space, Motion J">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-is-motion-jpeg-and-how-does-it-work">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is Motion JPEG and How Does It Work? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-is-motion-jpeg-and-how-does-it-work" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Motion JPEG (M-JPEG or MJPEG) is a video compression format where every single frame of a video sequence is compressed separately as a standard JPEG image. Unlike modern video codecs that analyze changes between consecutive frames to save space, Motion J" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-motion-jpeg-and-how-does-it-work">What Is Motion JPEG
+and How Does It Work?</h1>
+<p>Motion JPEG (M-JPEG or MJPEG) is a video compression format where
+every single frame of a video sequence is compressed separately as a
+standard JPEG image. Unlike modern video codecs that analyze changes
+between consecutive frames to save space, Motion JPEG treats video
+simply as a rapid slideshow of standalone pictures. This article
+explains the technical mechanics behind Motion JPEG, how it handles
+individual frames, its primary advantages and drawbacks, and where it is
+still used today.</p>
+<h2 id="how-motion-jpeg-uses-individual-frames">How Motion JPEG Uses
+Individual Frames</h2>
+<p>Traditional video compression formats (such as H.264, H.265, or AV1)
+use temporal compression—also known as inter-frame compression. These
+formats identify keyframes (I-frames) and then only encode the
+differences or movement across subsequent frames (P-frames and
+B-frames).</p>
+<p>Motion JPEG operates entirely differently by using strictly spatial
+compression, known as intra-frame compression:</p>
+<ol type="1">
+<li><strong>Frame Capture:</strong> The video source captures raw visual
+data at a specified frame rate (e.g., 30 frames per second).</li>
+<li><strong>Independent JPEG Compression:</strong> Instead of evaluating
+movement from frame to frame, the encoder takes each raw frame and
+applies standard lossy JPEG compression to it in isolation. This
+involves color space conversion, discrete cosine transform (DCT),
+quantization, and Huffman encoding.</li>
+<li><strong>Sequential Assembly:</strong> The compressed JPEG images are
+placed consecutively in a container format (such as AVI, QuickTime, or
+raw network streams).</li>
+<li><strong>Playback:</strong> The media player decodes each JPEG image
+sequentially at the designated playback speed, creating the illusion of
+smooth motion.</li>
+</ol>
+<p>Because there is no mathematical dependency between frames, each
+individual image in an M-JPEG stream is complete and can be viewed
+independently as a standard still photograph.</p>
+<h2 id="advantages-of-motion-jpeg">Advantages of Motion JPEG</h2>
+<ul>
+<li><strong>Low Processing Latency:</strong> Because the encoder does
+not need to analyze past or future frames to compute motion vectors,
+encoding and decoding require minimal processing power and introduce
+negligible latency.</li>
+<li><strong>Frame Accuracy and Editability:</strong> Video editing
+systems can cut, splice, or freeze-frame an M-JPEG video at any exact
+frame without needing to recalculate or render surrounding data.</li>
+<li><strong>Error Resilience:</strong> In network streaming, if a packet
+is dropped or corrupted, only that specific frame is lost. Subsequent
+frames remain fully intact, preventing visual artifacts or smear effects
+from lingering across the screen.</li>
+<li><strong>Simplicity:</strong> Implementing an M-JPEG decoder is
+straightforward because any hardware or software capable of rendering a
+JPEG image can decode an M-JPEG video stream.</li>
+</ul>
+<h2 id="disadvantages-of-motion-jpeg">Disadvantages of Motion JPEG</h2>
+<ul>
+<li><strong>Inefficient File Sizes:</strong> The lack of inter-frame
+compression makes M-JPEG significantly less bandwidth-efficient than
+modern codecs. An M-JPEG stream often consumes three to five times more
+bandwidth and storage than an H.264 stream of equivalent visual
+quality.</li>
+<li><strong>Lack of Standardization:</strong> While the JPEG standard is
+strictly defined, there is no single standardized container format or
+metadata structure for Motion JPEG, occasionally causing compatibility
+issues across different media containers.</li>
+</ul>
+<h2 id="common-applications">Common Applications</h2>
+<p>Despite the dominance of advanced video codecs, Motion JPEG remains
+relevant in specific niches:</p>
+<ul>
+<li><strong>IP Surveillance Cameras:</strong> Many security systems use
+M-JPEG streams because forensic analysts require crisp, artifact-free
+still frames for evidence, and the format handles packet loss gracefully
+over unstable networks.</li>
+<li><strong>Legacy Webcams and Capture Cards:</strong> Older consumer
+cameras often output M-JPEG natively over USB because it requires
+minimal onboard encoding hardware.</li>
+<li><strong>Industrial and Medical Imaging:</strong> Specialized imaging
+systems (such as endoscopes or machine-vision cameras) often prioritize
+low latency and frame-by-frame clarity over compression efficiency.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

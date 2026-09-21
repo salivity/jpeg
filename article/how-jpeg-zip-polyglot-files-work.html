@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How JPEG ZIP Polyglot Files Work - jpeg</title>
+    <meta name="description" content="A polyglot file is a computer file that is valid according to the specifications of two or more distinct file formats simultaneously. In cybersecurity, attackers frequently craft polyglot files combining the JPEG image format with the ZIP archive format">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpeg-zip-polyglot-files-work">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How JPEG ZIP Polyglot Files Work - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpeg-zip-polyglot-files-work" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A polyglot file is a computer file that is valid according to the specifications of two or more distinct file formats simultaneously. In cybersecurity, attackers frequently craft polyglot files combining the JPEG image format with the ZIP archive format" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpeg-zip-polyglot-files-work">How JPEG ZIP Polyglot Files
+Work</h1>
+<p>A polyglot file is a computer file that is valid according to the
+specifications of two or more distinct file formats simultaneously. In
+cybersecurity, attackers frequently craft polyglot files combining the
+JPEG image format with the ZIP archive format to bypass content
+inspection systems, smuggle malicious payloads, and evade detection.
+This article explains the technical mechanics behind JPEG-ZIP polyglots,
+examining how structural parsing differences between sequential image
+decoders and reverse-seeking archive extractors allow a single sequence
+of bytes to function both as an image and an archive.</p>
+<h3 id="the-asymmetry-of-format-parsers">The Asymmetry of Format
+Parsers</h3>
+<p>The creation of a JPEG-ZIP polyglot relies on a fundamental
+divergence in how each format is read by operating systems and
+applications.</p>
+<p>The JPEG format is read sequentially from the beginning of the file
+to the end. A JPEG parser begins execution by searching for the Start of
+Image (SOI) marker (<code>FF D8</code>) at offset zero. It proceeds to
+parse metadata markers (such as <code>APP0</code> or <code>COM</code>)
+and compressed scan data until it reaches the End of Image (EOI) marker
+(<code>FF D9</code>). Standard image viewers stop parsing once the EOI
+marker is encountered, ignoring any arbitrary bytes appended after
+it.</p>
+<p>Conversely, the ZIP file format is designed around random access and
+is parsed backwards from the end of the file. A ZIP utility does not
+require the file to begin with a specific header at byte zero. Instead,
+it scans backward from the end of the file to locate the End of Central
+Directory (EOCD) record, identifiable by the 4-byte signature
+<code>50 4B 05 06</code>. The EOCD record contains the byte offset
+pointing to the Central Directory, which in turn points to individual
+Local File Headers within the archive. Because the ZIP specification
+locates its primary index at the end, any data prepended before the
+archive entries is often ignored or handled as an offset adjustment.</p>
+<h3 id="method-1-appending-concatenation">Method 1: Appending
+(Concatenation)</h3>
+<p>The most straightforward way attackers craft this polyglot is by
+appending a valid ZIP archive directly to the end of a valid JPEG
+file.</p>
+<ol type="1">
+<li><strong>Construct the Payloads</strong>: The attacker creates a
+legitimate image (<code>image.jpg</code>) and a separate ZIP archive
+(<code>payload.zip</code>) containing the malicious payload or secondary
+files.</li>
+<li><strong>Concatenate the Data</strong>: The attacker merges the
+binary data using tools like the command-line utility <code>cat</code>
+on Unix (<code>cat image.jpg payload.zip &gt; polyglot.jpg</code>) or
+<code>copy /b</code> on Windows
+(<code>copy /b image.jpg + payload.zip polyglot.jpg</code>).</li>
+</ol>
+<p>When an image rendering engine processes the file, it reads the SOI
+marker, displays the pixel data, reaches <code>FF D9</code>, and cleanly
+terminates. When a decompression utility like <code>unzip</code> or
+7-Zip processes the same file, it ignores the initial JPEG segment,
+reads the EOCD signature at the tail, and extracts the archive. Some
+strict unzipping utilities may require the central directory offsets to
+be corrected to account for the size of the prepended JPEG, which
+attackers accomplish using tools like <code>zip -A</code> to adjust
+internal file pointers.</p>
+<h3 id="method-2-encapsulation-via-jpeg-comment-markers">Method 2:
+Encapsulation via JPEG Comment Markers</h3>
+<p>To bypass file upload filters that actively check for trailing bytes
+after an EOI marker, attackers can hide the ZIP structure within the
+valid boundaries of the JPEG itself using metadata segments.</p>
+<ol type="1">
+<li><strong>Allocating a Marker</strong>: JPEGs allow variable-length
+metadata segments, such as the Comment marker (<code>FF FE</code>) or
+Application-specific markers (<code>FF E0</code> through
+<code>FF EF</code>). These markers declare a 2-byte length field
+indicating how many subsequent bytes belong to the metadata
+payload.</li>
+<li><strong>Injecting the ZIP</strong>: An attacker inserts the
+<code>FF FE</code> marker immediately after the JPEG header, sets the
+length field to encapsulate the size of the ZIP archive, and embeds the
+raw ZIP data within this segment.</li>
+<li><strong>Handling Constraints</strong>: Because a single JPEG marker
+segment is limited to a maximum size of 65,535 bytes, larger archives
+are split across multiple consecutive <code>APPn</code> or
+<code>COM</code> segments, or the ZIP central directory is carefully
+arranged so that the entire archive fits within one block.</li>
+</ol>
+<p>Under this method, the image decoder reads the metadata, skips over
+the designated bytes, and renders the scan data. An archive extractor
+still reads from the end of the file, finds the EOCD record, and
+extracts the files without relying on trailing data beyond the JPEG's
+EOI marker.</p>
+<h3 id="exploitation-context">Exploitation Context</h3>
+<p>Attackers use these techniques to defeat security mechanisms that
+enforce weak validation rules. For instance, a web application might
+validate an uploaded profile picture by inspecting magic bytes at offset
+zero and verifying that an image parser can render the file. Once
+uploaded, the file can be triggered by a secondary vulnerability (such
+as a Local File Inclusion vulnerability, a desktop application executing
+compressed archives, or an HTML smuggling script) that treats the same
+file as an archive, effectively bridging the gap between an innocuous
+image upload and arbitrary code execution.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

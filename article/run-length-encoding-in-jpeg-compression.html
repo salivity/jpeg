@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run-Length Encoding in JPEG Compression - jpeg</title>
+    <meta name="description" content="Run-Length Encoding (RLE) serves as a critical lossless compression stage within the JPEG pipeline, tasked with shrinking data size by compacting consecutive repeating values. Positioned immediately after the Discrete Cosine Transform (DCT), quantization">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/run-length-encoding-in-jpeg-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Run-Length Encoding in JPEG Compression - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/run-length-encoding-in-jpeg-compression" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Run-Length Encoding (RLE) serves as a critical lossless compression stage within the JPEG pipeline, tasked with shrinking data size by compacting consecutive repeating values. Positioned immediately after the Discrete Cosine Transform (DCT), quantization" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="run-length-encoding-in-jpeg-compression">Run-Length Encoding in
+JPEG Compression</h1>
+<p>Run-Length Encoding (RLE) serves as a critical lossless compression
+stage within the JPEG pipeline, tasked with shrinking data size by
+compacting consecutive repeating values. Positioned immediately after
+the Discrete Cosine Transform (DCT), quantization, and zig-zag scanning
+steps, RLE targets the massive strings of zeros produced when
+high-frequency image details are discarded. By translating lengthy
+sequences of zeros into compact numerical pairs, RLE dramatically
+reduces data redundancy before the final entropy encoding stage.</p>
+<h3 id="the-role-of-rle-in-the-pipeline">The Role of RLE in the
+Pipeline</h3>
+<p>To understand RLE's purpose, it helps to examine the steps leading up
+to it:</p>
+<ol type="1">
+<li><strong>DCT and Quantization:</strong> An image is divided into 8x8
+pixel blocks and transformed into frequency domain coefficients. The
+quantization process then divides these coefficients by specific values,
+rounding many of the high-frequency components to zero.</li>
+<li><strong>Zig-Zag Scanning:</strong> The 8x8 matrix of quantized
+coefficients is reordered into a 1D array of 64 values using a zig-zag
+traversal. Because low frequencies sit at the top-left and high
+frequencies at the bottom-right, this scan naturally groups non-zero
+values at the beginning and clumps long sequences of zeros at the
+end.</li>
+</ol>
+<h3 id="how-jpeg-implements-rle">How JPEG Implements RLE</h3>
+<p>Standard RLE typically replaces any repeating value with a count and
+the value itself (e.g., <code>AAAA</code> becomes <code>4A</code>).
+However, JPEG employs a specialized variation focused almost entirely on
+zeros, because non-zero coefficients rarely repeat consecutively in
+natural images.</p>
+<p>In JPEG, RLE formats the data into pairs: <strong>(Run Length,
+Value)</strong>.</p>
+<ul>
+<li><strong>Run Length:</strong> The number of consecutive zero
+coefficients preceding a non-zero coefficient.</li>
+<li><strong>Value:</strong> The amplitude of the subsequent non-zero
+coefficient.</li>
+</ul>
+<p>For example, a sequence like <code>0, 0, 0, 0, 5</code> is
+represented as <code>(4, 5)</code>, meaning four zeros followed by the
+number five.</p>
+<h3 id="end-of-block-eob-optimization">End of Block (EOB)
+Optimization</h3>
+<p>The most significant efficiency gain of RLE in JPEG is the
+<strong>End of Block (EOB)</strong> marker. Because quantization zeroes
+out most high-frequency data, a zig-zag array often ends with dozens of
+consecutive zeros.</p>
+<p>Instead of encoding each remaining zero, JPEG inserts a single EOB
+marker as soon as no more non-zero coefficients remain in the 64-element
+block. If an 8x8 block has non-zero values only in the first six
+positions, the remaining 58 zeros are represented by a single EOB code,
+discarding massive amounts of redundant data instantly.</p>
+<h3 id="why-rle-is-essential">Why RLE is Essential</h3>
+<ul>
+<li><strong>Prepares Data for Entropy Coding:</strong> RLE transforms
+raw coefficients into statistical symbols that algorithms like Huffman
+coding or Arithmetic coding can compress with maximum efficiency.</li>
+<li><strong>Maximizes Quantization Benefits:</strong> Lossy quantization
+creates the zeros, but RLE is the mechanism that actually turns those
+zeros into file size savings.</li>
+<li><strong>Reduces Computational Overhead:</strong> Parsing compact
+run-length pairs is computationally faster for subsequent encoding and
+decoding stages than evaluating 64 individual coefficient values for
+every block in an image.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

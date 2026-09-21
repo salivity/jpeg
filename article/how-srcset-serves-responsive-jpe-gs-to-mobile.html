@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How srcset Serves Responsive JPEGs to Mobile - jpeg</title>
+    <meta name="description" content="The HTML srcset attribute enables web browsers to select and download the optimal JPEG image file for a user's specific screen size and pixel density. Instead of forcing a mobile device to download a large desktop-oriented asset, developers define a list">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-srcset-serves-responsive-jpe-gs-to-mobile">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How srcset Serves Responsive JPEGs to Mobile - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-srcset-serves-responsive-jpe-gs-to-mobile" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The HTML srcset attribute enables web browsers to select and download the optimal JPEG image file for a user's specific screen size and pixel density. Instead of forcing a mobile device to download a large desktop-oriented asset, developers define a list" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-srcset-serves-responsive-jpegs-to-mobile">How srcset Serves
+Responsive JPEGs to Mobile</h1>
+<p>The HTML <code>srcset</code> attribute enables web browsers to select
+and download the optimal JPEG image file for a user's specific screen
+size and pixel density. Instead of forcing a mobile device to download a
+large desktop-oriented asset, developers define a list of image variants
+with corresponding width descriptors. By evaluating these image options
+alongside the viewport dimensions and display characteristics, mobile
+browsers calculate the exact resolution needed and request only the most
+efficient file, saving bandwidth and improving load times.</p>
+<h3 id="the-mechanism-width-descriptors">The Mechanism: Width
+Descriptors</h3>
+<p>To serve responsive JPEGs, the <code>srcset</code> attribute pairs
+image file paths with width descriptors, represented by the letter
+<code>w</code> (for example, <code>image-small.jpg 400w</code>). The
+width descriptor indicates the intrinsic pixel width of that specific
+JPEG file.</p>
+<p>A standard implementation looks like this:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;fallback.jpg&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">     srcset</span><span class="op">=</span><span class="st">&quot;photo-400.jpg 400w,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">             photo-800.jpg 800w,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">             photo-1200.jpg 1200w&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ot">     sizes</span><span class="op">=</span><span class="st">&quot;(max-width: 600px) 100vw, 50vw&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">     alt</span><span class="op">=</span><span class="st">&quot;Example photo&quot;</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>The browser reads this list before any image is downloaded, gaining
+full awareness of every available file size.</p>
+<h3 id="the-role-of-the-sizes-attribute">The Role of the
+<code>sizes</code> Attribute</h3>
+<p>The <code>srcset</code> attribute works in tandem with the
+<code>sizes</code> attribute. While <code>srcset</code> tells the
+browser the physical dimensions of the available files,
+<code>sizes</code> communicates how much layout space the image will
+occupy on the screen at different viewport breakpoints.</p>
+<p>In the example above, <code>(max-width: 600px) 100vw</code> informs
+the mobile browser that on viewports up to 600 pixels wide, the image
+will span 100% of the viewport width (<code>100vw</code>). Because
+layout styles (CSS) may not yet be parsed when the browser initiates
+resource preloading, the <code>sizes</code> attribute gives the browser
+the immediate context it needs to calculate layout width.</p>
+<h3 id="accounting-for-device-pixel-ratio-dpr">Accounting for Device
+Pixel Ratio (DPR)</h3>
+<p>Mobile devices typically feature high-density displays (such as
+Retina screens) with Device Pixel Ratios of 2x, 3x, or higher. A mobile
+screen might measure 390 CSS pixels wide, but it actually requires a
+physical image width of 780 pixels (for a 2x screen) or 1,170 pixels
+(for a 3x screen) to display crisply.</p>
+<p>The mobile browser performs a simple equation:</p>
+<p><code>Required Width = Viewport Width (or CSS Layout Width) × Device Pixel Ratio</code></p>
+<p>If a user visits the site on a mobile device with a 375px wide screen
+and a 2x display, the required physical resolution is 750 pixels. The
+browser examines the <code>srcset</code> options (<code>400w</code>,
+<code>800w</code>, <code>1200w</code>), identifies that
+<code>photo-400.jpg</code> is insufficient to avoid pixelation, and
+selects <code>photo-800.jpg</code> as the closest match that maintains
+visual sharpness without wasting unnecessary data on the
+<code>1200w</code> asset.</p>
+<h3 id="benefits-for-mobile-users">Benefits for Mobile Users</h3>
+<p>By offloading the image selection logic to the client, responsive
+<code>srcset</code> syntax ensures that:</p>
+<ul>
+<li>Mobile devices download smaller file sizes compared to desktop
+screens, drastically reducing mobile data usage.</li>
+<li>First Contentful Paint (FCP) and Largest Contentful Paint (LCP)
+performance metrics improve due to lighter network payloads.</li>
+<li>High-DPI screens receive appropriately sharp images without
+penalizing standard-resolution devices.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

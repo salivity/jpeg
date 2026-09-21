@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG vs Uncompressed BMP: File Size Comparison - jpeg</title>
+    <meta name="description" content="When comparing digital images of identical pixel dimensions, a JPEG file is dramatically smaller than a raw uncompressed BMP file, typically reducing the required storage space by 85% to 95%. While an uncompressed BMP stores raw color data for every sing">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-vs-uncompressed-bmp-file-size-comparison">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG vs Uncompressed BMP: File Size Comparison - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-vs-uncompressed-bmp-file-size-comparison" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When comparing digital images of identical pixel dimensions, a JPEG file is dramatically smaller than a raw uncompressed BMP file, typically reducing the required storage space by 85% to 95%. While an uncompressed BMP stores raw color data for every sing" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-vs-uncompressed-bmp-file-size-comparison">JPEG vs
+Uncompressed BMP: File Size Comparison</h1>
+<p>When comparing digital images of identical pixel dimensions, a JPEG
+file is dramatically smaller than a raw uncompressed BMP file, typically
+reducing the required storage space by 85% to 95%. While an uncompressed
+BMP stores raw color data for every single pixel, resulting in a
+predictable and massive file size, JPEG employs lossy compression
+algorithms that strip redundant visual information. This difference in
+architecture means that an identical high-definition image can measure
+several megabytes in BMP format, yet only a few hundred kilobytes in
+JPEG format.</p>
+<h2 id="how-bmp-file-size-is-calculated">How BMP File Size Is
+Calculated</h2>
+<p>An uncompressed BMP (Bitmap) file has a deterministic file size
+directly tied to its resolution and color depth. Because it does not
+compress visual data, the file simply maps out every pixel across the
+width and height of the canvas.</p>
+<p>For a standard 24-bit (True Color) BMP image, every pixel requires 3
+bytes of data (1 byte each for red, green, and blue channels). The
+formula to calculate the data footprint is:</p>
+<p><span class="math display">\[\text{File Size in Bytes} \approx
+(\text{Width} \times \text{Height} \times 3) + 54\text{ bytes (header
+overhead)}\]</span></p>
+<p>Because content complexity does not affect uncompressed BMP files, a
+completely blank white canvas and a detailed photograph with the same
+dimensions will produce nearly the exact same file size.</p>
+<h2 id="how-jpeg-achieves-smaller-sizes">How JPEG Achieves Smaller
+Sizes</h2>
+<p>Unlike BMP, JPEG is a lossy compression format. Its final size
+depends on both the user-selected quality level and the visual
+complexity of the image. JPEG reduces file size using several steps:</p>
+<ul>
+<li><strong>Color Space Transformation and Chroma Subsampling:</strong>
+Converts RGB data to YCbCr (separating brightness from color) and
+discards high-frequency color data that the human eye cannot easily
+perceive.</li>
+<li><strong>Discrete Cosine Transform (DCT):</strong> Converts spatial
+pixel blocks (usually 8x8 pixels) into frequency components.</li>
+<li><strong>Quantization:</strong> Discards high-frequency details based
+on the selected quality setting. This is the primary stage where data is
+permanently reduced.</li>
+<li><strong>Entropy Encoding:</strong> Compresses the remaining
+numerical data using algorithms similar to ZIP files (Huffman
+coding).</li>
+</ul>
+<p>Because of this pipeline, flat or simple areas (like clear skies)
+compress far more efficiently than complex textures (like tree
+foliage).</p>
+<h2 id="direct-size-comparison-by-resolution">Direct Size Comparison by
+Resolution</h2>
+<p>To see the stark contrast in file sizes, consider common display
+resolutions saved in both formats at standard 24-bit color depth:</p>
+<ul>
+<li><strong>Full HD (1920 × 1080 pixels):</strong>
+<ul>
+<li><strong>BMP:</strong> Approximately 6.22 MB</li>
+<li><strong>JPEG (High Quality, 85–90%):</strong> Approximately 300 KB
+to 700 KB</li>
+<li><strong>JPEG (Medium Quality, 60–70%):</strong> Approximately 150 KB
+to 250 KB</li>
+</ul></li>
+<li><strong>4K UHD (3840 × 2160 pixels):</strong>
+<ul>
+<li><strong>BMP:</strong> Approximately 24.88 MB</li>
+<li><strong>JPEG (High Quality, 85–90%):</strong> Approximately 1.5 MB
+to 3.5 MB</li>
+<li><strong>JPEG (Medium Quality, 60–70%):</strong> Approximately 600 KB
+to 1.2 MB</li>
+</ul></li>
+</ul>
+<h2 id="summary-of-the-difference">Summary of the Difference</h2>
+<p>The typical compression ratio of JPEG compared to an uncompressed BMP
+ranges from <strong>10:1 to 20:1</strong> for standard photography,
+meaning the JPEG will be roughly <strong>5% to 10% the size of the
+BMP</strong>. While BMP retains absolute, uncompressed pixel accuracy at
+the expense of storage, JPEG provides a vastly more efficient footprint
+with minimal visible degradation under normal viewing conditions.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

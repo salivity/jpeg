@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How APP0 Markers Distinguish JFIF JPEG Files - jpeg</title>
+    <meta name="description" content="The JPEG standard defines how image data is compressed, but it does not specify how that data must be packaged into a complete file. To resolve this, several container formats emerged, with the JPEG File Interchange Format (JFIF) being one of the earlies">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-app-0-markers-distinguish-jfif-jpeg-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How APP0 Markers Distinguish JFIF JPEG Files - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-app-0-markers-distinguish-jfif-jpeg-files" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The JPEG standard defines how image data is compressed, but it does not specify how that data must be packaged into a complete file. To resolve this, several container formats emerged, with the JPEG File Interchange Format (JFIF) being one of the earlies" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-app0-markers-distinguish-jfif-jpeg-files">How APP0 Markers
+Distinguish JFIF JPEG Files</h1>
+<p>The JPEG standard defines how image data is compressed, but it does
+not specify how that data must be packaged into a complete file. To
+resolve this, several container formats emerged, with the JPEG File
+Interchange Format (JFIF) being one of the earliest and most common.
+JFIF files are distinguished from other JPEG-based variants—such as raw
+Exif, Adobe JPEG, or SPIFF—primarily by the presence and structure of an
+Application Marker 0 (APP0) segment located immediately after the Start
+of Image (SOI) marker. By inspecting this segment for a unique
+identifier string, parsers can determine that the stream conforms
+strictly to JFIF specifications rather than an alternative metadata
+structure.</p>
+<h3 id="the-jpeg-marker-structure">The JPEG Marker Structure</h3>
+<p>A standard JPEG stream consists of structural markers, each prefixed
+by a two-byte sequence beginning with <code>0xFF</code> followed by a
+byte designating the marker type. The file begins with the Start of
+Image (SOI) marker, represented by the hex bytes
+<code>0xFF 0xD8</code>.</p>
+<p>Immediately following the SOI marker, parsers expect
+application-specific markers spanning from <code>0xFF 0xE0</code> (APP0)
+through <code>0xFF 0xEF</code> (APP15). These segments carry
+container-level metadata without altering the underlying compressed
+entropy stream.</p>
+<h3 id="the-jfif-app0-signature">The JFIF APP0 Signature</h3>
+<p>The defining characteristic of a standard JFIF file is the APP0
+marker (<code>0xFF 0xE0</code>) placed directly after the SOI marker.
+Inside this segment lies a specific payload:</p>
+<ol type="1">
+<li><strong>Length Indicator (2 bytes):</strong> Specifies the length of
+the APP0 segment, including the length bytes themselves.</li>
+<li><strong>Identifier String (5 bytes):</strong> A null-terminated
+ASCII string reading <code>"JFIF\0"</code>
+(<code>0x4A 0x46 0x49 0x46 0x00</code> in hexadecimal).</li>
+<li><strong>Version Data (2 bytes):</strong> Indicates the major and
+minor JFIF version (typically <code>0x01 0x01</code> or
+<code>0x01 0x02</code>).</li>
+<li><strong>Density and Thumbnail Fields:</strong> Follow-up bytes
+defining pixel density units (aspect ratio, DPI, or DPC), X/Y density
+values, and optional uncompressed RGB thumbnail dimensions and
+data.</li>
+</ol>
+<p>If a decoder reads <code>0xFF 0xD8</code> followed immediately by
+<code>0xFF 0xE0</code> and encounters the exact byte sequence
+<code>0x4A 0x46 0x49 0x46 0x00</code>, the file is explicitly identified
+as a compliant JFIF container.</p>
+<h3 id="differentiation-from-other-jpeg-variations">Differentiation from
+Other JPEG Variations</h3>
+<p>Different implementations utilize alternative application markers or
+different identification strings inside the APP markers:</p>
+<ul>
+<li><strong>Exif-Based JPEGs:</strong> Modern digital cameras and
+smartphones typically format files using the Exif specification. Exif
+relies primarily on the APP1 marker (<code>0xFF 0xE1</code>) containing
+the ASCII signature <code>"Exif\0\0"</code>. A pure Exif file places
+<code>0xFF 0xE1</code> directly after the SOI, completely omitting the
+JFIF APP0 segment.</li>
+<li><strong>JFXX Extensions:</strong> JFIF extensions, used for
+alternative thumbnail formats (such as indexed color or JPEG-compressed
+thumbnails), also use the APP0 marker (<code>0xFF 0xE0</code>). However,
+their identifier string reads <code>"JFXX\0"</code>
+(<code>0x4A 0x46 0x58 0x58 0x00</code>) instead of
+<code>"JFIF\0"</code>.</li>
+<li><strong>Adobe JPEGs:</strong> Adobe applications frequently embed an
+APP14 marker (<code>0xFF 0xEE</code>) containing the
+<code>"Adobe"</code> identifier. This segment specifies custom color
+transform flags (such as distinguishing between RGB, YCbCr, and YCCK)
+that override standard JFIF color interpretations.</li>
+<li><strong>Photoshop Metadata:</strong> Legacy IPTC data injected by
+Adobe systems uses an APP13 marker (<code>0xFF 0xED</code>) designated
+by the identifier string <code>"Photoshop 3.0"</code>.</li>
+</ul>
+<h3 id="resolving-marker-conflicts">Resolving Marker Conflicts</h3>
+<p>In practice, some software tools produce hybrid files containing both
+a JFIF APP0 marker and an Exif APP1 marker. In strict parsing
+environments, the file type is dictated by whichever marker appears
+first immediately after the SOI marker. If the first marker is
+<code>0xFF 0xE0</code> containing <code>"JFIF\0"</code>, the parser
+treats the file as JFIF and assumes baseline YCbCr color spaces and
+coordinate systems defined by the JFIF standard. If the APP0 marker is
+missing or placed downstream of an APP1 segment, decoders treat the file
+as a non-JFIF Exif container.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

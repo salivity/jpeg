@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Range: 8-Bit JPEG vs. 16-Bit TIFF - jpeg</title>
+    <meta name="description" content="Dynamic range measures the ratio between the brightest highlights and the darkest shadows an image format can capture without losing detail to clipping or noise. A standard 8-bit JPEG contains only 256 distinct tonal values per color channel, yielding a">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/dynamic-range-8-bit-jpeg-vs-16-bit-tiff">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dynamic Range: 8-Bit JPEG vs. 16-Bit TIFF - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/dynamic-range-8-bit-jpeg-vs-16-bit-tiff" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Dynamic range measures the ratio between the brightest highlights and the darkest shadows an image format can capture without losing detail to clipping or noise. A standard 8-bit JPEG contains only 256 distinct tonal values per color channel, yielding a" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dynamic-range-8-bit-jpeg-vs-16-bit-tiff">Dynamic Range: 8-Bit
+JPEG vs. 16-Bit TIFF</h1>
+<p>Dynamic range measures the ratio between the brightest highlights and
+the darkest shadows an image format can capture without losing detail to
+clipping or noise. A standard 8-bit JPEG contains only 256 distinct
+tonal values per color channel, yielding a narrow dynamic range that is
+prone to highlight blowout and shadow clipping during editing. In
+contrast, a 16-bit TIFF format stores up to 65,536 tonal levels per
+channel, providing the vast numerical headroom required to preserve the
+complete 12-to-15-stop dynamic range captured by modern camera sensors.
+This article breaks down the mathematical differences, tonal capacity,
+and practical implications of dynamic range between these two
+formats.</p>
+<h3 id="bit-depth-and-tonal-precision">Bit Depth and Tonal
+Precision</h3>
+<p>Bit depth directly dictates the precision with which brightness
+values are mapped:</p>
+<ul>
+<li><strong>8-bit JPEG:</strong> Uses <span
+class="math inline">\(2^8\)</span> power levels, resulting in 256
+brightness values per channel (Red, Green, Blue). Across all three
+channels, this yields approximately 16.7 million possible colors.</li>
+<li><strong>16-bit TIFF:</strong> Uses <span
+class="math inline">\(2^{16}\)</span> power levels, resulting in 65,536
+brightness values per channel. Across three channels, this creates more
+than 281 trillion potential color gradations.</li>
+</ul>
+<p>Dynamic range relies on tonal granularity. When dynamic range is
+stretched across too few values, smooth transitions (like a sunset or
+deep gradient) fail, creating abrupt visual steps known as color banding
+or posterization.</p>
+<h3 id="dynamic-range-in-practice">Dynamic Range in Practice</h3>
+<p>In photographic terms, dynamic range is measured in exposure values
+(EV) or "stops," where each stop represents a doubling or halving of
+light.</p>
+<ul>
+<li><strong>JPEG Dynamic Range Limit:</strong> JPEGs are compressed
+using a non-linear tone curve (gamma encoding) to fit human vision
+within an 8-bit space. This format generally caps practical dynamic
+range at roughly 8 to 9 stops. Any scene data exceeding this range is
+discarded during compression, resulting in unrecoverable, pure white
+highlights or crushed black shadows.</li>
+<li><strong>TIFF Dynamic Range Capacity:</strong> A true 16-bit TIFF can
+hold more than 16 stops of dynamic range without compression losses.
+Because most professional camera sensors capture raw data at 14-bit
+depth (16,384 values per channel, spanning roughly 12 to 14.5 stops of
+dynamic range), exporting to a 16-bit TIFF container ensures that zero
+dynamic range data is discarded or clipped.</li>
+</ul>
+<h3 id="post-processing-and-exposure-latitudes">Post-Processing and
+Exposure Latitudes</h3>
+<p>The critical difference in dynamic range becomes apparent during
+post-processing:</p>
+<ul>
+<li><strong>Manipulating an 8-bit JPEG:</strong> Because the values are
+closely packed with no intermediate data, attempting to lift shadows or
+pull down highlights causes immediate degradation. Raising underexposed
+shadows reveals heavy noise, blocky compression artifacts, and comb-like
+gaps in the image histogram.</li>
+<li><strong>Manipulating a 16-bit TIFF:</strong> The 65,536 steps
+provide massive latitude for tonal adjustment. Shadows can be brightened
+significantly to expose clean, subtle textures, and bright highlights
+can be reduced without causing flat, gray patches. The histogram remains
+continuous, ensuring smooth transitions and pristine gradients.</li>
+</ul>
+<h3 id="summary-of-differences">Summary of Differences</h3>
+<ul>
+<li><strong>Tonal Values per Channel:</strong> 256 (JPEG) vs. 65,536
+(TIFF).</li>
+<li><strong>Usable Dynamic Range:</strong> ~8–9 stops (JPEG) vs. 14+
+stops (TIFF, sensor-dependent).</li>
+<li><strong>Compression:</strong> Lossy compression that discards
+dynamic extremes (JPEG) vs. Lossless/uncompressed storage that retains
+all tonal data (TIFF).</li>
+<li><strong>Application:</strong> JPEGs are suited strictly for final
+display and web distribution where the dynamic range has already been
+mastered. TIFFs are ideal for archiving, master editing, and high-end
+printing where maximum dynamic range and color fidelity must be
+maintained.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

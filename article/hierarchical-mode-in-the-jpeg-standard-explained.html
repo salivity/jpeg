@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Mode in the JPEG Standard Explained - jpeg</title>
+    <meta name="description" content="Hierarchical mode is one of the four original compression modes defined in the 1992 JPEG standard (ITU-T T.81 / ISO/IEC 10918-1), designed to encode an image as a sequence of spatial layers at multiple resolutions. This article explains what Hierarchical">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/hierarchical-mode-in-the-jpeg-standard-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hierarchical Mode in the JPEG Standard Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/hierarchical-mode-in-the-jpeg-standard-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Hierarchical mode is one of the four original compression modes defined in the 1992 JPEG standard (ITU-T T.81 / ISO/IEC 10918-1), designed to encode an image as a sequence of spatial layers at multiple resolutions. This article explains what Hierarchical" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="hierarchical-mode-in-the-jpeg-standard-explained">Hierarchical
+Mode in the JPEG Standard Explained</h1>
+<p>Hierarchical mode is one of the four original compression modes
+defined in the 1992 JPEG standard (ITU-T T.81 / ISO/IEC 10918-1),
+designed to encode an image as a sequence of spatial layers at multiple
+resolutions. This article explains what Hierarchical JPEG mode is,
+breaks down the step-by-step mechanism of how it creates a
+multiresolution pyramid, and outlines the practical reasons this complex
+mode saw limited adoption in modern computing.</p>
+<h3 id="the-four-operating-modes-of-jpeg">The Four Operating Modes of
+JPEG</h3>
+<p>The original JPEG specification defines four distinct compression
+modes:</p>
+<ol type="1">
+<li><strong>Sequential DCT-based:</strong> The image is compressed in a
+single scan from top to bottom, block by block.</li>
+<li><strong>Progressive DCT-based:</strong> The image is encoded in
+multiple passes of increasing spectral detail or bit precision.</li>
+<li><strong>Lossless:</strong> A non-DCT, predictive differential
+pulse-code modulation (DPCM) method.</li>
+<li><strong>Hierarchical:</strong> A pyramidal approach where an image
+is stored at multiple spatial resolutions.</li>
+</ol>
+<h3 id="what-is-hierarchical-mode">What is Hierarchical Mode?</h3>
+<p>Hierarchical mode provides a multiresolution representation of an
+image within a single file. Instead of storing just one full-sized image
+or relying solely on frequency-based progression, it stores an initial
+low-resolution base image followed by one or more differential
+(residual) enhancement layers that progressively increase the spatial
+dimensions (width and height).</p>
+<p>This design was intended to serve environments where target devices
+possess varying display capabilities—such as low-resolution monitors,
+mobile devices, or printers—allowing a decoder to read only the data
+necessary for its target resolution without decompressing the entire
+full-scale image.</p>
+<h3 id="how-hierarchical-mode-functions">How Hierarchical Mode
+Functions</h3>
+<p>The encoding and decoding process in Hierarchical mode relies on
+spatial downsampling, interpolation, and residual error coding:</p>
+<h4 id="1-image-pyramid-generation">1. Image Pyramid Generation</h4>
+<p>The encoder takes the full-resolution source image and generates a
+pyramid of images at decreasing spatial resolutions (typically factors
+of two, though other ratios are permitted). For example, a source image
+of 1600×1200 might be downsampled to create intermediate frames at
+800×600 and 400×300.</p>
+<h4 id="2-base-layer-encoding">2. Base Layer Encoding</h4>
+<p>The lowest-resolution version in the pyramid (e.g., 400×300) serves
+as the base layer. This layer is compressed independently using either
+standard sequential DCT, progressive DCT, or lossless coding. It
+contains no reference to other layers and can be decoded standalone.</p>
+<h4 id="3-upsampling-and-prediction">3. Upsampling and Prediction</h4>
+<p>To prepare the next resolution layer (e.g., 800×600):</p>
+<ul>
+<li>The encoded base layer is reconstructed by the encoder (mirroring
+the decoding process).</li>
+<li>This reconstructed base image is spatially upsampled (interpolated)
+to match the dimensions of the next higher layer in the pyramid.</li>
+</ul>
+<h4 id="4-residual-difference-calculation">4. Residual (Difference)
+Calculation</h4>
+<p>The upsampled image is subtracted from the original downsampled image
+at that level. The result is a "difference image" or "residual"
+representing the details lost during the downsampling process:</p>
+<p><span class="math display">\[\text{Residual} = \text{Actual Layer
+Image} - \text{Upsampled Reconstruction}\]</span></p>
+<h4 id="5-differential-encoding">5. Differential Encoding</h4>
+<p>The residual values are compressed. Because the residual data
+typically contains values centered around zero, it can be efficiently
+compressed using DCT-based differential coding or lossless predictive
+coding.</p>
+<h4 id="6-iteration-to-full-resolution">6. Iteration to Full
+Resolution</h4>
+<p>Steps 3 through 5 repeat for each subsequent level of the pyramid
+until the final full-resolution layer is reached and encoded.</p>
+<h3 id="the-decoding-workflow">The Decoding Workflow</h3>
+<p>A client decoding a Hierarchical JPEG executes the reverse
+process:</p>
+<ol type="1">
+<li><strong>Access Base Resolution:</strong> The decoder reads the first
+frame to immediately render the smallest version of the image.</li>
+<li><strong>Upscale and Apply Residuals:</strong> If higher resolution
+is required, the decoder upsamples its current decoded frame to the
+dimensions of the next frame, decodes the differential residual frame,
+and adds the residual to the upsampled prediction.</li>
+<li><strong>Targeted Stopping:</strong> The decoder can halt processing
+at any intermediate resolution, saving memory, processing power, and
+bandwidth if the display does not require full resolution.</li>
+</ol>
+<h3 id="why-hierarchical-mode-fell-out-of-common-use">Why Hierarchical
+Mode Fell Out of Common Use</h3>
+<p>Despite its technical sophistication, Hierarchical mode is virtually
+absent from modern web and media workflows:</p>
+<ul>
+<li><strong>File Size Overhead:</strong> Storing residual layers
+introduces data redundancy. A Hierarchical JPEG file is almost always
+significantly larger than an equivalent image saved as a single
+sequential or progressive JPEG.</li>
+<li><strong>Decoder Complexity:</strong> Hierarchical decoders require
+multiple passes of filtering, interpolation, and arithmetic
+reconstruction, demanding more memory and CPU cycles during an era when
+hardware was resource-constrained.</li>
+<li><strong>Lack of Software Support:</strong> Key image libraries, most
+notably early reference versions of <code>libjpeg</code>, offered
+incomplete or non-existent support for Hierarchical mode. Consequently,
+mainstream web browsers and operating systems never adopted it.</li>
+<li><strong>Alternative Solutions:</strong> The multiresolution problem
+was later addressed more efficiently by wavelet-based compression (such
+as JPEG 2000) and modern responsive web architectures, where servers
+deliver different pre-rendered sequential images based on client display
+parameters.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

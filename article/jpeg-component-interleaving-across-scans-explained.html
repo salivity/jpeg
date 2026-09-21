@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Component Interleaving Across Scans Explained - jpeg</title>
+    <meta name="description" content="This article examines how the JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) organizes and multiplexes color data by defining component interleaving within and across scans. It covers the structural definition of the Minimum Coded Unit (MCU), the role of t">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-component-interleaving-across-scans-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Component Interleaving Across Scans Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-component-interleaving-across-scans-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how the JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) organizes and multiplexes color data by defining component interleaving within and across scans. It covers the structural definition of the Minimum Coded Unit (MCU), the role of t" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-component-interleaving-across-scans-explained">JPEG
+Component Interleaving Across Scans Explained</h1>
+<p>This article examines how the JPEG standard (ITU-T T.81 / ISO/IEC
+10918-1) organizes and multiplexes color data by defining component
+interleaving within and across scans. It covers the structural
+definition of the Minimum Coded Unit (MCU), the role of the Start of
+Scan (SOS) marker, how sampling factors govern component layout, and the
+architectural differences between sequential and progressive
+multi-component scans.</p>
+<h3 id="sampling-factors-and-the-minimum-coded-unit-mcu">Sampling
+Factors and the Minimum Coded Unit (MCU)</h3>
+<p>In the JPEG specification, an image can consist of up to 255 color
+components, though common formats utilize three (such as <span
+class="math inline">\(Y, C_b, C_r\)</span>). Each component <span
+class="math inline">\(i\)</span> is assigned a horizontal sampling
+factor (<span class="math inline">\(H_i\)</span>) and a vertical
+sampling factor (<span class="math inline">\(V_i\)</span>), ranging from
+1 to 4. These factors dictate the relative spatial resolution of each
+channel.</p>
+<p>When components are interleaved, the data is grouped into Minimum
+Coded Units (MCUs). The dimensions of an MCU are determined by the
+maximum horizontal and vertical sampling factors across all components
+present in the scan:</p>
+<p><span class="math display">\[H_{max} = \max(H_i), \quad V_{max} =
+\max(V_i)\]</span></p>
+<p>An MCU represents a spatial region of <span
+class="math inline">\((H_{max} \times 8)\)</span> by <span
+class="math inline">\((V_{max} \times 8)\)</span> pixels. For each
+component <span class="math inline">\(i\)</span> included in an
+interleaved scan, that component contributes <span
+class="math inline">\(H_i \times V_i\)</span> individual <span
+class="math inline">\(8 \times 8\)</span> data units (blocks) to the
+MCU.</p>
+<h3 id="interleaved-vs-non-interleaved-scans">Interleaved vs.
+Non-Interleaved Scans</h3>
+<p>The Start of Scan (SOS) marker segment controls how components are
+distributed throughout the bitstream by specifying <span
+class="math inline">\(N_s\)</span>, the number of image components in
+the current scan (ranging from 1 to 4):</p>
+<ul>
+<li><strong>Non-Interleaved Scans (<span class="math inline">\(N_s =
+1\)</span>):</strong> When a scan contains only one component, no
+interleaving occurs. The MCU degenerates into a single <span
+class="math inline">\(8 \times 8\)</span> data unit of that specific
+component. The entire image plane for that component is encoded
+sequentially from left to right, top to bottom, before another scan
+begins.</li>
+<li><strong>Interleaved Scans (<span class="math inline">\(N_s &gt;
+1\)</span>):</strong> When two or more components are grouped into the
+same scan, they are interleaved at the MCU level. Instead of completing
+an entire component plane before moving to the next, the encoder
+alternates between components within every MCU across the scan.</li>
+</ul>
+<p>Within each interleaved MCU, the data units are serialized in order
+of their component specification in the SOS header:</p>
+<ol type="1">
+<li>All <span class="math inline">\(H_1 \times V_1\)</span> blocks of
+Component 1, traversed in raster order.</li>
+<li>All <span class="math inline">\(H_2 \times V_2\)</span> blocks of
+Component 2, traversed in raster order.</li>
+<li>This sequence continues for up to 4 components per scan.</li>
+</ol>
+<h3 id="example-standard-420-interleaving">Example: Standard 4:2:0
+Interleaving</h3>
+<p>In a typical <span class="math inline">\(Y C_b C_r\)</span> image
+with 4:2:0 chroma subsampling:</p>
+<ul>
+<li>Luminance (<span class="math inline">\(Y\)</span>): <span
+class="math inline">\(H_1 = 2, V_1 = 2\)</span></li>
+<li>Chrominance (<span class="math inline">\(C_b\)</span>): <span
+class="math inline">\(H_2 = 1, V_2 = 1\)</span></li>
+<li>Chrominance (<span class="math inline">\(C_r\)</span>): <span
+class="math inline">\(H_3 = 1, V_3 = 1\)</span></li>
+</ul>
+<p>Here, <span class="math inline">\(H_{max} = 2\)</span> and <span
+class="math inline">\(V_{max} = 2\)</span>. Each MCU covers a <span
+class="math inline">\(16 \times 16\)</span> pixel area. In an
+interleaved scan containing all three components (<span
+class="math inline">\(N_s = 3\)</span>), a single MCU consists of 6
+total blocks ordered as: <span class="math display">\[[Y_{0,0}, Y_{0,1},
+Y_{1,0}, Y_{1,1}, Cb_{0,0}, Cr_{0,0}]\]</span></p>
+<p>The decoder reconstructs these six <span class="math inline">\(8
+\times 8\)</span> frequency-domain blocks, applies the inverse discrete
+cosine transform (IDCT), and maps them to the corresponding <span
+class="math inline">\(16 \times 16\)</span> spatial region before
+advancing to the next MCU.</p>
+<h3 id="interleaving-rules-in-progressive-scans">Interleaving Rules in
+Progressive Scans</h3>
+<p>The JPEG standard applies strict structural constraints on component
+interleaving when using progressive DCT-based processes:</p>
+<ol type="1">
+<li><strong>DC Coefficient Scans:</strong> Multiple components can be
+interleaved within a single scan only if the spectral selection is
+restricted exclusively to DC coefficients (spectral selection start
+<span class="math inline">\(Ss = 0\)</span> and end <span
+class="math inline">\(Se = 0\)</span>). This permits decoders to quickly
+establish a coarse, full-color thumbnail of the image using an
+interleaved stream of DC values.</li>
+<li><strong>AC Coefficient Scans:</strong> Interleaving across multiple
+components is strictly prohibited for scans containing AC coefficients
+(<span class="math inline">\(Ss &gt; 0\)</span> or <span
+class="math inline">\(Se &gt; 0\)</span>). Every AC spectral selection
+or successive approximation scan must have <span
+class="math inline">\(N_s = 1\)</span>. Consequently, progressive JPEG
+files interleave components only during the initial DC pass; all
+subsequent detail passes are strictly non-interleaved.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

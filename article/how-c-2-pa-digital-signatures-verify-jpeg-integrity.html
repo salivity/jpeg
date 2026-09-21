@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How C2PA Digital Signatures Verify JPEG Integrity - jpeg</title>
+    <meta name="description" content="This article explains how the Coalition for Content Provenance and Authenticity (C2PA) standard secures JPEG images against unauthorized tampering. By binding cryptographic hashes of visual data to cryptographically signed metadata manifests, C2PA establ">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-c-2-pa-digital-signatures-verify-jpeg-integrity">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How C2PA Digital Signatures Verify JPEG Integrity - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-c-2-pa-digital-signatures-verify-jpeg-integrity" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the Coalition for Content Provenance and Authenticity (C2PA) standard secures JPEG images against unauthorized tampering. By binding cryptographic hashes of visual data to cryptographically signed metadata manifests, C2PA establ" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-c2pa-digital-signatures-verify-jpeg-integrity">How C2PA
+Digital Signatures Verify JPEG Integrity</h1>
+<p>This article explains how the Coalition for Content Provenance and
+Authenticity (C2PA) standard secures JPEG images against unauthorized
+tampering. By binding cryptographic hashes of visual data to
+cryptographically signed metadata manifests, C2PA establishes a
+verifiable chain of custody. Readers will learn the technical mechanics
+of this process, from data hashing and manifest creation to public-key
+validation, ensuring digital photos remain authentic from capture to
+display.</p>
+<h3 id="the-c2pa-manifest-and-jumbf-architecture">The C2PA Manifest and
+JUMBF Architecture</h3>
+<p>When a C2PA-compliant device or software application creates or edits
+a JPEG, it generates a standardized metadata package called a
+"manifest." In a standard JPEG file, this manifest is embedded within
+specific application markers—typically using the JPEG Universal Metadata
+Box Format (JUMBF).</p>
+<p>The manifest contains several critical components:</p>
+<ul>
+<li><strong>Assertions:</strong> Data points describing the image, such
+as capture parameters, location, timestamps, and edit actions.</li>
+<li><strong>Hard Bindings:</strong> Cryptographic hashes of the asset's
+binary payload (the raw pixel data).</li>
+<li><strong>Claim:</strong> A consolidated structure that summarizes the
+assertions and references the hard bindings.</li>
+<li><strong>Signature Box:</strong> The cryptographic digital signature
+applied to the claim, alongside the signer's X.509 public key
+certificate chain.</li>
+</ul>
+<h3 id="hashing-the-image-data">Hashing the Image Data</h3>
+<p>Integrity verification depends fundamentally on cryptographic hashing
+(typically using algorithms like SHA-256). Before a signature is
+generated, the signing software isolates the image's visual data from
+non-critical or mutable metadata. It computes a cryptographic hash of
+these byte ranges.</p>
+<p>Because even a single altered pixel drastically changes the resulting
+hash, this digest acts as an unforgeable fingerprint of the image's
+exact visual state at the moment of signing. This computed hash is
+recorded in the manifest as a hard binding.</p>
+<h3 id="generating-the-digital-signature">Generating the Digital
+Signature</h3>
+<p>Once the claim structure—containing the assertions and the image
+hash—is compiled, the signing entity secures it using asymmetric
+cryptography:</p>
+<ol type="1">
+<li><strong>Hashing the Claim:</strong> The manifest engine computes a
+hash of the entire claim block.</li>
+<li><strong>Signing with a Private Key:</strong> The signer encrypts
+this claim hash using their private key, creating the digital signature.
+The signer may be a camera manufacturer (hardware-level signing), an
+editing suite (like Adobe Photoshop), or an online publishing
+platform.</li>
+<li><strong>Attaching Credentials:</strong> The signer embeds its public
+certificate chain into the manifest. This certificate links the
+signature to a trusted Certificate Authority (CA), identifying who
+signed the file.</li>
+</ol>
+<h3 id="the-verification-workflow">The Verification Workflow</h3>
+<p>When a viewer, browser, or verification tool inspects the JPEG, it
+executes a three-step validation process without requiring an external
+database:</p>
+<ol type="1">
+<li><strong>Certificate Validation:</strong> The validator checks the
+embedded X.509 certificate against trusted root certificate authorities
+to confirm the signer’s identity has not been forged or revoked.</li>
+<li><strong>Signature Decryption:</strong> Using the public key found in
+the embedded certificate, the validator decrypts the digital signature
+to obtain the original claim hash. It then independently computes the
+hash of the claim block. If both hashes match, the metadata inside the
+claim has not been modified since it was signed.</li>
+<li><strong>Payload Integrity Check:</strong> The validator reads the
+hard binding within the claim to find the expected image data hash. It
+then recalculates the hash over the JPEG’s actual pixel byte stream. If
+the newly computed hash matches the signed hash, the visual content is
+guaranteed to be identical to what was originally certified.</li>
+</ol>
+<h3 id="detecting-tampering">Detecting Tampering</h3>
+<p>If an attacker modifies the JPEG—such as cloning out an object,
+splicing in new elements, or altering the metadata—the cryptographic
+chain breaks. If the pixels are altered without updating the manifest,
+the calculated image hash will fail to match the hard binding. If an
+attacker attempts to update the hard binding to match their edits, they
+will lack the original private key required to generate a valid
+signature over the updated claim. Any unauthorized change immediately
+invalidates the digital signature, alerting the viewer that the image
+has been altered.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

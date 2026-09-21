@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Compresses Luminance More Than Chrominance - jpeg</title>
+    <meta name="description" content="JPEG compression prioritizes the luminance (brightness) channel over chrominance (color) channels primarily because of the biology of human visual perception. By converting standard RGB image data into the YCbCr color space, the JPEG algorithm separates">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-compresses-luminance-more-than-chrominance">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Compresses Luminance More Than Chrominance - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-compresses-luminance-more-than-chrominance" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG compression prioritizes the luminance (brightness) channel over chrominance (color) channels primarily because of the biology of human visual perception. By converting standard RGB image data into the YCbCr color space, the JPEG algorithm separates" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-compresses-luminance-more-than-chrominance">Why JPEG
+Compresses Luminance More Than Chrominance</h1>
+<p>JPEG compression prioritizes the luminance (brightness) channel over
+chrominance (color) channels primarily because of the biology of human
+visual perception. By converting standard RGB image data into the YCbCr
+color space, the JPEG algorithm separates brightness from color
+information. It then aggressively discards fine color detail through
+chroma subsampling and coarse quantization while preserving brightness
+data. This targeted approach significantly reduces file sizes without
+introducing obvious visual degradation to the human eye.</p>
+<h3 id="the-biology-of-human-vision">The Biology of Human Vision</h3>
+<p>The human eye relies on two main types of photoreceptor cells located
+on the retina: rods and cones. Rods are extremely sensitive to light
+intensity and brightness variations, providing high spatial acuity for
+luminance. Cones, while responsible for perceiving color, are far less
+numerous and provide lower spatial resolution for chromatic
+differences.</p>
+<p>Because of this anatomical imbalance, humans are quick to notice
+blurriness, edge distortion, or loss of detail in light-and-dark
+contrasts. Conversely, the human visual system struggles to detect fine
+spatial shifts or blurring in pure color information if the underlying
+brightness boundaries remain sharp. JPEG leverages this perceptual quirk
+to achieve higher compression ratios.</p>
+<h3 id="color-space-transformation-rgb-to-ycbcr">Color Space
+Transformation: RGB to YCbCr</h3>
+<p>Digital sensors and displays typically operate using the RGB (Red,
+Green, Blue) color model, where luminance and color data are blended
+across all three channels. In an RGB image, compressing any single
+channel degrades both brightness and color simultaneously.</p>
+<p>To isolate brightness, JPEG converts RGB data into the YCbCr color
+space:</p>
+<ul>
+<li><strong>Y (Luminance):</strong> Represents the brightness, grayscale
+details, and primary structural edges of the image.</li>
+<li><strong>Cb (Chrominance Blue):</strong> Represents the
+blue-difference component (blueness relative to green/yellow).</li>
+<li><strong>Cr (Chrominance Red):</strong> Represents the red-difference
+component (redness relative to green/cyan).</li>
+</ul>
+<p>Once separated, the compression algorithm can apply distinct
+compression rules to each component independently.</p>
+<h3 id="chroma-subsampling">Chroma Subsampling</h3>
+<p>The first major fidelity reduction applied to chrominance is chroma
+subsampling. Because the eye cannot resolve fine color detail, JPEG
+reduces the resolution of the Cb and Cr channels while maintaining the Y
+channel at full resolution.</p>
+<p>In common implementations such as 4:2:0 subsampling, chrominance data
+is sampled at half the resolution both horizontally and vertically. This
+means a 2x2 grid of pixels shares a single chrominance sample while
+maintaining four distinct luminance values. This step alone reduces the
+total uncompressed raw data by 50% before any mathematical compression
+algorithms take place, with virtually no perceptible loss in quality
+under standard viewing conditions.</p>
+<h3 id="quantization-and-frequency-discarding">Quantization and
+Frequency Discarding</h3>
+<p>After subsampling, the image is divided into 8x8 pixel blocks and
+processed using the Discrete Cosine Transform (DCT). The DCT translates
+spatial pixel data into frequency components, separating low-frequency
+broad features from high-frequency fine details.</p>
+<p>JPEG then applies quantization, which divides the frequency
+coefficients by values defined in a quantization table and rounds the
+results to the nearest integer. JPEG uses separate quantization tables
+for luminance and chrominance:</p>
+<ul>
+<li><strong>The Luminance Table:</strong> Uses smaller divisors,
+especially for low and mid frequencies, preserving fine structural
+variations and sharp contrast transitions.</li>
+<li><strong>The Chrominance Table:</strong> Uses significantly larger
+divisors across both low and high frequencies. This forces a large
+portion of the color frequency coefficients to round down to zero.</li>
+</ul>
+<p>During entropy coding (the final step of JPEG compression), sequences
+of zeros are stored extremely efficiently using run-length encoding. By
+aggressively zeroing out the chrominance coefficients, JPEG achieves
+substantial data reduction where the eye is least likely to notice it,
+keeping the high-fidelity luminance channel intact to define the image's
+perceived sharpness.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

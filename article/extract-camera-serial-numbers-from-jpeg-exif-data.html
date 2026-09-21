@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Camera Serial Numbers from JPEG EXIF Data - jpeg</title>
+    <meta name="description" content="Digital cameras embed unique hardware identifiers into the metadata of captured images, providing forensic examiners with critical evidence to link a file to a specific physical device. While basic image properties reside in standardized Exchangeable Ima">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/extract-camera-serial-numbers-from-jpeg-exif-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Extract Camera Serial Numbers from JPEG EXIF Data - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/extract-camera-serial-numbers-from-jpeg-exif-data" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Digital cameras embed unique hardware identifiers into the metadata of captured images, providing forensic examiners with critical evidence to link a file to a specific physical device. While basic image properties reside in standardized Exchangeable Ima" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="extract-camera-serial-numbers-from-jpeg-exif-data">Extract
+Camera Serial Numbers from JPEG EXIF Data</h1>
+<p>Digital cameras embed unique hardware identifiers into the metadata
+of captured images, providing forensic examiners with critical evidence
+to link a file to a specific physical device. While basic image
+properties reside in standardized Exchangeable Image File Format (EXIF)
+fields, camera serial numbers are frequently stored inside
+vendor-specific, proprietary data blocks known as MakerNotes. Digital
+forensic investigators retrieve these hidden identifiers by parsing the
+raw binary structures of JPEG APP1 segments, decoding
+manufacturer-specific offsets, and utilizing specialized metadata
+extraction frameworks.</p>
+<h3 id="the-role-of-makernotes-in-jpeg-forensics">The Role of MakerNotes
+in JPEG Forensics</h3>
+<p>Standard EXIF specifications defined by JEITA define common tags such
+as exposure time, aperture, and date. However, the standard does not
+mandate a uniform tag for hardware serial numbers. To store
+device-specific information, manufacturers utilize tag
+<code>0x927c</code>, designated as the MakerNote tag.</p>
+<p>Located within the Exif SubIFD (Image File Directory), the MakerNote
+contains proprietary, vendor-defined data. Manufacturers such as Canon,
+Nikon, Sony, and Fujifilm structure these blocks differently:</p>
+<ul>
+<li><strong>Canon:</strong> Uses a structured sub-directory containing
+distinct camera settings and internal serial number tags.</li>
+<li><strong>Nikon:</strong> Often stores data formatted similarly to a
+secondary TIFF header, sometimes applying proprietary encoding or
+byte-shifting.</li>
+<li><strong>Sony and Olympus:</strong> Employ proprietary offsets and
+lookup tables to store internal IDs, shutter counts, and serial
+numbers.</li>
+</ul>
+<h3 id="step-by-step-technical-extraction-workflow">Step-by-Step
+Technical Extraction Workflow</h3>
+<h4 id="1-locating-the-app1-segment">1. Locating the APP1 Segment</h4>
+<p>Every standard JPEG begins with the Start of Image (SOI) marker
+(<code>0xFFD8</code>). Forensic software parses the byte stream to
+locate the <code>APP1</code> marker (<code>0xFFE1</code>), which
+designates the start of the EXIF metadata block. The two bytes
+immediately following indicate the total length of the segment.</p>
+<h4 id="2-traversing-the-tiff-header-and-ifds">2. Traversing the TIFF
+Header and IFDs</h4>
+<p>Within the <code>APP1</code> block, the parser validates the
+<code>Exif\0\0</code> header, followed by the TIFF header, which
+establishes the byte-ordering (endianness):</p>
+<ul>
+<li><code>II</code> (<code>0x4949</code>): Little-endian (Intel)</li>
+<li><code>MM</code> (<code>0x4D4D</code>): Big-endian (Motorola)</li>
+</ul>
+<p>The parser follows the offset to the primary directory (IFD0),
+locates the pointer to the Exif SubIFD (tag <code>0x8769</code>), and
+reads down to tag <code>0x927c</code> (MakerNote).</p>
+<h4 id="3-resolving-proprietary-makernote-offsets">3. Resolving
+Proprietary MakerNote Offsets</h4>
+<p>Because MakerNotes are not standardized, base offsets vary:</p>
+<ul>
+<li>Some vendors design the offsets inside the MakerNote relative to the
+start of the TIFF header.</li>
+<li>Other vendors calculate offsets relative to the start of the
+MakerNote block itself.</li>
+</ul>
+<p>Forensic engines read the manufacturer tag in IFD0 (tag
+<code>0x010F</code>) to load the corresponding vendor parser schema
+before attempting to decode the nested directory inside
+<code>0x927c</code>.</p>
+<h4 id="4-extracting-the-hardware-tag">4. Extracting the Hardware
+Tag</h4>
+<p>Once the proper schema is applied, investigators target specific
+internal tags known to contain serial identifiers. For example:</p>
+<ul>
+<li>In Canon MakerNotes, the serial number typically resides inside
+internal camera settings tags or dedicated fields like
+<code>SerialNumber</code> or <code>InternalSerialNumber</code>.</li>
+<li>In Nikon MakerNotes, the value often sits within the
+<code>0x001D</code> (SerialNumber) tag or encoded within a proprietary
+16-byte cryptographically shifted string.</li>
+<li>In Sony devices, the body serial number is frequently stored in the
+<code>CameraInfo</code> block within internal tags.</li>
+</ul>
+<h3 id="forensic-tools-and-implementation">Forensic Tools and
+Implementation</h3>
+<h4 id="command-line-and-scripted-extraction">Command-Line and Scripted
+Extraction</h4>
+<p>Forensic investigators primarily rely on Phil Harvey’s
+<strong>ExifTool</strong>, an extensively reverse-engineered metadata
+parsing engine. Running commands targeting deep proprietary tags
+bypasses basic operating system file properties:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> <span class="at">-SerialNumber</span> <span class="at">-InternalSerialNumber</span> <span class="at">-CameraSerialNumber</span> evidence.jpg</span></code></pre></div>
+<p>To extract every nested tag inside the MakerNote for manual
+verification:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> <span class="at">-MakerNotes:all</span> evidence.jpg</span></code></pre></div>
+<p>In custom forensic workflows, investigators use Python libraries such
+as <code>piexif</code> or custom binary parsers built with
+<code>struct</code> to extract raw byte slices from tag
+<code>0x927c</code> and compare them against byte signatures of known
+camera models.</p>
+<h4 id="dedicated-forensic-suites">Dedicated Forensic Suites</h4>
+<p>Digital forensic platforms like EnCase, FTK (Forensic Toolkit), and
+Magnet AXIOM incorporate automated MakerNote decoders into their ingest
+pipelines. These tools extract the serial number, index it against
+hardware registries, and cross-reference it with other evidence files to
+establish a common source across multiple images.</p>
+<h3 id="investigative-challenges-and-countermeasures">Investigative
+Challenges and Countermeasures</h3>
+<ul>
+<li><strong>Stripped Metadata:</strong> Social media platforms (such as
+Facebook, X, and Instagram) and web messaging applications strip
+<code>APP1</code> metadata blocks entirely during re-compression,
+removing MakerNotes.</li>
+<li><strong>Internal vs. Body Serial Numbers:</strong> Some
+manufacturers maintain separate identifiers for the exterior casing and
+the internal digital signal processor (DSP). Investigators must
+distinguish between the external chassis number and the internal digital
+signature.</li>
+<li><strong>Obfuscation:</strong> Certain vendors obfuscate serial
+numbers using bitwise operations (e.g., XOR masking or byte rotation).
+Decoders must apply the correct reverse key specific to the firmware
+version.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

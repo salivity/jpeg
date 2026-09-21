@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why WAFs Inspect JPEG Markers in File Uploads - jpeg</title>
+    <meta name="description" content="Web Application Firewalls (WAFs) inspect JPEG marker segments during file upload workflows to detect and block malicious payloads disguised as legitimate image files. Attackers frequently exploit standard file upload mechanisms by embedding web shells, c">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-wa-fs-inspect-jpeg-markers-in-file-uploads">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why WAFs Inspect JPEG Markers in File Uploads - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-wa-fs-inspect-jpeg-markers-in-file-uploads" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Web Application Firewalls (WAFs) inspect JPEG marker segments during file upload workflows to detect and block malicious payloads disguised as legitimate image files. Attackers frequently exploit standard file upload mechanisms by embedding web shells, c" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-wafs-inspect-jpeg-markers-in-file-uploads">Why WAFs Inspect
+JPEG Markers in File Uploads</h1>
+<p>Web Application Firewalls (WAFs) inspect JPEG marker segments during
+file upload workflows to detect and block malicious payloads disguised
+as legitimate image files. Attackers frequently exploit standard file
+upload mechanisms by embedding web shells, cross-site scripting (XSS)
+vectors, or binary exploits within the structural metadata of images. By
+parsing and analyzing JPEG markers, a WAF verifies structural integrity
+and ensures that hidden executable code cannot bypass perimeter defenses
+to compromise backend servers or client browsers.</p>
+<h3 id="the-structure-of-jpeg-marker-segments">The Structure of JPEG
+Marker Segments</h3>
+<p>A JPEG file is organized into a sequence of segments, each beginning
+with a two-byte marker starting with the byte <code>0xFF</code> followed
+by a specific byte identifying the marker type. Common markers
+include:</p>
+<ul>
+<li><strong>Start of Image (SOI - <code>0xFFD8</code>)</strong> and
+<strong>End of Image (EOI - <code>0xFFD9</code>)</strong>: Delimit the
+start and end of the image stream.</li>
+<li><strong>Application Data (APPn - <code>0xFFE0</code> to
+<code>0xFFEF</code>)</strong>: Used for application-specific metadata,
+such as EXIF data (<code>APP1</code>) or ICC color profiles
+(<code>APP2</code>).</li>
+<li><strong>Comment (COM - <code>0xFFFE</code>)</strong>: Contains text
+comments.</li>
+<li><strong>Start of Scan (SOS - <code>0xFFDA</code>)</strong>:
+Indicates the beginning of the compressed image data.</li>
+</ul>
+<p>Because the JPEG standard allows arbitrary data to be placed inside
+specific markers—such as the <code>COM</code> segment and various
+<code>APPn</code> segments—these fields provide an ideal hiding place
+for adversaries.</p>
+<h3 id="preventing-polyglot-files-and-web-shells">Preventing Polyglot
+Files and Web Shells</h3>
+<p>One of the primary reasons WAFs inspect marker segments is to
+identify "polyglot" files. A polyglot is a file that is simultaneously
+valid in multiple file formats, such as a valid JPEG that also functions
+as an executable PHP, ASPX, or JSP script.</p>
+<p>An attacker can insert executable code (e.g.,
+<code>&lt;?php system($_GET['cmd']); ?&gt;</code>) inside a JPEG
+<code>COM</code> marker or EXIF tag. If the hosting server allows
+user-uploaded files to be stored in an executable directory or processes
+them through a Local File Inclusion (LFI) vulnerability, the server
+interprets the embedded script while ignoring the surrounding binary
+image data. WAF inspection scans these marker payloads for known script
+signatures and language constructs before the file reaches storage.</p>
+<h3 id="mitigating-parser-exploitation-and-buffer-overflows">Mitigating
+Parser Exploitation and Buffer Overflows</h3>
+<p>Web applications routinely rely on image processing libraries (such
+as LibJPEG, ImageMagick, or GD) to resize, crop, or re-encode
+user-uploaded photos. These libraries must parse the JPEG marker
+sequence to extract image dimensions, color profiles, and compression
+settings.</p>
+<p>Attackers deliberately craft malformed marker lengths or corrupt
+marker sequences to trigger:</p>
+<ul>
+<li><strong>Heap and Stack Overflows:</strong> Specifying a segment
+length header that does not match the actual data payload can cause the
+backend parser to read or write out of bounds.</li>
+<li><strong>Denial of Service (DoS):</strong> Exploiting markers that
+declare massive image dimensions (decompression bombs) can exhaust
+server memory and CPU resources.</li>
+</ul>
+<p>WAFs parse marker segment boundaries and lengths independently to
+ensure the file adheres strictly to RFC specifications, rejecting
+malformed structures before they reach underlying processing
+libraries.</p>
+<h3 id="blocking-client-side-attacks-stored-xss">Blocking Client-Side
+Attacks (Stored XSS)</h3>
+<p>JPEG marker segments are also inspected to protect end users from
+stored Cross-Site Scripting (XSS). If an application serves
+user-uploaded JPEGs directly to the browser with incorrect or permissive
+MIME types (or if Internet Explorer-style MIME-sniffing occurs),
+embedded HTML or JavaScript inside an <code>APP1</code> or
+<code>COM</code> segment can execute in the victim's browser
+context.</p>
+<p>A WAF looks for HTML tags, script delimiters, and JavaScript event
+handlers inside these marker sections to neutralize potential
+client-side script execution.</p>
+<h3 id="detecting-trailing-payloads-and-steganography">Detecting
+Trailing Payloads and Steganography</h3>
+<p>Valid JPEG files terminate with the End of Image marker
+(<code>0xFFD9</code>). Some attackers append malicious shellcode,
+secondary payloads, or archives to the end of a valid JPEG, beyond the
+<code>0xFFD9</code> marker. While standard image viewers ignore any data
+following the EOI marker, backend systems or extracted archives can
+still read and execute this trailing data. WAFs inspect the file layout
+to ensure no unauthorized data persists past the terminating marker.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

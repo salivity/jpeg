@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte Stuffing in JPEG: Why 0xFF is Followed by 0x00 - jpeg</title>
+    <meta name="description" content="This article provides an overview of byte stuffing and its critical role within the JPEG image compression format. It explains what byte stuffing is, how the JPEG specification structures structural control signals using marker codes, and why the compres">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/byte-stuffing-in-jpeg-why-0-x-ff-is-followed-by-0-x-00">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Byte Stuffing in JPEG: Why 0xFF is Followed by 0x00 - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/byte-stuffing-in-jpeg-why-0-x-ff-is-followed-by-0-x-00" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of byte stuffing and its critical role within the JPEG image compression format. It explains what byte stuffing is, how the JPEG specification structures structural control signals using marker codes, and why the compres" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="byte-stuffing-in-jpeg-why-0xff-is-followed-by-0x00">Byte
+Stuffing in JPEG: Why 0xFF is Followed by 0x00</h1>
+<p>This article provides an overview of byte stuffing and its critical
+role within the JPEG image compression format. It explains what byte
+stuffing is, how the JPEG specification structures structural control
+signals using marker codes, and why the compression algorithm explicitly
+injects a null byte (<code>0x00</code>) after any <code>0xFF</code> byte
+generated during entropy encoding to prevent data corruption and parsing
+errors.</p>
+<h2 id="what-is-byte-stuffing">What is Byte Stuffing?</h2>
+<p>Byte stuffing—also known as octet stuffing—is a data framing
+technique used in communication protocols and file formats. It ensures
+that reserved control characters or delimiters do not appear naturally
+within the transmitted payload.</p>
+<p>When binary data is transferred, the receiver needs a reliable way to
+differentiate between payload data (the actual content) and control
+signals (such as end-of-packet, start-of-packet, or synchronization
+flags). If a sequence of payload bits happens to match a reserved
+control sequence, the decoder might prematurely terminate the stream or
+perform an unintended action. Byte stuffing solves this by appending or
+inserting an escape sequence whenever a control byte naturally occurs in
+the payload, allowing the receiving end to decode the payload
+unambiguously.</p>
+<h2 id="jpeg-file-structure-and-markers">JPEG File Structure and
+Markers</h2>
+<p>To understand byte stuffing in JPEG, one must first understand how
+JPEG files are structured. A JPEG stream is organized around two-byte
+control codes called <strong>markers</strong>. Every JPEG marker adheres
+to a strict format:</p>
+<ol type="1">
+<li>A prefix byte: <code>0xFF</code></li>
+<li>A marker code byte: Any non-zero byte (e.g., <code>0xD8</code> for
+Start of Image, <code>0xC0</code> for Start of Frame, <code>0xDA</code>
+for Start of Scan, and <code>0xD9</code> for End of Image)</li>
+</ol>
+<p>Whenever a JPEG decoder encounters an <code>0xFF</code> byte followed
+by a non-zero byte, it treats that sequence as a command to configure
+decoder settings, load quantization tables, identify image dimensions,
+or terminate decoding.</p>
+<h2 id="the-collision-problem-in-entropy-coded-data">The Collision
+Problem in Entropy-Coded Data</h2>
+<p>Once a JPEG reaches the image payload—the "Scan" segment initiated by
+the <code>0xFFDA</code> marker—it stops writing fixed metadata and
+begins writing variable-length entropy-coded data (typically compressed
+using Huffman coding or arithmetic coding).</p>
+<p>Entropy coding produces a pseudo-random bitstream. In any
+sufficiently large block of compressed image data, eight consecutive
+<code>1</code> bits will inevitably appear purely by chance:</p>
+<p><span class="math display">\[\text{11111111}_2 =
+\text{0xFF}_{16}\]</span></p>
+<p>If this <code>0xFF</code> byte happens to be followed by a byte that
+matches an existing marker code (such as <code>0xD9</code> for End of
+Image), a standard parser reading byte-by-byte would misinterpret the
+compressed pixel data as a control signal. In this scenario, the parser
+would abruptly halt decoding, resulting in a truncated, corrupted
+image.</p>
+<h2 id="why-jpeg-inserts-a-0x00-byte">Why JPEG Inserts a 0x00 Byte</h2>
+<p>To prevent random bit patterns from colliding with structural
+markers, the JPEG specification (ITU-T T.81 / ISO/IEC 10918-1) mandates
+byte stuffing inside the entropy-coded scan data.</p>
+<p>The mechanism operates through clear rules on both encoding and
+decoding:</p>
+<h3 id="encoder-behavior">Encoder Behavior</h3>
+<p>During the entropy-encoding phase, the encoder monitors the output
+stream byte-by-byte. If an emitted byte evaluates to <code>0xFF</code>,
+the encoder immediately inserts a stuffed null byte (<code>0x00</code>)
+into the stream before continuing with the rest of the compressed
+data.</p>
+<ul>
+<li><strong>Raw data output:</strong>
+<code>... 4A 7B FF 23 9C ...</code></li>
+<li><strong>Stuffed byte stream written to file:</strong>
+<code>... 4A 7B FF 00 23 9C ...</code></li>
+</ul>
+<h3 id="decoder-behavior">Decoder Behavior</h3>
+<p>When the JPEG decoder parses the entropy-coded stream:</p>
+<ul>
+<li>If it encounters an <code>0xFF</code> followed immediately by
+<code>0x00</code>, it recognizes this as a stuffed byte. The decoder
+discards the <code>0x00</code> byte entirely and treats the
+<code>0xFF</code> as literal data belonging to the compressed
+payload.</li>
+<li>If it encounters an <code>0xFF</code> followed by a
+<strong>non-zero</strong> byte, it recognizes an authentic JPEG marker.
+This could indicate a restart marker (<code>0xD0</code> through
+<code>0xD7</code>) used for error recovery, or the End of Image marker
+(<code>0xD9</code>), prompting the decoder to finish processing the
+scan.</li>
+</ul>
+<p>By reserving the sequence <code>0xFF 0x00</code> specifically to
+represent an escaped <code>0xFF</code> data byte, the JPEG standard
+ensures that arbitrary image data will never accidentally trigger
+decoder control mechanisms.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

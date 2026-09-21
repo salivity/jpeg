@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Uniform Scalar Quantization Causes Loss in JPEG - jpeg</title>
+    <meta name="description" content="Uniform scalar quantization is the primary source of permanent, irreversible data loss in the JPEG compression pipeline. While stages like the Discrete Cosine Transform (DCT) and Huffman coding are either mathematically reversible or completely lossless,">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-uniform-scalar-quantization-causes-loss-in-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Uniform Scalar Quantization Causes Loss in JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-uniform-scalar-quantization-causes-loss-in-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Uniform scalar quantization is the primary source of permanent, irreversible data loss in the JPEG compression pipeline. While stages like the Discrete Cosine Transform (DCT) and Huffman coding are either mathematically reversible or completely lossless," />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-uniform-scalar-quantization-causes-loss-in-jpeg">Why Uniform
+Scalar Quantization Causes Loss in JPEG</h1>
+<p>Uniform scalar quantization is the primary source of permanent,
+irreversible data loss in the JPEG compression pipeline. While stages
+like the Discrete Cosine Transform (DCT) and Huffman coding are either
+mathematically reversible or completely lossless, quantization
+intentionally discards visual data to achieve high compression ratios.
+It works by dividing frequency coefficients by predetermined step sizes
+and rounding the results to the nearest integer. Because multiple
+distinct input values collapse into a single discrete output value, the
+original numbers cannot be recovered during decompression, resulting in
+permanent data loss.</p>
+<h3 id="the-mechanism-of-uniform-scalar-quantization">The Mechanism of
+Uniform Scalar Quantization</h3>
+<p>After an image is divided into <span class="math inline">\(8 \times
+8\)</span> pixel blocks and converted into frequency space via the
+Discrete Cosine Transform (DCT), each block yields 64 DCT coefficients.
+These coefficients represent varying degrees of horizontal and vertical
+frequencies, ranging from the low-frequency DC component to
+high-frequency AC components.</p>
+<p>Quantization processes each coefficient independently using a uniform
+step size defined in a quantization matrix (<span
+class="math inline">\(Q\)</span>):</p>
+<p><span class="math display">\[\text{Quantized Value} =
+\text{round}\left(\frac{\text{DCT Coefficient}}{Q}\right)\]</span></p>
+<p>In this operation, the step size <span
+class="math inline">\(Q\)</span> remains constant for a specific
+frequency position across the block (uniform scalar), scaling the
+continuous or high-precision DCT values into a significantly smaller set
+of integers.</p>
+<h3 id="the-mathematics-of-irreversibility-many-to-one-mapping">The
+Mathematics of Irreversibility: Many-to-One Mapping</h3>
+<p>The core reason quantization causes irreversible loss lies in the
+rounding function, which creates a many-to-one mathematical mapping.</p>
+<p>When a DCT coefficient is divided by a quantization factor <span
+class="math inline">\(Q\)</span> and rounded to the nearest integer, an
+entire interval of real numbers maps to a single discrete integer. For
+example, if the quantization step <span class="math inline">\(Q\)</span>
+is 16, any DCT value between 40 and 55 will divide to a range between
+2.5 and 3.4375. Upon rounding, every value within this interval becomes
+the integer 3:</p>
+<ul>
+<li><span class="math inline">\(\text{round}(41 / 16) = 3\)</span></li>
+<li><span class="math inline">\(\text{round}(48 / 16) = 3\)</span></li>
+<li><span class="math inline">\(\text{round}(55 / 16) = 3\)</span></li>
+</ul>
+<p>During decompression, the decoder performs dequantization by
+multiplying the stored integer by the quantization step:</p>
+<p><span class="math display">\[\text{Reconstructed Value} = 3 \times 16
+= 48\]</span></p>
+<p>The decoder reconstructs 48 regardless of whether the original value
+was 41, 48, or 55. The exact original value is permanently lost, leaving
+behind a residual quantization error (<span class="math inline">\(e =
+\text{Original} - \text{Reconstructed}\)</span>) that cannot be
+corrected by any subsequent algorithm.</p>
+<h3 id="truncation-to-zero-and-frequency-erasure">Truncation to Zero and
+Frequency Erasure</h3>
+<p>Quantization matrices are designed around the human visual system,
+which is far less sensitive to high-frequency spatial details than to
+low-frequency luminance changes. Consequently, the quantization values
+for high-frequency coefficients are set substantially higher than those
+for low-frequency coefficients.</p>
+<p>When high-frequency coefficients—which often naturally possess small
+amplitudes—are divided by large quantization values, the result
+typically falls between <span class="math inline">\(-0.5\)</span> and
+<span class="math inline">\(0.5\)</span>. The rounding step
+systematically drives these values to zero. Once truncated to zero,
+subtle texture information, fine lines, and sharp color transitions are
+completely deleted from the bitstream. During decoding, these zeroed
+coefficients contribute nothing to the inverse DCT, permanently
+smoothing out fine image details.</p>
+<p>Because dequantization can only reconstruct a single midpoint value
+for each quantization bin, the true high-precision state of the image
+data cannot be mathematically inverted. This makes uniform scalar
+quantization the defining lossy step in JPEG compression.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of XMP Markers in JPEG XML Metadata - jpeg</title>
+    <meta name="description" content="This article examines how Extensible Metadata Platform (XMP) markers function within the JPEG file structure to safely store standardized XML metadata. It outlines the mechanics of JPEG segment architecture, details how XMP uses specific application mark">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/role-of-xmp-markers-in-jpeg-xml-metadata">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of XMP Markers in JPEG XML Metadata - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/role-of-xmp-markers-in-jpeg-xml-metadata" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how Extensible Metadata Platform (XMP) markers function within the JPEG file structure to safely store standardized XML metadata. It outlines the mechanics of JPEG segment architecture, details how XMP uses specific application mark" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="role-of-xmp-markers-in-jpeg-xml-metadata">Role of XMP Markers in
+JPEG XML Metadata</h1>
+<p>This article examines how Extensible Metadata Platform (XMP) markers
+function within the JPEG file structure to safely store standardized XML
+metadata. It outlines the mechanics of JPEG segment architecture,
+details how XMP uses specific application markers to store non-image
+information, and explains how software reads and handles large XML
+payloads without corrupting image rendering.</p>
+<h3 id="the-structure-of-jpeg-and-application-markers">The Structure of
+JPEG and Application Markers</h3>
+<p>JPEG files are organized into a sequential stream of chunks known as
+segments, each identified by a two-byte marker beginning with the byte
+<code>0xFF</code>. These markers dictate how an image decoder processes
+the file. While some markers dictate the start and end of image streams
+or define quantization tables, others are reserved for
+application-specific data.</p>
+<p>These application markers range from <code>APP0</code>
+(<code>0xFFE0</code>) through <code>APP15</code> (<code>0xFFEF</code>).
+Image decoders that do not recognize a particular application marker are
+designed to simply skip over its payload and continue reading the file,
+preventing the image from failing to render.</p>
+<h3 id="the-role-of-the-app1-marker-for-xmp">The Role of the APP1 Marker
+for XMP</h3>
+<p>XMP, developed by Adobe, relies on the <code>APP1</code>
+(<code>0xFFE1</code>) marker to embed its data. Although
+<code>APP1</code> is also used by Exif metadata, XMP identifies itself
+through a unique namespace header directly following the marker and the
+two-byte segment length field.</p>
+<p>The primary roles of the XMP marker setup include:</p>
+<ul>
+<li><strong>Signature Identification:</strong> Immediately following the
+segment length bytes, the file contains the null-terminated ASCII string
+<code>http://ns.adobe.com/xap/1.0/\0</code>. This namespace URI acts as
+an explicit signature, allowing parsers to distinguish an XMP
+<code>APP1</code> segment from an Exif <code>APP1</code> segment.</li>
+<li><strong>Encapsulation:</strong> The marker encapsulates the complete
+XML data packet (often enclosed in a
+<code>&lt;?xpacket begin...?&gt;</code> wrapper). This separates the
+metadata from the raw image raster data, ensuring backward compatibility
+with software that does not support XMP.</li>
+<li><strong>Parser Direction:</strong> When an image-processing tool
+encounters <code>0xFFE1</code> combined with the XMP namespace URI, it
+immediately directs the payload to an XML parser rather than an Exif
+decoder or an image decompression engine.</li>
+</ul>
+<h3 id="overcoming-the-64-kb-segment-limitation">Overcoming the 64 KB
+Segment Limitation</h3>
+<p>A single JPEG segment cannot exceed 65,535 bytes (64 KB) due to the
+two-byte segment length descriptor. Rich metadata—such as extensive
+editing histories, embedded presets, or digital rights management
+records—can easily exceed this capacity.</p>
+<p>To solve this, XMP defines an Extended XMP architecture:</p>
+<ol type="1">
+<li><strong>Standard XMP:</strong> A primary <code>APP1</code> segment
+holds essential properties and a GUID (a 128-bit MD5 digest) pointing to
+extended data.</li>
+<li><strong>Extended XMP Markers:</strong> Additional <code>APP1</code>
+segments are added with a distinct namespace:
+<code>http://ns.adobe.com/xmp/extension/\0</code>.</li>
+<li><strong>Reassembly:</strong> These extension markers include the
+GUID, the total length of the extended data, and the specific offset for
+that chunk. The parser reads these segments, validates the GUID, and
+reconstructs the full XML payload in memory.</li>
+</ol>
+<p>Through this marker system, JPEGs maintain universal display
+compatibility while acting as containers for structured, standardized
+XML data.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless JPEG Predictor Functions Explained - jpeg</title>
+    <meta name="description" content="The original JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) defines a fully lossless mode of operation based on Differential Pulse Code Modulation (DPCM) instead of the traditional Discrete Cosine Transform (DCT). In this lossless mode, the encoder predict">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/lossless-jpeg-predictor-functions-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossless JPEG Predictor Functions Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/lossless-jpeg-predictor-functions-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The original JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) defines a fully lossless mode of operation based on Differential Pulse Code Modulation (DPCM) instead of the traditional Discrete Cosine Transform (DCT). In this lossless mode, the encoder predict" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossless-jpeg-predictor-functions-explained">Lossless JPEG
+Predictor Functions Explained</h1>
+<p>The original JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) defines a
+fully lossless mode of operation based on Differential Pulse Code
+Modulation (DPCM) instead of the traditional Discrete Cosine Transform
+(DCT). In this lossless mode, the encoder predicts the value of each
+pixel using the values of up to three neighboring, previously
+reconstructed pixels, and then encodes only the difference (prediction
+error) using Huffman or arithmetic coding. The standard defines eight
+distinct predictor selection values—ranging from 0 to 7—giving encoders
+flexibility to optimize compression depending on image
+characteristics.</p>
+<h3 id="the-neighboring-sample-layout">The Neighboring Sample
+Layout</h3>
+<p>Predictors calculate the estimated value of the current sample,
+denoted as <span class="math inline">\(X\)</span>, using up to three
+neighboring reconstructed samples:</p>
+<ul>
+<li><strong><span class="math inline">\(A\)</span></strong>: The sample
+immediately to the left of <span class="math inline">\(X\)</span>.</li>
+<li><strong><span class="math inline">\(B\)</span></strong>: The sample
+immediately above <span class="math inline">\(X\)</span>.</li>
+<li><strong><span class="math inline">\(C\)</span></strong>: The sample
+diagonally above and to the left of <span
+class="math inline">\(X\)</span> (the sample immediately to the left of
+<span class="math inline">\(B\)</span>).</li>
+</ul>
+<h3 id="the-eight-predictor-functions">The Eight Predictor
+Functions</h3>
+<p>The JPEG specification designates the predictor via a 3-bit selection
+value (Ss) in the scan header:</p>
+<ul>
+<li><strong>Selection Value 0 (No Prediction):</strong> Differential
+coding is disabled. This mode is typically reserved for hierarchical
+progression and implies a prediction value of zero.</li>
+<li><strong>Selection Value 1 (Horizontal Predictor):</strong> <span
+class="math display">\[P_x = A\]</span> Predicts the current pixel using
+the neighbor directly to the left. This works best for images with
+strong horizontal correlation.</li>
+<li><strong>Selection Value 2 (Vertical Predictor):</strong> <span
+class="math display">\[P_x = B\]</span> Predicts the current pixel using
+the neighbor directly above. This is ideal for images with strong
+vertical correlation.</li>
+<li><strong>Selection Value 3 (Diagonal Predictor):</strong> <span
+class="math display">\[P_x = C\]</span> Predicts the current pixel using
+the neighbor diagonally above and to the left.</li>
+<li><strong>Selection Value 4 (Planar Predictor):</strong> <span
+class="math display">\[P_x = A + B - C\]</span> A two-dimensional linear
+extrapolation that assumes a planar surface across the local
+gradient.</li>
+<li><strong>Selection Value 5 (Horizontal + Diagonal
+Difference):</strong> <span class="math display">\[P_x = A + \lfloor (B
+- C) / 2 \rfloor\]</span> Adjusts the horizontal prediction (<span
+class="math inline">\(A\)</span>) based on the local vertical gradient
+between <span class="math inline">\(B\)</span> and <span
+class="math inline">\(C\)</span>.</li>
+<li><strong>Selection Value 6 (Vertical + Diagonal Difference):</strong>
+<span class="math display">\[P_x = B + \lfloor (A - C) / 2
+\rfloor\]</span> Adjusts the vertical prediction (<span
+class="math inline">\(B\)</span>) based on the local horizontal gradient
+between <span class="math inline">\(A\)</span> and <span
+class="math inline">\(C\)</span>.</li>
+<li><strong>Selection Value 7 (Average Predictor):</strong> <span
+class="math display">\[P_x = \lfloor (A + B) / 2 \rfloor\]</span> Uses
+the arithmetic mean of the horizontal and vertical neighbors, providing
+effective noise smoothing in uniform regions.</li>
+</ul>
+<h3 id="boundary-conditions">Boundary Conditions</h3>
+<p>For edges where neighboring pixels do not exist, the standard defines
+specific fallbacks. For the first pixel in an image, a fixed baseline
+value determined by the sample precision is used (e.g., <span
+class="math inline">\(2^{P-1}\)</span> where <span
+class="math inline">\(P\)</span> is precision). For the remainder of the
+first row, predictor 1 (<span class="math inline">\(A\)</span>) is
+enforced because samples <span class="math inline">\(B\)</span> and
+<span class="math inline">\(C\)</span> are unavailable. For the first
+column of subsequent rows, predictor 2 (<span
+class="math inline">\(B\)</span>) is enforced because samples <span
+class="math inline">\(A\)</span> and <span
+class="math inline">\(C\)</span> do not exist.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

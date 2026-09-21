@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MozJPEG Optimizes Progressive JPEG Headers - jpeg</title>
+    <meta name="description" content="Progressive JPEGs improve perceived loading times by rendering low-detail previews that sharpen as data streams in, but standard implementations often introduce substantial metadata bloat through repeated scan and Huffman headers. MozJPEG reduces this by">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-moz-jpeg-optimizes-progressive-jpeg-headers">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MozJPEG Optimizes Progressive JPEG Headers - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-moz-jpeg-optimizes-progressive-jpeg-headers" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Progressive JPEGs improve perceived loading times by rendering low-detail previews that sharpen as data streams in, but standard implementations often introduce substantial metadata bloat through repeated scan and Huffman headers. MozJPEG reduces this by" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-mozjpeg-optimizes-progressive-jpeg-headers">How MozJPEG
+Optimizes Progressive JPEG Headers</h1>
+<p>Progressive JPEGs improve perceived loading times by rendering
+low-detail previews that sharpen as data streams in, but standard
+implementations often introduce substantial metadata bloat through
+repeated scan and Huffman headers. MozJPEG reduces this byte overhead by
+deploying tailored scan scripts, consolidating spectral passes, and
+maximizing Huffman table reuse across passes. This article examines how
+MozJPEG restructures progressive scans to minimize the cumulative byte
+footprint of JPEG header markers without degrading decoding performance
+or visual quality.</p>
+<h3 id="the-source-of-progressive-header-bloat">The Source of
+Progressive Header Bloat</h3>
+<p>In a baseline JPEG, the image data is contained within a single scan
+preceded by a single Start of Scan (<code>SOS</code>) marker and a
+shared set of Define Huffman Table (<code>DHT</code>) markers.
+Progressive JPEGs, by contrast, split the image into multiple spectral
+and successive approximation passes (often 10 or more in standard
+<code>libjpeg</code> implementations).</p>
+<p>Each progressive pass requires its own <code>SOS</code> marker, which
+contains:</p>
+<ul>
+<li>The marker code (<code>0xFFDA</code>)</li>
+<li>Header length fields</li>
+<li>Component selectors (specifying luminance and chrominance
+associations)</li>
+<li>Entropy coding table selectors</li>
+<li>Spectral predictor boundaries (<span
+class="math inline">\(Ss\)</span> and <span
+class="math inline">\(Se\)</span>)</li>
+<li>Successive approximation bit positions (<span
+class="math inline">\(Ah\)</span> and <span
+class="math inline">\(Al\)</span>)</li>
+</ul>
+<p>If the encoder assigns custom entropy coding per pass, each scan can
+also introduce redundant <code>DHT</code> markers. Across numerous small
+scans, these repeated markers consume a disproportionate amount of
+data—frequently accounting for several kilobytes of purely structural
+overhead.</p>
+<h3 id="tailored-and-consolidated-scan-scripts">Tailored and
+Consolidated Scan Scripts</h3>
+<p>MozJPEG mitigates scan-related overhead by replacing
+<code>libjpeg</code>'s default progressive scripts with mathematically
+optimized scan configurations.</p>
+<p>Instead of arbitrarily splitting DC and AC coefficients into numerous
+micro-scans:</p>
+<ol type="1">
+<li><strong>Component Interleaving:</strong> MozJPEG selectively
+interleaves luminance and chrominance DC coefficients into a single
+unified initial scan, eliminating separate initial <code>SOS</code>
+headers for color channels.</li>
+<li><strong>Band Consolidation:</strong> High-frequency AC coefficients
+are grouped into broader spectral bands. While standard encoders might
+divide AC coefficients into three or four separate passes, MozJPEG
+balances visual delivery against header costs by condensing the
+remaining coefficients into fewer, denser scans.</li>
+<li><strong>Scan Count Reduction:</strong> By trimming the total number
+of scans from the standard 10 down to roughly 6 to 8 (depending on the
+preset and file dimensions), MozJPEG directly removes the 14-byte
+<code>SOS</code> segment and associated framing overhead for every
+eliminated pass.</li>
+</ol>
+<h3 id="global-huffman-table-optimization-and-reuse">Global Huffman
+Table Optimization and Reuse</h3>
+<p>Standard progressive encoders often emit distinct <code>DHT</code>
+segments before different scans if the coefficient distributions vary
+significantly between passes. MozJPEG circumvents this using two-pass
+statistical optimization:</p>
+<ul>
+<li><strong>Unified Frequency Gathering:</strong> MozJPEG tallies symbol
+frequencies across multiple scans simultaneously before finalizing
+entropy tables.</li>
+<li><strong>Shared DHT Placement:</strong> It computes optimal Huffman
+tables that cover the symbol distributions of multiple scans and emits
+them once in the main file header (following the Start of Frame, or
+<code>SOF</code> marker).</li>
+<li><strong>Elimination of Per-Scan DHT Markers:</strong> By ensuring
+subsequent scans reference these globally declared tables rather than
+introducing local adaptations, MozJPEG eliminates hundreds of bytes of
+redundant Huffman table declarations that typically precede individual
+<code>SOS</code> markers.</li>
+</ul>
+<h3 id="elimination-of-redundant-zero-scans">Elimination of Redundant
+Zero-Scans</h3>
+<p>When aggressive quantization or trellis quantization sets
+high-frequency coefficients to zero, standard progressive scripts may
+still write structural <code>SOS</code> headers for spectral bands that
+contain almost no entropy data. MozJPEG tracks non-zero coefficient
+distributions across the Discrete Cosine Transform (DCT) blocks. If a
+progressive band contains zero or negligible data across the entire
+image, the encoder dynamically omits the scan entirely, avoiding the
+generation of dead <code>SOS</code> marker overhead.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

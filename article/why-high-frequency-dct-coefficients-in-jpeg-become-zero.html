@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why High-Frequency DCT Coefficients in JPEG Become Zero - jpeg</title>
+    <meta name="description" content="High-frequency Discrete Cosine Transform (DCT) coefficients in a JPEG block are typically reduced to zero during the lossy quantization stage to maximize file compression while preserving perceived image quality. Because the human visual system is far le">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-high-frequency-dct-coefficients-in-jpeg-become-zero">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why High-Frequency DCT Coefficients in JPEG Become Zero - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-high-frequency-dct-coefficients-in-jpeg-become-zero" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="High-frequency Discrete Cosine Transform (DCT) coefficients in a JPEG block are typically reduced to zero during the lossy quantization stage to maximize file compression while preserving perceived image quality. Because the human visual system is far le" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-high-frequency-dct-coefficients-in-jpeg-become-zero">Why
+High-Frequency DCT Coefficients in JPEG Become Zero</h1>
+<p>High-frequency Discrete Cosine Transform (DCT) coefficients in a JPEG
+block are typically reduced to zero during the lossy quantization stage
+to maximize file compression while preserving perceived image quality.
+Because the human visual system is far less sensitive to fine, rapid
+changes in brightness and color than to broad visual structures, the
+JPEG standard exploits this biological limitation. By dividing
+high-frequency values by large divisors in a quantization matrix and
+rounding the results to the nearest integer, small values drop to zero,
+allowing subsequent entropy encoding algorithms to compress the data
+with high efficiency.</p>
+<h3 id="how-the-dct-organizes-frequency-data">How the DCT Organizes
+Frequency Data</h3>
+<p>When an image is compressed using JPEG, it is divided into 8x8 pixel
+blocks. The two-dimensional DCT converts these spatial pixel values into
+64 frequency coefficients:</p>
+<ul>
+<li><strong>The DC coefficient:</strong> Located at the top-left corner
+(position 0,0), this represents the average brightness or color of the
+entire 8x8 block.</li>
+<li><strong>Low-frequency AC coefficients:</strong> Located adjacent to
+the DC coefficient, these represent gradual transitions, broad shapes,
+and general shading.</li>
+<li><strong>High-frequency AC coefficients:</strong> Located toward the
+bottom-right of the matrix, these correspond to rapid visual changes,
+such as fine textures, sharp edges, and subtle noise.</li>
+</ul>
+<p>In natural photographs, most visual energy is concentrated in the DC
+and low-frequency components. As a result, the raw high-frequency
+coefficients calculated by the DCT are already relatively small in
+magnitude.</p>
+<h3 id="human-visual-perception">Human Visual Perception</h3>
+<p>The primary justification for discarding high-frequency information
+is the human contrast sensitivity function (CSF). The human eye acts as
+a spatial low-pass filter. People can easily detect broad luminance
+shifts and coarse outlines, but struggle to perceive high-frequency
+spatial patterns, especially at typical viewing distances. Consequently,
+subtle high-frequency details can be altered or removed entirely without
+the viewer noticing a degradation in image fidelity.</p>
+<h3 id="the-quantization-process">The Quantization Process</h3>
+<p>Quantization is the only stage in the JPEG pipeline that introduces
+loss. After the DCT calculates the frequency values, each coefficient is
+divided by a corresponding value from a predefined 8x8 quantization
+table and rounded to the nearest integer:</p>
+<p><span class="math display">\[\text{Quantized Value} =
+\text{round}\left(\frac{\text{DCT Coefficient}}{\text{Quantization
+Factor}}\right)\]</span></p>
+<p>Quantization matrices are specifically designed with asymmetric
+values:</p>
+<ol type="1">
+<li><strong>Low-frequency divisors</strong> are kept small (e.g., values
+between 1 and 16) to preserve essential structural details.</li>
+<li><strong>High-frequency divisors</strong> are significantly larger
+(often ranging from 50 to over 100).</li>
+</ol>
+<p>Because high-frequency DCT coefficients usually possess small initial
+amplitudes, dividing them by large quantization factors yields numbers
+between -0.5 and 0.5. When rounded to the nearest integer, these values
+become zero.</p>
+<h3 id="why-zeros-enable-extreme-compression">Why Zeros Enable Extreme
+Compression</h3>
+<p>Eliminating high-frequency coefficients directly translates into
+massive storage savings during the final encoding steps:</p>
+<ol type="1">
+<li><strong>Zig-Zag Ordering:</strong> JPEG reads the 8x8 quantized
+matrix in a zig-zag pattern, starting at the top-left (low frequencies)
+and ending at the bottom-right (high frequencies). This orders the
+coefficients from lowest to highest frequency, grouping all the
+generated zeros at the end of the sequence.</li>
+<li><strong>Run-Length Encoding (RLE):</strong> Instead of storing each
+individual zero, RLE encodes continuous sequences of zeros as a count. A
+long streak of consecutive zeros requires only a few bits to
+represent.</li>
+<li><strong>End-of-Block (EOB) Marker:</strong> Once the last non-zero
+coefficient in the zig-zag scan is processed, an End-of-Block symbol is
+emitted, completely skipping any remaining zeros in the block.</li>
+</ol>
+<p>By strategically forcing high-frequency coefficients to zero, JPEG
+converts dozens of redundant values in each 8x8 block into a single
+terminating code, dramatically decreasing the overall file size.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

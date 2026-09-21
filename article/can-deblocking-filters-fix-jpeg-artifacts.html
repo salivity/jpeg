@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Deblocking Filters Fix JPEG Artifacts? - jpeg</title>
+    <meta name="description" content="JPEG compression artifacts cannot be mathematically reversed because the compression process permanently discards image data; however, post-processing deblocking filters can significantly reduce the visibility of these flaws. While a filter cannot recove">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/can-deblocking-filters-fix-jpeg-artifacts">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Deblocking Filters Fix JPEG Artifacts? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/can-deblocking-filters-fix-jpeg-artifacts" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG compression artifacts cannot be mathematically reversed because the compression process permanently discards image data; however, post-processing deblocking filters can significantly reduce the visibility of these flaws. While a filter cannot recove" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-deblocking-filters-fix-jpeg-artifacts">Can Deblocking
+Filters Fix JPEG Artifacts?</h1>
+<p>JPEG compression artifacts cannot be mathematically reversed because
+the compression process permanently discards image data; however,
+post-processing deblocking filters can significantly reduce the
+visibility of these flaws. While a filter cannot recover the exact
+original pixel values, it can smooth abrupt block boundaries and
+diminish ringing effects to make the image appear cleaner. This article
+examines how deblocking filters operate, the fundamental limits of
+reversing lossy compression, and how modern post-processing techniques
+approach the restoration of compressed images.</p>
+<h3 id="why-jpeg-artifacts-occur">Why JPEG Artifacts Occur</h3>
+<p>JPEG compression relies on the Discrete Cosine Transform (DCT)
+applied to discrete <span class="math inline">\(8\times8\)</span> pixel
+blocks. During compression, a quantization matrix reduces the precision
+of high-frequency data within each block, as human vision is less
+sensitive to fine textural variations. When compression is aggressive,
+two main artifacts emerge:</p>
+<ol type="1">
+<li><strong>Blocking Artifacts:</strong> Because each <span
+class="math inline">\(8\times8\)</span> block is quantized
+independently, the values along the outer edges of adjacent blocks no
+longer align smoothly, creating a visible, artificial grid across the
+image.</li>
+<li><strong>Ringing Artifacts:</strong> The loss of high-frequency
+components causes oscillations near high-contrast edges, creating
+halo-like distortions.</li>
+</ol>
+<p>Because the quantization step rounds off mathematical values to zero
+or smaller integers, the original high-frequency details are permanently
+destroyed during encoding.</p>
+<h3 id="how-deblocking-filters-work">How Deblocking Filters Work</h3>
+<p>Deblocking filters operate directly on the decoded image in the
+spatial domain to hide compression boundaries. Their primary function is
+to target the periodic <span class="math inline">\(8\times8\)</span>
+grid transitions without softening real edges in the image content.</p>
+<ul>
+<li><strong>Boundary Detection:</strong> The filter analyzes pixel
+gradients across the known grid lines (every 8th pixel horizontally and
+vertically).</li>
+<li><strong>Thresholding:</strong> The algorithm evaluates whether the
+difference across the boundary is an artifact or a legitimate feature of
+the image. If the gradient is below a calculated threshold, it is
+treated as a compression artifact. If the change is sharp and
+pronounced, the filter preserves it as a natural edge.</li>
+<li><strong>Adaptive Smoothing:</strong> Once identified, an
+interpolation or low-pass filter is applied across the boundary to blend
+the adjacent blocks, replacing the sharp jump with a smooth
+gradient.</li>
+</ul>
+<h3 id="concealment-versus-true-reversal">Concealment Versus True
+Reversal</h3>
+<p>Deblocking filters do not reverse JPEG compression; they conceal it.
+True reversal requires exact reconstruction of the original uncompressed
+data, which is an ill-posed inverse problem.</p>
+<p>Applying a traditional deblocking filter trades one visual defect for
+another: high-frequency block noise is exchanged for low-pass blurring.
+While the resulting image is often more visually pleasing and less
+distracting to the human eye, the image technically contains even less
+of the original high-frequency information than the compressed file
+did.</p>
+<h3 id="modern-alternatives-ai-and-neural-networks">Modern Alternatives:
+AI and Neural Networks</h3>
+<p>Traditional deblocking filters, such as those adapted from video
+codecs like H.264/AVC, rely on fixed mathematical heuristics. In
+contrast, modern post-processing utilizes deep learning, such as
+Convolutional Neural Networks (CNNs) and Generative Adversarial Networks
+(GANs).</p>
+<p>Rather than merely blurring block boundaries, deep learning models
+are trained on pairs of uncompressed and heavily compressed images.
+These networks learn the statistical likelihood of real-world textures
+and "hallucinate" plausible high-frequency details to replace what was
+lost. While this is still an estimation rather than a true reversal of
+the original pixel data, it produces results that closely approximate an
+uncompressed source without the typical softness associated with
+standard deblocking filters.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

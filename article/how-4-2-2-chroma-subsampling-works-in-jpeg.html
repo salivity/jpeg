@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How 4:2:2 Chroma Subsampling Works in JPEG - jpeg</title>
+    <meta name="description" content="Chroma subsampling is a foundational data-reduction technique used in the JPEG compression pipeline that capitalizes on the human eye’s higher sensitivity to luminance (brightness) than to chrominance (color). In a 4:2:2 subsampling scheme, color resol">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-4-2-2-chroma-subsampling-works-in-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How 4:2:2 Chroma Subsampling Works in JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-4-2-2-chroma-subsampling-works-in-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Chroma subsampling is a foundational data-reduction technique used in the JPEG compression pipeline that capitalizes on the human eye’s higher sensitivity to luminance (brightness) than to chrominance (color). In a 4:2:2 subsampling scheme, color resol" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-422-chroma-subsampling-works-in-jpeg">How 4:2:2 Chroma
+Subsampling Works in JPEG</h1>
+<p>Chroma subsampling is a foundational data-reduction technique used in
+the JPEG compression pipeline that capitalizes on the human eye’s higher
+sensitivity to luminance (brightness) than to chrominance (color). In a
+4:2:2 subsampling scheme, color resolution is halved horizontally while
+maintaining full vertical resolution and complete brightness detail.
+This article details the operational mechanics of 4:2:2 subsampling
+within JPEG compression, tracking how an image transitions from RGB
+pixels to a downsampled, quantized, and efficiently encoded final
+file.</p>
+<h3 id="1-color-space-conversion-rgb-to-ycbcr">1. Color Space Conversion
+(RGB to YCbCr)</h3>
+<p>The JPEG compression process begins by converting an image from the
+standard RGB color model into the YCbCr color space:</p>
+<ul>
+<li><strong>Y (Luminance):</strong> Represents the grayscale brightness
+information.</li>
+<li><strong>Cb (Chroma Blue):</strong> Represents the blue-difference
+color component.</li>
+<li><strong>Cr (Chroma Red):</strong> Represents the red-difference
+color component.</li>
+</ul>
+<p>Because the human visual system contains significantly more rod cells
+(sensitive to light intensity) than cone cells (sensitive to color), the
+Y channel must be preserved with maximum fidelity. Separating color from
+brightness allows the compression algorithm to discard redundant color
+data without noticeably degrading visual quality.</p>
+<h3 id="2-the-422-subsampling-mechanism">2. The 4:2:2 Subsampling
+Mechanism</h3>
+<p>Once converted to YCbCr, the chroma channels (Cb and Cr) undergo
+subsampling based on a standardized 4-pixel-wide by 2-pixel-tall sample
+grid:</p>
+<ul>
+<li><strong>4 (First digit):</strong> The horizontal reference width of
+the sample block (4 pixels).</li>
+<li><strong>2 (Second digit):</strong> The number of chrominance samples
+taken from the top row of 4 pixels.</li>
+<li><strong>2 (Third digit):</strong> The number of chrominance samples
+taken from the bottom row of 4 pixels.</li>
+</ul>
+<p>In practice, this means adjacent horizontal pairs of pixels share the
+exact same Cb and Cr values, while each pixel retains its own unique Y
+value. Horizontally, color resolution is reduced by 50%, but vertically,
+it remains 100% intact. Compared to uncompressed 4:4:4 data (which
+retains full resolution for all channels), 4:2:2 subsampling immediately
+reduces the uncompressed raw data volume of the color channels by
+one-third before any mathematical compression occurs.</p>
+<h3 id="3-block-formation-and-the-discrete-cosine-transform-dct">3.
+Block Formation and the Discrete Cosine Transform (DCT)</h3>
+<p>JPEG processes image data in 8x8 pixel blocks:</p>
+<ul>
+<li><strong>Luma (Y):</strong> Because luminance is not downsampled, an
+8x8 area of the original image maps directly to an 8x8 luma data
+block.</li>
+<li><strong>Chroma (Cb and Cr):</strong> Because horizontal resolution
+is halved, an 8x8 block of subsampled chroma data actually covers a
+16-pixel-wide by 8-pixel-tall area of the original image.</li>
+</ul>
+<p>These blocks are organized into Minimum Coded Units (MCUs). In a
+4:2:2 configuration, an MCU consists of four 8x8 blocks: two horizontal
+Y blocks, one Cb block, and one Cr block (representing a 16x8 pixel
+window of the original image). Each 8x8 block is subsequently
+transformed into frequency space using the 2D Discrete Cosine Transform
+(DCT), which separates low-frequency visual structures from
+high-frequency fine details.</p>
+<h3 id="4-quantization-and-entropy-coding">4. Quantization and Entropy
+Coding</h3>
+<p>Following the DCT, the frequency coefficients are quantized:</p>
+<ul>
+<li>High-frequency values, representing subtle variations imperceptible
+to the human eye, are divided by quantization table values and rounded
+to zero.</li>
+<li>Because chroma data is already downsampled, JPEG uses dedicated,
+more aggressive quantization tables for Cb and Cr channels compared to
+the luma channel.</li>
+</ul>
+<p>Finally, the remaining non-zero coefficients are arranged in a
+zig-zag order and compressed using lossless entropy coding (typically
+Huffman coding or arithmetic coding). The resulting bitstream is written
+into the JPEG file format alongside the sampling headers that instruct
+decoders how to reconstruct the image.</p>
+<h3 id="decoding-and-visual-impact">Decoding and Visual Impact</h3>
+<p>During decompression, the JPEG decoder reverses the process. It
+decodes the bitstream, dequantizes the data, runs an Inverse DCT (IDCT),
+and upsamples the 4:2:2 Cb and Cr channels back to full resolution by
+interpolating color values across adjacent horizontal pixels.</p>
+<p>While 4:2:0 subsampling (halving both horizontal and vertical color
+resolution) is the default for general web imagery and consumer digital
+photography, 4:2:2 provides a higher-fidelity compromise. It preserves
+sharper horizontal color boundaries and text legibility while still
+delivering substantial bandwidth and storage savings.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

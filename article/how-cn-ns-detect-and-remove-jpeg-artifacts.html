@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How CNNs Detect and Remove JPEG Artifacts - jpeg</title>
+    <meta name="description" content="Modern convolutional neural networks (CNNs) detect and eliminate JPEG compression artifacts by learning complex mappings between compressed, low-quality images and their uncompressed counterparts. By combining hierarchical spatial convolutions, dual-doma">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-cn-ns-detect-and-remove-jpeg-artifacts">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How CNNs Detect and Remove JPEG Artifacts - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-cn-ns-detect-and-remove-jpeg-artifacts" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern convolutional neural networks (CNNs) detect and eliminate JPEG compression artifacts by learning complex mappings between compressed, low-quality images and their uncompressed counterparts. By combining hierarchical spatial convolutions, dual-doma" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-cnns-detect-and-remove-jpeg-artifacts">How CNNs Detect and
+Remove JPEG Artifacts</h1>
+<p>Modern convolutional neural networks (CNNs) detect and eliminate JPEG
+compression artifacts by learning complex mappings between compressed,
+low-quality images and their uncompressed counterparts. By combining
+hierarchical spatial convolutions, dual-domain processing, and residual
+learning, these networks identify structural distortions—such as
+blocking and ringing—and reconstruct missing high-frequency details.
+This article explains the architectural mechanisms, domain-specific
+strategies, and training methodologies modern deep learning models use
+to restore compressed imagery.</p>
+<h3 id="the-mechanics-of-jpeg-compression-artifacts">The Mechanics of
+JPEG Compression Artifacts</h3>
+<p>JPEG compression reduces file size using a lossy algorithm centered
+on the Discrete Cosine Transform (DCT). The image is divided into <span
+class="math inline">\(8 \times 8\)</span> pixel blocks, transformed into
+frequency space, and quantized. Quantization aggressively discards
+high-frequency details, causing distinct visual flaws:</p>
+<ul>
+<li><strong>Blocking Artifacts:</strong> Discontinuities along the
+boundaries of the <span class="math inline">\(8 \times 8\)</span> grid
+caused by independent block processing.</li>
+<li><strong>Ringing Artifacts:</strong> Halos or ghosting around
+high-contrast edges caused by the loss of high-frequency components
+(Gibbs phenomenon).</li>
+<li><strong>Blurring:</strong> Loss of fine texture and sharpness
+resulting from zeroed-out high-frequency coefficients.</li>
+</ul>
+<h3
+id="hierarchical-feature-extraction-and-artifact-detection">Hierarchical
+Feature Extraction and Artifact Detection</h3>
+<p>CNNs process images through stacked convolutional layers that capture
+spatial features at various scales:</p>
+<ol type="1">
+<li><strong>Shallow Layers:</strong> Initial layers use small receptive
+fields to detect local pixel inconsistencies. They identify the
+unnatural, sharp gradient transitions typical of block boundaries and
+the faint oscillations of ringing artifacts around sharp edges.</li>
+<li><strong>Deep Layers:</strong> Deeper layers expand the receptive
+field to analyze broader semantic context. This context allows the
+network to differentiate between legitimate high-frequency textures
+(such as animal fur or fabric weave) and synthetic compression
+noise.</li>
+</ol>
+<h3 id="residual-learning-architecture">Residual Learning
+Architecture</h3>
+<p>Traditional image restoration architectures attempted to map a
+compressed image directly to a clean image. Modern networks, such as
+DnCNN (Denoising Convolutional Neural Network), instead use deep
+residual learning.</p>
+<p>Rather than generating an entirely new image, the network predicts
+the residual image—the difference between the clean original and the
+compressed input. Because the compression noise represents a smaller,
+sparser distribution than the underlying image data, training the
+network to isolate and subtract this noise significantly speeds up
+convergence and improves reconstruction stability. Skip connections
+allow low-level identity features to bypass intermediate layers,
+ensuring that uncorrupted structural details remain untouched.</p>
+<h3 id="dual-domain-processing">Dual-Domain Processing</h3>
+<p>While early artifact-reduction CNNs operated exclusively in the
+spatial domain (RGB or YCbCr pixel space), modern state-of-the-art
+networks leverage dual-domain processing.</p>
+<p>These networks incorporate both the spatial domain and the DCT
+frequency domain:</p>
+<ul>
+<li><strong>Frequency-Domain Branches:</strong> Ingest the raw quantized
+DCT coefficients directly. Because JPEG artifacts originate from
+specific quantization matrices applied to frequency bins, processing the
+DCT coefficients allows the network to invert the quantization error
+mathematically.</li>
+<li><strong>Spatial-Domain Branches:</strong> Enforce visual
+consistency, edge smoothness, and color accuracy across pixel
+neighborhoods.</li>
+</ul>
+<p>By fusing features from both domains, the network eliminates grid
+boundaries without smoothing over genuine edge details.</p>
+<h3 id="perceptual-and-adversarial-loss-functions">Perceptual and
+Adversarial Loss Functions</h3>
+<p>Early restoration models relied solely on pixel-wise loss functions,
+such as Mean Squared Error (MSE) or L1 loss. While MSE achieves high
+Peak Signal-to-Noise Ratio (PSNR) values, it tends to average out
+potential pixel values, producing overly smoothed, plastic-looking
+surfaces.</p>
+<p>Modern pipelines incorporate advanced objective functions to yield
+visually authentic results:</p>
+<ul>
+<li><strong>Perceptual Loss:</strong> Evaluates feature differences
+extracted from intermediate layers of a pre-trained network (such as
+VGG-19), forcing the reconstruction to match high-level visual features
+rather than exact pixel values.</li>
+<li><strong>Adversarial Loss (GANs):</strong> Pairs the restoration
+network with a discriminator trained to differentiate between real,
+uncompressed images and restored images. This competition pushes the
+network to synthesize realistic micro-textures rather than simply
+blurring compression noise.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

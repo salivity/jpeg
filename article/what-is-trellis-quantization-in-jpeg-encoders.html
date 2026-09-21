@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is Trellis Quantization in JPEG Encoders? - jpeg</title>
+    <meta name="description" content="Trellis quantization is an advanced optimization technique used in image and video compression that frames the coefficient quantization process as a graph-search problem to optimize the trade-off between file size and image fidelity. In standard JPEG enc">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-is-trellis-quantization-in-jpeg-encoders">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is Trellis Quantization in JPEG Encoders? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-is-trellis-quantization-in-jpeg-encoders" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Trellis quantization is an advanced optimization technique used in image and video compression that frames the coefficient quantization process as a graph-search problem to optimize the trade-off between file size and image fidelity. In standard JPEG enc" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-trellis-quantization-in-jpeg-encoders">What Is Trellis
+Quantization in JPEG Encoders?</h1>
+<p>Trellis quantization is an advanced optimization technique used in
+image and video compression that frames the coefficient quantization
+process as a graph-search problem to optimize the trade-off between file
+size and image fidelity. In standard JPEG encoders, discrete cosine
+transform (DCT) coefficients are quantized independently via simple
+rounding, which ignores the bit cost of entropy coding. Trellis
+quantization solves this by applying the Viterbi algorithm to jointly
+evaluate distortion and bitrate across entire 8x8 DCT blocks,
+significantly improving rate-distortion performance without violating
+standard JPEG decoding specifications.</p>
+<h3 id="the-limitation-of-standard-quantization">The Limitation of
+Standard Quantization</h3>
+<p>Baseline JPEG compression divides an image into 8x8 pixel blocks,
+transforms each block using the Discrete Cosine Transform (DCT), and
+divides the resulting frequency coefficients by values from a
+quantization table.</p>
+<p>In conventional encoders (like standard <code>libjpeg</code>), each
+coefficient is quantized independently using standard scalar rounding to
+the nearest integer:</p>
+<p><span class="math display">\[\text{Quantized Value} =
+\text{round}\left(\frac{\text{DCT Coefficient}}{\text{Quantization
+Step}}\right)\]</span></p>
+<p>While this approach minimizes local mathematical distortion (squared
+error) for that specific coefficient, it operates in isolation. It
+ignores two critical factors:</p>
+<ol type="1">
+<li>The entropy coding mechanism (Huffman coding) that encodes the
+quantized coefficients using run-length pairs (run of zeros followed by
+coefficient size).</li>
+<li>The global balance between the visual cost of modifying a
+coefficient and the actual bit-rate cost required to store it.</li>
+</ol>
+<h3 id="how-trellis-quantization-operates">How Trellis Quantization
+Operates</h3>
+<p>Trellis quantization approaches coefficient selection through
+rate-distortion optimization (RDO). Instead of restricting each
+coefficient to its nearest integer, the encoder treats each quantized
+coefficient as a choice among several candidate values (typically the
+nearest integer <span class="math inline">\(k\)</span>, rounded down
+<span class="math inline">\(k-1\)</span>, or zero).</p>
+<p>The encoder models the sequence of 64 zig-zag ordered coefficients in
+a block as a state trellis—a directed acyclic graph where:</p>
+<ul>
+<li><strong>Nodes (States):</strong> Represent the run-length state of
+preceding zero coefficients.</li>
+<li><strong>Transitions (Branches):</strong> Represent assigning a
+specific quantized level to a coefficient.</li>
+<li><strong>Path Cost:</strong> Defined by the Lagrangian cost function
+<span class="math inline">\(J = D + \lambda R\)</span>.</li>
+</ul>
+<p>In this cost function:</p>
+<ul>
+<li><span class="math inline">\(D\)</span> represents the distortion
+(the difference between the original DCT coefficient and the
+reconstructed coefficient).</li>
+<li><span class="math inline">\(R\)</span> represents the rate (the
+exact number of bits required by the Huffman table to code that
+coefficient and any preceding zeros).</li>
+<li><span class="math inline">\(\lambda\)</span> (lambda) is the
+Lagrange multiplier, which defines the target trade-off between file
+size and quality.</li>
+</ul>
+<p>Using the Viterbi algorithm—a dynamic programming approach—the
+encoder traverses the trellis to find the sequence of coefficients that
+yields the lowest total cost <span class="math inline">\(J\)</span> for
+the entire block.</p>
+<h3 id="mechanisms-for-improving-rate-distortion-performance">Mechanisms
+for Improving Rate-Distortion Performance</h3>
+<p>Trellis quantization achieves superior compression through three
+primary mechanisms:</p>
+<ol type="1">
+<li><p><strong>Strategic Zero-Dropping:</strong> In JPEG, isolated
+non-zero coefficients separated by long runs of zeros are expensive to
+code because they require both run-length markers and amplitude bits.
+Trellis quantization can identify when the bit cost of signaling a small
+high-frequency coefficient exceeds its perceptual benefit, choosing to
+zero it out instead.</p></li>
+<li><p><strong>Optimal End-of-Block (EOB) Placement:</strong> JPEG uses
+an End-of-Block marker to terminate an 8x8 block once all remaining
+coefficients are zero. Trellis quantization can drop trailing
+low-magnitude coefficients early if the distortion introduced is
+outweighed by the bits saved from writing an earlier EOB
+marker.</p></li>
+<li><p><strong>Bit-Aware Amplitude Selection:</strong> Huffman coding
+groups coefficient magnitudes into logarithmic size categories. A
+coefficient value of 8 requires more bits to store than a value of 7. If
+dropping a coefficient from 8 to 7 introduces negligible distortion but
+moves it into a cheaper Huffman code category, trellis quantization will
+favor the smaller value.</p></li>
+</ol>
+<h3 id="real-world-benefits-and-trade-offs">Real-World Benefits and
+Trade-offs</h3>
+<ul>
+<li><strong>Decoder Compatibility:</strong> Trellis quantization
+produces completely standard-compliant JPEG bitstreams. Any standard
+JPEG viewer or decoder can read the output, as all optimization occurs
+purely on the encoder side.</li>
+<li><strong>Bitrate Savings:</strong> Modern encoders like MozJPEG
+utilize trellis quantization to achieve 10% to 15% reductions in file
+size compared to baseline JPEG encoders at equivalent structural
+similarity (SSIM) or peak signal-to-noise ratio (PSNR).</li>
+<li><strong>Computational Cost:</strong> The primary drawback is
+encoding complexity. Evaluating multiple candidate states via dynamic
+programming requires substantially more CPU cycles and memory bandwidth
+during compression, though decompression speed remains completely
+unaffected.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

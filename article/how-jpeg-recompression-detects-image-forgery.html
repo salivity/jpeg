@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How JPEG Recompression Detects Image Forgery - jpeg</title>
+    <meta name="description" content="JPEG recompression detection is a core digital forensics technique used to uncover spliced or altered photos by analyzing mathematical inconsistencies left behind during the saving process. When an image is manipulated—such as pasting an object from on">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpeg-recompression-detects-image-forgery">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How JPEG Recompression Detects Image Forgery - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpeg-recompression-detects-image-forgery" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG recompression detection is a core digital forensics technique used to uncover spliced or altered photos by analyzing mathematical inconsistencies left behind during the saving process. When an image is manipulated—such as pasting an object from on" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpeg-recompression-detects-image-forgery">How JPEG
+Recompression Detects Image Forgery</h1>
+<p>JPEG recompression detection is a core digital forensics technique
+used to uncover spliced or altered photos by analyzing mathematical
+inconsistencies left behind during the saving process. When an image is
+manipulated—such as pasting an object from one photo into another—and
+re-saved, the modified regions often retain distinct compression
+histories compared to the untampered areas. This article explains how
+the JPEG compression process works, how forensic tools detect double
+compression and grid misalignments, and how these artifacts expose
+photographic forgery.</p>
+<h3 id="the-mechanics-of-jpeg-compression">The Mechanics of JPEG
+Compression</h3>
+<p>To understand recompression detection, it is essential to look at
+standard JPEG encoding. When a camera or software saves a file as a
+JPEG, it performs three key steps:</p>
+<ol type="1">
+<li><strong>Block Division:</strong> The image is split into regular
+grids of 8x8 pixels.</li>
+<li><strong>Discrete Cosine Transform (DCT):</strong> Each 8x8 block is
+converted from spatial pixel values into frequency domain
+coefficients.</li>
+<li><strong>Quantization:</strong> High-frequency visual details are
+discarded using a specific quantization table, which determines the
+file's compression level and visual quality.</li>
+</ol>
+<p>Quantization is a lossy process. Once these high-frequency values are
+divided and rounded to integers, the original data cannot be perfectly
+restored.</p>
+<h3 id="how-splicing-creates-compression-inconsistencies">How Splicing
+Creates Compression Inconsistencies</h3>
+<p>Image splicing occurs when an element from a donor image is pasted
+into a host image. When the final composite is saved as a new JPEG, it
+undergoes recompression. This creates two detectable forensic anomalies:
+double quantization effects and block grid misalignment.</p>
+<h4 id="1-double-quantization-dq-artifacts">1. Double Quantization (DQ)
+Artifacts</h4>
+<p>If an image is compressed once at quality level <span
+class="math inline">\(Q_1\)</span> and later re-saved at quality level
+<span class="math inline">\(Q_2\)</span>, the DCT coefficients undergo
+double quantization. This creates periodic peaks and valleys in the
+histogram of the DCT coefficients—patterns that never occur in an
+authentic, singly compressed image.</p>
+<p>In a spliced photo, the background might experience uniform double
+compression, while a newly drawn or uncompressed object only experiences
+single compression. Conversely, if a pre-compressed donor patch is
+pasted into a raw image, only the spliced region will exhibit double
+compression artifacts. Forensic software identifies these localized
+statistical differences to map out forged areas.</p>
+<h4 id="2-grid-misalignment">2. Grid Misalignment</h4>
+<p>Because JPEG operates on rigid 8x8 pixel grids, splicing an object
+from one image to another almost always disrupts this geometry. Unless
+the perpetrator precisely aligns the pasted object to match the exact
+8x8 block boundaries of the host canvas, the spliced patch will have its
+original 8x8 grid shifted relative to the rest of the image.</p>
+<p>Forensic algorithms detect these mismatched block boundary artifacts,
+pinpointing spliced borders even if the visual seams have been feathered
+or smoothed using photo editing software.</p>
+<h4 id="3-ghost-artifacts">3. Ghost Artifacts</h4>
+<p>When an image is recompressed at a lower quality than its original
+state, the error introduced between the successive compressions reaches
+a measurable minimum when tested against the original compression
+parameters. Forensic tools can test an image against multiple quality
+factors to reveal "JPEG ghosts"—shadowy visual footprints that highlight
+regions with differing compression histories.</p>
+<h3 id="practical-application-and-limitations">Practical Application and
+Limitations</h3>
+<p>JPEG recompression analysis is non-destructive and operates on the
+underlying data rather than visual plausibility. It effectively uncovers
+edits that are invisible to the naked eye.</p>
+<p>However, the technique has operational boundaries:</p>
+<ul>
+<li><strong>Multiple Global Saves:</strong> Repeatedly re-saving the
+entire image at low quality can eventually overwrite and homogenize
+local forensic traces.</li>
+<li><strong>Anti-Forensic Techniques:</strong> Deliberate noise
+injection or severe post-processing, such as aggressive blurring, can
+obscure coefficient distributions.</li>
+</ul>
+<p>Despite these limitations, JPEG recompression detection remains one
+of the most reliable and mathematically grounded methods for validating
+digital media authenticity.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

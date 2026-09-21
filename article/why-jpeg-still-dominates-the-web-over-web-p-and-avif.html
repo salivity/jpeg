@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Still Dominates the Web Over WebP and AVIF - jpeg</title>
+    <meta name="description" content="Despite the technological superiority of modern image formats like WebP and AVIF, the traditional JPEG format continues to command the majority of the web. This article examines why JPEG remains dominant, exploring the critical roles of universal backwar">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-still-dominates-the-web-over-web-p-and-avif">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Still Dominates the Web Over WebP and AVIF - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-still-dominates-the-web-over-web-p-and-avif" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Despite the technological superiority of modern image formats like WebP and AVIF, the traditional JPEG format continues to command the majority of the web. This article examines why JPEG remains dominant, exploring the critical roles of universal backwar" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-still-dominates-the-web-over-webp-and-avif">Why JPEG
+Still Dominates the Web Over WebP and AVIF</h1>
+<p>Despite the technological superiority of modern image formats like
+WebP and AVIF, the traditional JPEG format continues to command the
+majority of the web. This article examines why JPEG remains dominant,
+exploring the critical roles of universal backward compatibility,
+ubiquitous hardware acceleration, entrenched digital workflows, and the
+diminishing returns of newer compression algorithms for standard web
+publishing.</p>
+<h3 id="universal-compatibility-across-all-platforms">Universal
+Compatibility Across All Platforms</h3>
+<p>JPEG boasts complete, unconditional support across every device,
+operating system, and software client manufactured over the last three
+decades. While modern browsers like Chrome, Firefox, and Safari support
+WebP and AVIF, the web does not exist solely inside up-to-date desktop
+browsers.</p>
+<p>Web content is regularly parsed by legacy software, smart TVs,
+embedded web views, native mobile applications, RSS readers, and older
+email clients (such as desktop Microsoft Outlook). AVIF and WebP often
+fail to render or require complex fallback configurations in these
+environments. JPEG requires no fallbacks, content negotiation, or
+polyfills, guaranteeing that an image will display properly regardless
+of the viewer's technical setup.</p>
+<h3 id="hardware-acceleration-and-low-resource-overhead">Hardware
+Acceleration and Low Resource Overhead</h3>
+<p>Decades of engineering have cemented JPEG decoding directly into
+silicon. Virtually every central processing unit (CPU), graphics
+processing unit (GPU), and mobile system-on-a-chip (SoC) contains
+dedicated hardware blocks designed to encode and decode JPEG streams
+almost instantaneously with minimal power consumption.</p>
+<p>In contrast, AVIF relies on the complex AV1 video codec. Decoding
+AVIF images on older or budget devices without dedicated AV1 hardware
+decoders relies on software rendering, which spikes CPU usage and drains
+battery life. For high-traffic platforms delivering millions of images
+per second, the low computational overhead of serving and rendering
+JPEGs remains a distinct advantage.</p>
+<h3 id="entrenched-creation-and-publishing-pipelines">Entrenched
+Creation and Publishing Pipelines</h3>
+<p>The global image pipeline is built natively around JPEG. Digital
+cameras, smartphones, scanners, and imaging peripherals default to JPEG
+capture. Professional creative suites, stock photography marketplaces,
+and content management systems (CMS) have optimized their asset handling
+pipelines for the format over decades.</p>
+<p>Transitioning entirely to WebP or AVIF requires re-architecting
+publishing workflows. Content delivery networks (CDNs) and hosting
+providers often charge extra for on-the-fly image conversion services.
+Storing multiple versions of each asset—such as generating AVIF with
+WebP and JPEG fallbacks—triples the storage requirements and complicates
+database management.</p>
+<h3 id="the-good-enough-threshold-and-advanced-encoders">The "Good
+Enough" Threshold and Advanced Encoders</h3>
+<p>Modern JPEG encoders, most notably MozJPEG, have significantly
+narrowed the efficiency gap between legacy JPEG and newer formats. By
+employing advanced trellis quantization and progressive scans, optimized
+JPEGs can achieve file sizes small enough to satisfy standard web
+performance metrics without perceptible visual degradation.</p>
+<p>For most website operators, the bandwidth savings achieved by
+switching to AVIF or WebP do not offset the added development complexity
+and engineering overhead. JPEG remains dominant because it is
+exceptionally reliable, computationally inexpensive, and sufficiently
+performant for the vast majority of web use cases.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

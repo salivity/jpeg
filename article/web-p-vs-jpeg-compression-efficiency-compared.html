@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs JPEG Compression Efficiency Compared - jpeg</title>
+    <meta name="description" content="Google developed the WebP format to optimize web performance by reducing image file sizes while preserving visual quality. Compared to traditional JPEG, WebP consistently delivers superior compression efficiency, producing files that are 25% to 34% small">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/web-p-vs-jpeg-compression-efficiency-compared">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs JPEG Compression Efficiency Compared - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/web-p-vs-jpeg-compression-efficiency-compared" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Google developed the WebP format to optimize web performance by reducing image file sizes while preserving visual quality. Compared to traditional JPEG, WebP consistently delivers superior compression efficiency, producing files that are 25% to 34% small" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-jpeg-compression-efficiency-compared">WebP vs JPEG
+Compression Efficiency Compared</h1>
+<p>Google developed the WebP format to optimize web performance by
+reducing image file sizes while preserving visual quality. Compared to
+traditional JPEG, WebP consistently delivers superior compression
+efficiency, producing files that are 25% to 34% smaller at equivalent
+quality levels. This reduction speeds up website load times, lowers
+bandwidth consumption, and provides modern web features like
+transparency in lossy formats, making WebP a more efficient alternative
+to legacy standards.</p>
+<h3 id="the-compression-gap-webp-vs-jpeg">The Compression Gap: WebP vs.
+JPEG</h3>
+<p>Independent benchmarks and Google's own comparative studies show that
+WebP's lossy compression outperforms JPEG by roughly 25% to 34% at
+identical Structural Similarity (SSIM) index ratings. This means a
+standard 1 MB JPEG image can often be delivered as a 650 KB to 750 KB
+WebP file with no perceptible degradation in image clarity to the human
+eye.</p>
+<h3 id="why-webp-compresses-more-efficiently">Why WebP Compresses More
+Efficiently</h3>
+<p>The efficiency advantage of WebP stems from its modern underlying
+technology. While JPEG relies on discrete cosine transform (DCT) applied
+to static 8x8 pixel blocks, lossy WebP uses predictive coding based on
+the VP8 video codec framework:</p>
+<ul>
+<li><strong>Predictive Coding:</strong> WebP divides an image into
+macroblocks and predicts the values of pixels based on neighboring
+blocks already processed. It only encodes the difference (residual)
+between the prediction and the actual image data, drastically reducing
+redundant data.</li>
+<li><strong>Variable Block Sizes:</strong> Instead of fixed block sizes,
+WebP can analyze larger and smaller segments of an image dynamically,
+allocating compression power where details actually exist.</li>
+<li><strong>Transform Coding:</strong> The residual differences are
+compressed using an arithmetic coding scheme, which is mathematically
+more compact than the Huffman coding traditionally implemented in
+standard JPEGs.</li>
+</ul>
+<h3 id="visual-quality-and-artifacts">Visual Quality and Artifacts</h3>
+<p>Compression efficiency is not just about raw file size; it also
+encompasses how images degrade when compressed aggressively:</p>
+<ul>
+<li><strong>JPEG Artifacts:</strong> When heavily compressed, JPEG
+images display obvious ringing artifacts and harsh, pixelated block
+boundaries (macroblocking), particularly around high-contrast edges and
+text.</li>
+<li><strong>WebP Artifacts:</strong> WebP tends to smear or blur details
+rather than create hard geometric blocks when pushed to low bitrates.
+For web users, this uniform softening is generally far less distracting
+and visually jarring than JPEG's blocky patterns.</li>
+</ul>
+<h3 id="beyond-basic-compression-the-feature-advantage">Beyond Basic
+Compression: The Feature Advantage</h3>
+<p>WebP also improves overall compression efficiency through features
+JPEG does not natively support:</p>
+<ul>
+<li><strong>Lossy Transparency:</strong> WebP supports an 8-bit alpha
+channel alongside lossy compression. In the past, designers requiring
+transparency were forced to use PNG, resulting in massive file sizes.
+WebP allows transparent backgrounds with lossy compression, resulting in
+files that are often 60% to 70% smaller than equivalent PNGs.</li>
+<li><strong>Lossless Capability:</strong> Unlike JPEG, which is strictly
+lossy, WebP also includes a lossless mode that is roughly 26% smaller
+than standard PNG formats.</li>
+</ul>
+<h3 id="practical-considerations">Practical Considerations</h3>
+<p>While WebP outperforms JPEG in pure compression efficiency, there are
+minor trade-offs:</p>
+<ul>
+<li><strong>Encoding Speed:</strong> Encoding WebP images requires
+significantly more CPU power and time than encoding JPEGs, though
+decoding speeds are comparable and lightweight for end users.</li>
+<li><strong>Compatibility:</strong> Modern web browsers support WebP
+universally, but legacy image viewers, older desktop software, and
+specialized publishing pipelines still rely natively on JPEG.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

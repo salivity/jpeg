@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can JPEG Encode Images in CIE Lab Color Space? - jpeg</title>
+    <meta name="description" content="This article examines whether the JPEG image format can encode images using the CIE Lab color space. While the core JPEG compression algorithm technically supports multi-channel data such as CIE Lab, common implementations like the JFIF container restric">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/can-jpeg-encode-images-in-cie-lab-color-space">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can JPEG Encode Images in CIE Lab Color Space? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/can-jpeg-encode-images-in-cie-lab-color-space" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines whether the JPEG image format can encode images using the CIE Lab color space. While the core JPEG compression algorithm technically supports multi-channel data such as CIE Lab, common implementations like the JFIF container restric" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-jpeg-encode-images-in-cie-lab-color-space">Can JPEG Encode
+Images in CIE Lab Color Space?</h1>
+<p>This article examines whether the JPEG image format can encode images
+using the CIE Lab color space. While the core JPEG compression algorithm
+technically supports multi-channel data such as CIE Lab, common
+implementations like the JFIF container restrict images primarily to
+YCbCr and grayscale. Below, we break down how the compression
+specification works, where CIE Lab is supported, and why it is rarely
+used on the modern web.</p>
+<h3
+id="the-distinction-between-jpeg-compression-and-file-containers">The
+Distinction Between JPEG Compression and File Containers</h3>
+<p>To understand how CIE Lab relates to JPEG, it is essential to
+distinguish between the JPEG compression algorithm (ISO/IEC 10918-1) and
+the file formats used to store it.</p>
+<p>The underlying JPEG compression specification is mathematically
+color-space independent. It operates on arbitrary numerical channels
+(components) rather than specific color models. At this technical level,
+JPEG can compress anywhere from 1 to 255 separate channels, meaning it
+can readily compress the <span class="math inline">\(L^*\)</span>, <span
+class="math inline">\(a^*\)</span>, and <span
+class="math inline">\(b^*\)</span> channels of the CIE Lab space without
+altering its core Discrete Cosine Transform (DCT) math.</p>
+<p>However, end users interact with file containers, most notably
+<strong>JFIF</strong> (JPEG File Interchange Format). The JFIF standard
+explicitly restricts color components to either one channel (grayscale)
+or three channels mapped specifically to the <strong>YCbCr</strong>
+color model. Because standard web browsers and operating systems assume
+<code>.jpg</code> files are JFIF-compliant, standard JPEGs cannot
+reliably use CIE Lab.</p>
+<h3 id="methods-for-storing-cie-lab-with-jpeg-compression">Methods for
+Storing CIE Lab with JPEG Compression</h3>
+<p>Despite JFIF limitations, there are standard and proprietary ways to
+use CIE Lab with JPEG compression:</p>
+<ol type="1">
+<li><strong>TIFF with JPEG Compression</strong>: The TIFF container
+format allows developers to apply JPEG compression to images defined in
+the 1976 CIE <span class="math inline">\(L^*a^*b^*\)</span> color space.
+This approach is common in specialized prepress, medical imaging, and
+scientific workflows.</li>
+<li><strong>Adobe Application Markers (APP14)</strong>: Adobe software
+can write CIE Lab data into JPEG files using custom application markers
+within the file header. When opened in compatible tools like Adobe
+Photoshop, the image renders accurately in Lab mode. In incompatible
+software, the file will either fail to open or render with severely
+distorted colors.</li>
+<li><strong>SPIFF (Still Picture Interchange File Format)</strong>:
+Defined in ITU-T T.84 / ISO/IEC 10918-3, SPIFF was designed as an
+official successor to JFIF and includes explicit, native support for CIE
+Lab. However, it never achieved widespread commercial adoption.</li>
+<li><strong>JPEG 2000 (JP2)</strong>: While a different standard
+(ISO/IEC 15444-1), JPEG 2000 natively supports CIE Lab encoding within
+its primary specification and file container.</li>
+</ol>
+<h3 id="practical-limitations">Practical Limitations</h3>
+<p>While encoding is technically possible, using CIE Lab in traditional
+JPEG files is not recommended for general distribution:</p>
+<ul>
+<li><strong>Compatibility</strong>: Modern web browsers, social media
+platforms, and standard image viewers do not expect CIE Lab in JPEG
+containers and will display inverted, tinted, or corrupted output.</li>
+<li><strong>Subsampling Inefficiencies</strong>: JPEG achieves much of
+its compression by chroma subsampling the <span
+class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span> channels. While the <span
+class="math inline">\(a^*\)</span> and <span
+class="math inline">\(b^*\)</span> channels in CIE Lab represent
+chromaticity and can theoretically be subsampled, standard encoding
+pipelines are calibrated around YCbCr transfer functions.</li>
+<li><strong>ICC Profiles as the Standard Solution</strong>: Standard
+workflows achieve device-independent color by encoding an image as
+standard sRGB or Adobe RGB (via YCbCr) and embedding an ICC color
+profile directly into the metadata. This delivers the color precision
+required without sacrificing software compatibility.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Uses Zig-Zag Scanning for DCT Coefficients - jpeg</title>
+    <meta name="description" content="In the JPEG image compression standard, an 8x8 block of pixels is converted into frequency components via the Discrete Cosine Transform (DCT) and then quantized. Rather than reading these 64 coefficients in standard row-by-row or column-by-column raster">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-uses-zig-zag-scanning-for-dct-coefficients">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Uses Zig-Zag Scanning for DCT Coefficients - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-uses-zig-zag-scanning-for-dct-coefficients" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the JPEG image compression standard, an 8x8 block of pixels is converted into frequency components via the Discrete Cosine Transform (DCT) and then quantized. Rather than reading these 64 coefficients in standard row-by-row or column-by-column raster" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-uses-zig-zag-scanning-for-dct-coefficients">Why JPEG
+Uses Zig-Zag Scanning for DCT Coefficients</h1>
+<p>In the JPEG image compression standard, an 8x8 block of pixels is
+converted into frequency components via the Discrete Cosine Transform
+(DCT) and then quantized. Rather than reading these 64 coefficients in
+standard row-by-row or column-by-column raster order, JPEG rearranges
+them using a diagonal zig-zag pattern. This article explains the
+technical mechanics behind this ordering, demonstrating how it groups
+spatial frequencies from lowest to highest to dramatically optimize
+subsequent Run-Length Encoding (RLE) and entropy coding steps.</p>
+<h3 id="energy-compaction-and-spatial-frequencies">Energy Compaction and
+Spatial Frequencies</h3>
+<p>The two-dimensional DCT transforms spatial pixel values into spatial
+frequency coefficients. The top-left corner of the resulting 8x8 matrix
+represents the lowest frequencies—starting with the Direct Current (DC)
+component at index (0,0), which holds the average brightness of the
+block. As you move away from the top-left toward the bottom-right
+corner, the coefficients represent progressively higher vertical,
+horizontal, and diagonal spatial frequencies (Alternating Current or AC
+components).</p>
+<p>Natural images exhibit high spatial correlation, meaning most of the
+visual energy and perceptible information is concentrated in these lower
+frequencies.</p>
+<h3 id="the-effect-of-quantization">The Effect of Quantization</h3>
+<p>Human vision is far less sensitive to subtle variations in
+high-frequency patterns than to broad luminance and low-frequency
+structures. Consequently, JPEG's quantization step intentionally uses
+larger divisors for high-frequency coefficients located toward the
+bottom-right. When the divided values are rounded to the nearest
+integer, the vast majority of medium- and high-frequency coefficients
+become zero. The non-zero values are predominantly clustered in the
+upper-left region.</p>
+<h3 id="the-zig-zag-traversal">The Zig-Zag Traversal</h3>
+<p>Reading the 8x8 grid in standard row-major order would alternate
+haphazardly between low-frequency non-zero values and high-frequency
+zeros. To align the coefficients in a predictable order of visual
+importance, JPEG reads them along diagonal paths:</p>
+<ol type="1">
+<li>It begins at the DC coefficient (0,0).</li>
+<li>It proceeds diagonally back and forth across the matrix, traversing
+lower frequencies first.</li>
+<li>It ends at the highest combined horizontal and vertical frequency at
+the bottom-right (7,7).</li>
+</ol>
+<p>This path systematically sorts the 64 two-dimensional values into a
+one-dimensional array ordered almost entirely by monotonically
+increasing frequency.</p>
+<h3 id="maximizing-compression-with-run-length-encoding-rle">Maximizing
+Compression with Run-Length Encoding (RLE)</h3>
+<p>Sorting by frequency directly serves JPEG's subsequent compression
+algorithms:</p>
+<ul>
+<li><strong>Clustering Non-Zeros:</strong> Non-zero coefficients are
+pushed to the very beginning of the 1D stream.</li>
+<li><strong>Long Sequences of Zeros:</strong> As the scan enters higher
+frequencies, the sequence quickly transitions into long runs of
+consecutive zeros.</li>
+<li><strong>Run-Length Encoding Efficiency:</strong> JPEG encodes AC
+coefficients as pairs indicating
+<code>(run of preceding zeros, value of next non-zero coefficient)</code>.
+Grouping zeros together minimizes the number of symbols that must be
+created.</li>
+<li><strong>The End of Block (EOB) Marker:</strong> Once the last
+non-zero coefficient in the zig-zag scan has been read, JPEG emits a
+single, compact "End of Block" (EOB) code. This single marker signals
+the decoder that every remaining coefficient up to the 64th position is
+zero, allowing the encoder to skip storing dozens of individual zeros
+per block.</li>
+</ul>
+<p>By restructuring the 2D frequency distribution into a predictable 1D
+gradient of non-zeros followed by zeros, the zig-zag scan drastically
+reduces the final byte size before Huffman or arithmetic coding takes
+place.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

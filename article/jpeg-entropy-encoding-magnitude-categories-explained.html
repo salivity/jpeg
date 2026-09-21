@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Entropy Encoding Magnitude Categories Explained - jpeg</title>
+    <meta name="description" content="In JPEG compression, the entropy encoder represents quantized discrete cosine transform (DCT) coefficient values using a two-part system: a magnitude category and an appended bit sequence. Because DCT coefficients span a wide range of positive and negati">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-entropy-encoding-magnitude-categories-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Entropy Encoding Magnitude Categories Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-entropy-encoding-magnitude-categories-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In JPEG compression, the entropy encoder represents quantized discrete cosine transform (DCT) coefficient values using a two-part system: a magnitude category and an appended bit sequence. Because DCT coefficients span a wide range of positive and negati" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-entropy-encoding-magnitude-categories-explained">JPEG
+Entropy Encoding Magnitude Categories Explained</h1>
+<p>In JPEG compression, the entropy encoder represents quantized
+discrete cosine transform (DCT) coefficient values using a two-part
+system: a magnitude category and an appended bit sequence. Because DCT
+coefficients span a wide range of positive and negative integers,
+directly assigning a unique Huffman code to every possible number would
+create an excessively large codebook. To solve this, JPEG groups
+coefficient amplitudes into magnitude categories (or "sizes") that
+define the number of bits required to store the coefficient, allowing
+Huffman or arithmetic coding to compress the category while raw
+variable-length bits specify the exact signed value.</p>
+<h2 id="the-two-part-representation">The Two-Part Representation</h2>
+<p>Every non-zero coefficient is split into two distinct components
+during entropy coding:</p>
+<ol type="1">
+<li><strong>Magnitude Category (<span
+class="math inline">\(S\)</span>):</strong> An integer value indicating
+how many bits are required to represent the coefficient's absolute
+amplitude.</li>
+<li><strong>Value Bits:</strong> An <span
+class="math inline">\(S\)</span>-bit suffix appended immediately after
+the category's entropy code to specify the exact signed number.</li>
+</ol>
+<p>By separating the value this way, the JPEG Huffman table only needs
+to define codes for a small set of category numbers (typically 0 through
+11 for baseline sequential DCT, or up to 15) rather than thousands of
+individual integer values.</p>
+<h2 id="magnitude-category-assignment">Magnitude Category
+Assignment</h2>
+<p>The magnitude category directly corresponds to the bit-length of the
+coefficient. The scale is structured symmetrically around zero,
+excluding zero itself (which is handled either via Run-Length Encoding
+for AC coefficients or a Category 0 designation for DC differences).</p>
+<table>
+<thead>
+<tr>
+<th>Category (<span class="math inline">\(S\)</span>)</th>
+<th>Value Range (Negative)</th>
+<th>Value Range (Positive)</th>
+<th>Number of Bits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><em>None</em> (Value is 0)</td>
+<td><em>None</em> (Value is 0)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>-3, -2</td>
+<td>2, 3</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>-7 to -4</td>
+<td>4 to 7</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>-15 to -8</td>
+<td>8 to 15</td>
+<td>4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>-31 to -16</td>
+<td>16 to 31</td>
+<td>5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>-63 to -32</td>
+<td>32 to 63</td>
+<td>6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>-127 to -64</td>
+<td>64 to 127</td>
+<td>7</td>
+</tr>
+<tr>
+<td>8</td>
+<td>-255 to -128</td>
+<td>128 to 255</td>
+<td>8</td>
+</tr>
+<tr>
+<td>9</td>
+<td>-511 to -256</td>
+<td>256 to 511</td>
+<td>9</td>
+</tr>
+<tr>
+<td>10</td>
+<td>-1023 to -512</td>
+<td>512 to 1023</td>
+<td>10</td>
+</tr>
+<tr>
+<td>11</td>
+<td>-2047 to -1024</td>
+<td>1024 to 2047</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<p>Mathematically, a non-zero integer <span
+class="math inline">\(V\)</span> belongs to category <span
+class="math inline">\(S\)</span> if:</p>
+<p><span class="math display">\[2^{S-1} \le |V| \le 2^S - 1\]</span></p>
+<h2 id="encoding-the-value-bits">Encoding the Value Bits</h2>
+<p>Once the category <span class="math inline">\(S\)</span> is
+identified, the encoder emits the Huffman code for <span
+class="math inline">\(S\)</span>, immediately followed by <span
+class="math inline">\(S\)</span> additional bits to identify the precise
+number within that category's range.</p>
+<p>The bit pattern adheres to a specific convention:</p>
+<ul>
+<li><strong>Positive numbers:</strong> Encoded using their standard
+base-2 binary representation. Because positive numbers in category <span
+class="math inline">\(S\)</span> are <span class="math inline">\(\ge
+2^{S-1}\)</span>, their most significant bit (MSB) is always
+<code>1</code>.</li>
+<li><strong>Negative numbers:</strong> Encoded as the one's complement
+of their absolute value, calculated as <span class="math inline">\(V +
+(2^S - 1)\)</span>. Because of this offset, the most significant bit
+(MSB) for negative numbers is always <code>0</code>.</li>
+</ul>
+<h3 id="example">Example</h3>
+<p>To encode the value <strong>-5</strong>:</p>
+<ol type="1">
+<li><strong>Find Category:</strong> <span class="math inline">\(|-5| =
+5\)</span>, which falls between <span class="math inline">\(4\)</span>
+(<span class="math inline">\(2^2\)</span>) and <span
+class="math inline">\(7\)</span> (<span class="math inline">\(2^3 -
+1\)</span>). The magnitude category is <strong>3</strong>.</li>
+<li><strong>Calculate Additional Bits:</strong> Because the value is
+negative, evaluate <span class="math inline">\(-5 + (2^3 - 1) = -5 + 7 =
+2\)</span>.</li>
+<li><strong>Convert to Binary:</strong> The integer 2 represented in 3
+bits is <code>010</code>.</li>
+<li><strong>Emit to Bitstream:</strong> The encoder emits the Huffman
+code corresponding to Category 3, followed directly by the bits
+<code>010</code>.</li>
+</ol>
+<p>To encode <strong>+5</strong>:</p>
+<ol type="1">
+<li>Category is <strong>3</strong>.</li>
+<li>Standard binary representation of 5 in 3 bits is
+<code>101</code>.</li>
+<li>The encoder emits the Huffman code for Category 3, followed directly
+by <code>101</code>.</li>
+</ol>
+<h2 id="application-to-dc-and-ac-coefficients">Application to DC and AC
+Coefficients</h2>
+<p>Magnitude categories are integrated into the bitstream differently
+depending on the type of DCT coefficient:</p>
+<ul>
+<li><strong>DC Coefficients:</strong> The DC coefficient is encoded
+differentially as the difference from the previous block's DC value
+(<span class="math inline">\(\Delta DC\)</span>). The encoder determines
+the magnitude category of <span class="math inline">\(\Delta
+DC\)</span>, Huffman-encodes that single category value, and appends the
+raw magnitude bits.</li>
+<li><strong>AC Coefficients:</strong> Non-zero AC coefficients are
+preceded by runs of consecutive zeros. The encoder combines the zero-run
+length (0–15) and the magnitude category (1–10) into a single composite
+byte: <code>(run_length &lt;&lt; 4) | category</code>. This composite
+byte is assigned a single Huffman code, followed immediately by the raw
+magnitude bits representing the AC coefficient.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Sharpening Before JPEG: Compression and Artifacts - jpeg</title>
+    <meta name="description" content="Sharpening an image prior to JPEG compression noticeably reduces compression efficiency and increases the severity of visual artifacts. Because sharpening works by increasing local contrast along edges and boosting high-frequency detail, it actively work">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/image-sharpening-before-jpeg-compression-and-artifacts">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Image Sharpening Before JPEG: Compression and Artifacts - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/image-sharpening-before-jpeg-compression-and-artifacts" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Sharpening an image prior to JPEG compression noticeably reduces compression efficiency and increases the severity of visual artifacts. Because sharpening works by increasing local contrast along edges and boosting high-frequency detail, it actively work" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="image-sharpening-before-jpeg-compression-and-artifacts">Image
+Sharpening Before JPEG: Compression and Artifacts</h1>
+<p>Sharpening an image prior to JPEG compression noticeably reduces
+compression efficiency and increases the severity of visual artifacts.
+Because sharpening works by increasing local contrast along edges and
+boosting high-frequency detail, it actively works against the core
+compression mechanisms of the JPEG algorithm. As a result, pre-sharpened
+images require higher bitrates to maintain visual fidelity and are far
+more susceptible to ringing, mosquito noise, and blocking
+distortions.</p>
+<h3 id="how-jpeg-compression-interacts-with-image-frequencies">How JPEG
+Compression Interacts with Image Frequencies</h3>
+<p>JPEG compression relies on the Discrete Cosine Transform (DCT) to
+convert 8x8 pixel blocks from the spatial domain into frequency
+components. The algorithm divides these frequencies into low-frequency
+information (smooth gradients and broad shapes) and high-frequency
+information (fine textures, rapid transitions, and sharp edges).</p>
+<p>Because the human visual system is far more sensitive to gradual
+luminance shifts than to fine, high-frequency details, the JPEG
+quantization step aggressively discards or rounds off high-frequency DCT
+coefficients. The remaining values are then compressed using run-length
+and Huffman encoding.</p>
+<h3 id="the-impact-on-compression-efficiency">The Impact on Compression
+Efficiency</h3>
+<p>Image sharpening algorithms—such as unsharp masking, high-pass
+filtering, or clarity adjustments—work by amplifying the high-frequency
+differences between neighboring pixels. This fundamentally disrupts
+compression efficiency in two ways:</p>
+<ul>
+<li><strong>Increased Non-Zero Coefficients:</strong> By exaggerating
+edge transitions, sharpening creates strong high-frequency energy where
+there was previously smooth or low-frequency data. During the DCT step,
+this generates numerous large, non-zero high-frequency coefficients that
+survive the quantization process.</li>
+<li><strong>Reduced Run-Length Encoding Efficiency:</strong> JPEG
+achieves high compression ratios by grouping sequences of zero-value
+high-frequency coefficients together. Because sharpening populates these
+high frequencies with non-zero values, the run-length encoder cannot
+compress the data as effectively.</li>
+</ul>
+<p>Consequently, a sharpened image exported at a specific JPEG quality
+setting will produce a substantially larger file size than the
+unsharpened original. If a fixed file size or bandwidth target is
+enforced, the compressor must apply harsher quantization across the
+entire image, leading to an overall degradation in image quality.</p>
+<h3 id="the-amplification-of-compression-artifacts">The Amplification of
+Compression Artifacts</h3>
+<p>Applying lossy JPEG compression to an aggressively sharpened image
+triggers several distinct visual defects:</p>
+<ul>
+<li><strong>Ringing Artifacts (The Gibbs Phenomenon):</strong>
+Sharpening creates steep gradients (halos) around edges. When the
+high-frequency components of these steep transitions are truncated
+during quantization, the inverse transform reconstructs them with
+visible wave-like ripples or halos around high-contrast borders.</li>
+<li><strong>Mosquito Noise:</strong> In regions surrounding
+high-contrast edges, high-frequency quantization errors manifest as a
+buzzing, mottled cluster of artifacts known as mosquito noise. Sharpened
+edges drastically exacerbate this effect.</li>
+<li><strong>Noise Amplification:</strong> Sharpening filters do not
+discriminate between actual subject detail and sensor noise or film
+grain. Amplified background noise is treated as intentional
+high-frequency data by the JPEG encoder, resulting in muddy, blocky
+backgrounds that waste precious bit budget.</li>
+<li><strong>Exaggerated Blocking:</strong> At lower JPEG quality levels,
+the discontinuity between adjacent 8x8 blocks becomes more pronounced
+when high-frequency edge energy crosses block boundaries.</li>
+</ul>
+<h3 id="best-practices">Best Practices</h3>
+<p>To maintain optimal visual quality and small file sizes:</p>
+<ol type="1">
+<li><strong>Sharpen Conservatively:</strong> If sharpening must be
+applied prior to compression, use edge-masking techniques that target
+only high-contrast structural edges while leaving flat areas, gradients,
+and subtle textures untouched.</li>
+<li><strong>Denoise Before Sharpening:</strong> Clean luminance and
+chrominance noise before applying any sharpening so the compressor does
+not spend bits encoding amplified grain.</li>
+<li><strong>Sharpen at Final Output Resolution:</strong> Downsampling an
+image after sharpening reintroduces aliasing, while sharpening a
+low-resolution image too heavily creates disproportionately large edge
+transitions that ruin JPEG quantization tables. Always resize first,
+sharpen moderately, and compress last.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

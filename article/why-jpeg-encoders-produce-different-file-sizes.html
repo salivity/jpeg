@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Encoders Produce Different File Sizes - jpeg</title>
+    <meta name="description" content="When compressing the exact same uncompressed pixel data, different JPEG encoding libraries often yield noticeably different file sizes, even when configured with the same numerical "quality" value. This discrepancy occurs because the JPEG specification (">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-encoders-produce-different-file-sizes">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Encoders Produce Different File Sizes - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-encoders-produce-different-file-sizes" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When compressing the exact same uncompressed pixel data, different JPEG encoding libraries often yield noticeably different file sizes, even when configured with the same numerical "quality" value. This discrepancy occurs because the JPEG specification (" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-encoders-produce-different-file-sizes">Why JPEG
+Encoders Produce Different File Sizes</h1>
+<p>When compressing the exact same uncompressed pixel data, different
+JPEG encoding libraries often yield noticeably different file sizes,
+even when configured with the same numerical "quality" value. This
+discrepancy occurs because the JPEG specification (ITU-T T.81)
+standardizes the decoding process rather than enforcing a rigid encoding
+implementation. As a result, libraries such as libjpeg, libjpeg-turbo,
+MozJPEG, and image framework encoders make distinct algorithmic choices
+regarding quantization tables, chroma subsampling, discrete cosine
+transform (DCT) precision, and entropy coding.</p>
+<h3 id="the-quality-scale-is-arbitrary">The Quality Scale is
+Arbitrary</h3>
+<p>The most common reason for size discrepancies is that the standard
+JPEG specification does not define a standard "Quality 1–100" scale.
+Each encoding library maps quality numbers to internal quantization
+tables differently.</p>
+<p>For instance, libjpeg uses a formula devised by the Independent JPEG
+Group (IJG) to scale a baseline quantization matrix. MozJPEG, while
+based on libjpeg, modifies these tables to prioritize human visual
+perception, selectively discarding more high-frequency detail. A quality
+setting of "80" in one library can produce an entirely different set of
+divisors than "80" in another, leading to different amounts of data loss
+and varying output sizes.</p>
+<h3 id="non-standardized-quantization-matrices">Non-Standardized
+Quantization Matrices</h3>
+<p>Quantization is the lossy step of JPEG compression where
+high-frequency color and brightness details are divided and rounded to
+zero. Beyond arbitrary quality scaling, different encoders use
+fundamentally different quantization matrices for luminance (brightness)
+and chrominance (color). Some libraries tune their matrices using
+psychoacoustic and psychovisual models to remove imperceptible details
+more aggressively, which directly reduces the final byte count.</p>
+<h3 id="chroma-subsampling-differences">Chroma Subsampling
+Differences</h3>
+<p>The human eye is more sensitive to variations in brightness
+(luminance) than color (chrominance). Encoders exploit this through
+chroma subsampling:</p>
+<ul>
+<li><strong>4:4:4:</strong> No subsampling (maximum detail, larger file
+size).</li>
+<li><strong>4:2:2:</strong> Color resolution halved horizontally.</li>
+<li><strong>4:2:0:</strong> Color resolution halved horizontally and
+vertically (standard for web and video).</li>
+</ul>
+<p>Different libraries have different default behaviors. One library
+might automatically switch from 4:4:4 to 4:2:0 when the quality drops
+below 90, whereas another may keep 4:4:4 until quality drops below 75,
+or default to 4:2:0 across all quality levels unless manually
+overridden.</p>
+<h3 id="discrete-cosine-transform-dct-precision">Discrete Cosine
+Transform (DCT) Precision</h3>
+<p>Before quantization, the image is converted from spatial data into
+frequency data using the Discrete Cosine Transform. The standard allows
+multiple mathematical approaches for calculating the DCT:</p>
+<ul>
+<li><strong>Integer DCT (ISlow / IFast):</strong> Uses fixed-point
+arithmetic for speed. Faster variants introduce minor rounding
+approximations that alter the final coefficients.</li>
+<li><strong>Floating-point DCT (Float):</strong> Produces mathematically
+precise results at the cost of computation time.</li>
+</ul>
+<p>Even a difference of <span class="math inline">\(\pm1\)</span> in a
+rounded coefficient can determine whether that value compresses to a
+zero run-length or requires extra bits to store.</p>
+<h3 id="huffman-coding-and-entropy-optimization">Huffman Coding and
+Entropy Optimization</h3>
+<p>After quantization, the remaining data is compressed using lossless
+Huffman coding. Encoders handle this step using different
+strategies:</p>
+<ul>
+<li><strong>Standard Huffman Tables:</strong> Fast encoders often use
+fixed, pre-computed Huffman tables defined in the JPEG specification
+annex. This saves processing time but produces larger files.</li>
+<li><strong>Optimized Huffman Tables:</strong> Advanced encoders scan
+the quantized data in a second pass to construct custom Huffman tables
+tailored specifically to the image's actual data distribution.</li>
+<li><strong>Trellis Quantization:</strong> Modern encoders like MozJPEG
+employ Trellis quantization, an optimization technique adapted from
+video encoding. It evaluates the exact bit-cost of rounding quantized
+coefficients up or down, choosing the value that yields the best
+visual-quality-to-filesize ratio.</li>
+</ul>
+<h3 id="metadata-and-markers">Metadata and Markers</h3>
+<p>File overhead differences also stem from structural metadata:</p>
+<ul>
+<li><strong>Restart Markers:</strong> Some encoders insert restart
+markers to allow parallel decoding or error recovery, adding a small
+byte overhead.</li>
+<li><strong>ICC Profiles and EXIF:</strong> Encoders can automatically
+strip or embed color space profiles, EXIF metadata, and
+application-specific marker segments (like Adobe <code>APP14</code>
+markers). Even a standard sRGB profile can add several kilobytes to an
+image.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

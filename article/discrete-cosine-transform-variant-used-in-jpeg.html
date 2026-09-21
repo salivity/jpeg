@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Cosine Transform Variant Used in JPEG - jpeg</title>
+    <meta name="description" content="The standard JPEG image compression format relies on a specific mathematical algorithm to convert spatial pixel data into frequency components: the two-dimensional Type-II Discrete Cosine Transform (2D DCT-II). This article outlines the exact DCT variant">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/discrete-cosine-transform-variant-used-in-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Discrete Cosine Transform Variant Used in JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/discrete-cosine-transform-variant-used-in-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The standard JPEG image compression format relies on a specific mathematical algorithm to convert spatial pixel data into frequency components: the two-dimensional Type-II Discrete Cosine Transform (2D DCT-II). This article outlines the exact DCT variant" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="discrete-cosine-transform-variant-used-in-jpeg">Discrete Cosine
+Transform Variant Used in JPEG</h1>
+<p>The standard JPEG image compression format relies on a specific
+mathematical algorithm to convert spatial pixel data into frequency
+components: the two-dimensional Type-II Discrete Cosine Transform (2D
+DCT-II). This article outlines the exact DCT variant utilized in the
+baseline JPEG standard (ISO/IEC 10918-1), the mathematical formulation
+applied to image blocks, and why this specific variant was selected for
+digital image compression.</p>
+<h3 id="the-specific-variant-two-dimensional-dct-ii">The Specific
+Variant: Two-Dimensional DCT-II</h3>
+<p>The standard JPEG specification implements the <strong>Type-II
+Discrete Cosine Transform (DCT-II)</strong>, applied in two dimensions
+over an <span class="math inline">\(8 \times 8\)</span> grid of
+samples.</p>
+<p>While there are eight standard variants of the Discrete Cosine
+Transform (DCT-I through DCT-VIII), the DCT-II is often referred to
+simply as "the DCT" in digital signal processing because of its
+widespread adoption. In the decompression stage, JPEG uses the exact
+inverse operation, known mathematically as the <strong>Type-III Discrete
+Cosine Transform (DCT-III)</strong> or Inverse DCT (IDCT).</p>
+<h3 id="mathematical-definition-in-jpeg">Mathematical Definition in
+JPEG</h3>
+<p>In baseline JPEG, an image is divided into <span
+class="math inline">\(8 \times 8\)</span> blocks of pixels. Before
+transformation, pixel values (typically ranging from 0 to 255 for 8-bit
+channels) are zero-centered by subtracting 128 (shifting the range to
+<span class="math inline">\([-128, 127]\)</span>).</p>
+<p>The forward 2D DCT-II transforms an <span class="math inline">\(8
+\times 8\)</span> spatial block <span class="math inline">\(f(x,
+y)\)</span> into an <span class="math inline">\(8 \times 8\)</span>
+frequency matrix <span class="math inline">\(F(u, v)\)</span> using the
+following formula:</p>
+<p><span class="math display">\[F(u, v) = \frac{1}{4} C(u) C(v)
+\sum_{x=0}^{7} \sum_{y=0}^{7} f(x, y) \cos\left[ \frac{(2x + 1)u\pi}{16}
+\right] \cos\left[ \frac{(2y + 1)v\pi}{16} \right]\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span> are spatial coordinates within the
+block (<span class="math inline">\(0 \le x, y \le 7\)</span>).</li>
+<li><span class="math inline">\(u\)</span> and <span
+class="math inline">\(v\)</span> are horizontal and vertical spatial
+frequency indices (<span class="math inline">\(0 \le u, v \le
+7\)</span>).</li>
+<li>The normalization factor <span class="math inline">\(C(k)\)</span>
+is defined as: <span class="math display">\[C(k) = \begin{cases}
+\frac{1}{\sqrt{2}} &amp; \text{if } k = 0 \\ 1 &amp; \text{if } k &gt; 0
+\end{cases}\]</span></li>
+</ul>
+<p>The value <span class="math inline">\(F(0, 0)\)</span> represents the
+DC coefficient (the average value of the block), while the remaining 63
+values represent the AC coefficients (progressively higher frequency
+details).</p>
+<h3 id="why-jpeg-uses-dct-ii">Why JPEG Uses DCT-II</h3>
+<p>The designers of the JPEG standard chose the DCT-II for several key
+reasons:</p>
+<ol type="1">
+<li><strong>High Energy Compaction:</strong> DCT-II closely approximates
+the Karhunen-Loève Transform (KLT) for highly correlated signals (such
+as natural images). It packs the vast majority of visual information
+into the lowest-frequency coefficients in the top-left corner of the
+matrix.</li>
+<li><strong>Boundary Conditions:</strong> Unlike the Discrete Fourier
+Transform (DFT), which assumes periodic boundaries that cause sharp
+artificial edges at block borders, DCT-II implicitly assumes even
+(mirror-symmetric) boundary reflections. This minimizes high-frequency
+artifacts along the borders of the <span class="math inline">\(8 \times
+8\)</span> blocks.</li>
+<li><strong>Computational Efficiency:</strong> The separable nature of
+the 2D DCT-II allows it to be calculated as two successive 1D transforms
+(first along rows, then columns). Fast algorithms, such as the Arai,
+Agui, and Nakajima (AAN) or Feig-Winograd algorithms, allow this
+transform to be computed with minimal multiplications and
+additions.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

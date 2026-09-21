@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless JPEG Rotation: How to Avoid Generation Loss - jpeg</title>
+    <meta name="description" content="Lossless JPEG rotation allows users to alter an image's orientation without degrading its visual quality or introducing compression artifacts. Unlike standard photo editors that fully decode an image to raw pixels and re-encode it—causing generational">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/lossless-jpeg-rotation-how-to-avoid-generation-loss">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossless JPEG Rotation: How to Avoid Generation Loss - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/lossless-jpeg-rotation-how-to-avoid-generation-loss" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Lossless JPEG rotation allows users to alter an image's orientation without degrading its visual quality or introducing compression artifacts. Unlike standard photo editors that fully decode an image to raw pixels and re-encode it—causing generational" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossless-jpeg-rotation-how-to-avoid-generation-loss">Lossless
+JPEG Rotation: How to Avoid Generation Loss</h1>
+<p>Lossless JPEG rotation allows users to alter an image's orientation
+without degrading its visual quality or introducing compression
+artifacts. Unlike standard photo editors that fully decode an image to
+raw pixels and re-encode it—causing generational loss—lossless
+transformation tools manipulate the underlying compressed data directly.
+This article explains how standard rotation degrades image data, how
+lossless tools manipulate transform coefficients to preserve quality,
+and the structural constraints required for the process to remain
+completely lossless.</p>
+<h3 id="the-cause-of-generation-loss-in-standard-editing">The Cause of
+Generation Loss in Standard Editing</h3>
+<p>Standard image editors handle image rotation through a three-step
+cycle:</p>
+<ol type="1">
+<li>Decode the compressed JPEG file into uncompressed RGB pixels.</li>
+<li>Rotate the pixel matrix in memory by 90, 180, or 270 degrees.</li>
+<li>Re-encode the rotated raw pixels back into a new JPEG file.</li>
+</ol>
+<p>During the re-encoding phase, the image undergoes Discrete Cosine
+Transform (DCT) calculations and quantization once again. Quantization
+is an inherently lossy process that rounds off high-frequency color and
+detail data to reduce file size. Repeating this cycle discards
+additional image information, resulting in softer details, ringing
+artifacts, and blockiness known as generation loss.</p>
+<h3 id="how-lossless-rotation-works">How Lossless Rotation Works</h3>
+<p>Lossless rotation tools, such as the widely implemented
+<code>jpegtran</code> utility, avoid generation loss by operating
+directly on the compressed data stream without converting it back into
+raw spatial pixels.</p>
+<h4 id="1-partial-decoding">1. Partial Decoding</h4>
+<p>A JPEG file stores image data in discrete blocks—typically 8x8
+pixels—called Minimum Coded Units (MCUs). Inside each MCU, the image
+information is stored as quantized DCT frequency coefficients, which are
+then packaged using lossless entropy encoding (usually Huffman
+coding).</p>
+<p>Lossless tools decode only the entropy layer. They unpack the binary
+bitstream to expose the quantized DCT coefficients, completely skipping
+the inverse DCT step that converts frequencies back into visible
+pixels.</p>
+<h4 id="2-frequency-domain-transposition">2. Frequency Domain
+Transposition</h4>
+<p>Rotating an 8x8 grid of spatial pixels corresponds to a specific
+mathematical transformation of its 8x8 DCT coefficient matrix. When
+rotating by multiples of 90 degrees or flipping across an axis:</p>
+<ul>
+<li>The rows and columns of the DCT coefficient matrix are
+transposed.</li>
+<li>The signs (positive or negative) of odd-indexed frequency
+coefficients are inverted.</li>
+</ul>
+<p>Because this transformation is purely algebraic and involves only
+exact sign changes and position swapping, no rounding errors occur. The
+fundamental frequency data remains identical to the original.</p>
+<h4 id="3-rearranging-the-block-grid">3. Rearranging the Block Grid</h4>
+<p>Once the internal coefficients of each MCU are transformed, the tool
+rearranges the sequence of the MCUs themselves within the file to match
+the new orientation. Finally, the tool re-applies entropy encoding
+(Huffman compression) to write the new file. Because entropy encoding is
+completely lossless, the underlying image fidelity is perfectly
+preserved.</p>
+<h3 id="boundary-constraints-and-mcu-alignment">Boundary Constraints and
+MCU Alignment</h3>
+<p>For a JPEG rotation to be entirely lossless, the image dimensions
+must be an exact multiple of the MCU size.</p>
+<ul>
+<li>In grayscale or 4:4:4 color formats, the MCU size is 8x8
+pixels.</li>
+<li>In common chroma-subsampled formats (such as 4:2:0), the MCU size is
+16x16 pixels.</li>
+</ul>
+<p>If an image's width or height is not evenly divisible by the MCU
+size, partial blocks exist along the right and bottom edges. Rotating
+the image moves these partial blocks to the top or left edges, where
+standard JPEG formatting requires full blocks. In such scenarios,
+lossless tools cannot safely place partial blocks without either:</p>
+<ul>
+<li><strong>Cropping:</strong> Trimming the non-aligned partial edge
+pixels (often up to 15 pixels).</li>
+<li><strong>Leaving edges untouched:</strong> Skipping the non-aligned
+edge blocks, leaving them unrotated.</li>
+<li><strong>Lossy recompression:</strong> Decompressing and re-encoding
+only the non-aligned boundary areas.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatic JPEG to AVIF Conversion via CDN Headers - jpeg</title>
+    <meta name="description" content="Modern Content Delivery Networks (CDNs) streamline web performance by automatically transforming legacy JPEG images into next-generation AVIF files at the network edge. This real-time optimization is driven by HTTP content negotiation, where the CDN insp">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/automatic-jpeg-to-avif-conversion-via-cdn-headers">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Automatic JPEG to AVIF Conversion via CDN Headers - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/automatic-jpeg-to-avif-conversion-via-cdn-headers" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern Content Delivery Networks (CDNs) streamline web performance by automatically transforming legacy JPEG images into next-generation AVIF files at the network edge. This real-time optimization is driven by HTTP content negotiation, where the CDN insp" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="automatic-jpeg-to-avif-conversion-via-cdn-headers">Automatic
+JPEG to AVIF Conversion via CDN Headers</h1>
+<p>Modern Content Delivery Networks (CDNs) streamline web performance by
+automatically transforming legacy JPEG images into next-generation AVIF
+files at the network edge. This real-time optimization is driven by HTTP
+content negotiation, where the CDN inspects the browser's incoming
+request headers, determines format compatibility, dynamically converts
+the image if supported, and caches the result for future users. This
+process drastically reduces payload sizes without requiring developers
+to rewrite HTML markup or manually generate multiple file variations at
+the origin server.</p>
+<h3 id="1-detecting-browser-support-via-the-accept-header">1. Detecting
+Browser Support via the Accept Header</h3>
+<p>The conversion workflow begins when a web browser requests an image
+asset. Along with the URL request, modern browsers send an
+<code>Accept</code> HTTP request header detailing the MIME types they
+can decode.</p>
+<p>For example, a browser with AVIF support sends a header structured
+like this:</p>
+<pre class="http"><code>Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8</code></pre>
+<p>Because <code>image/avif</code> is explicitly declared, the CDN's
+edge server immediately identifies that the client can render AVIF
+images natively. If a browser lacks AVIF support, the
+<code>image/avif</code> token is omitted from the string, signaling to
+the CDN that it must fall back to WebP or the original JPEG.</p>
+<h3 id="2-edge-based-evaluation-and-decision-logic">2. Edge-Based
+Evaluation and Decision Logic</h3>
+<p>When the request reaches the CDN edge node, a lightweight worker or
+image optimization engine evaluates several criteria before initiating a
+conversion:</p>
+<ul>
+<li><strong>Format Capability:</strong> Does the <code>Accept</code>
+header include <code>image/avif</code>?</li>
+<li><strong>Resource Type:</strong> Is the requested resource an image
+format suitable for compression (e.g., JPEG or PNG)?</li>
+<li><strong>File Size and Dimensions:</strong> Will converting this
+particular image to AVIF result in a meaningful byte reduction without
+degrading visual quality?</li>
+</ul>
+<p>If the criteria are met, the edge node checks its local cache for an
+existing AVIF version of the requested asset.</p>
+<h3 id="3-on-the-fly-image-transcoding">3. On-the-Fly Image
+Transcoding</h3>
+<p>If the AVIF version is not already cached (a cache miss), the CDN
+handles conversion through an integrated image processing pipeline:</p>
+<ol type="1">
+<li><strong>Origin Fetch:</strong> The edge node fetches the original,
+high-quality JPEG from the origin server (or pulls it from the
+origin-shield cache).</li>
+<li><strong>Decoding and Encoding:</strong> Edge compute workers decode
+the source JPEG into raw pixel data and re-encode it using an AVIF
+encoder (such as <code>libaom</code> or <code>rav1e</code>).</li>
+<li><strong>Optimization Tuning:</strong> The encoder applies preset
+compression parameters, stripping unnecessary metadata (such as EXIF
+data) and balancing the target perceptual quality (SSIM/PSNR metrics)
+against CPU encoding time.</li>
+</ol>
+<p>Because AVIF encoding is computationally intensive, top-tier CDNs
+often perform this transcoding asynchronously or via dedicated
+hardware-accelerated processing clusters near the edge to prevent
+latency spikes on the initial request.</p>
+<h3 id="4-cache-partitioning-with-the-vary-header">4. Cache Partitioning
+with the Vary Header</h3>
+<p>To serve both modern and legacy browsers from the same URL without
+delivering broken images, the CDN must cache multiple variations of the
+asset. It manages this using the <code>Vary</code> HTTP response
+header.</p>
+<p>When the CDN delivers the transformed AVIF, it responds with:</p>
+<pre class="http"><code>Content-Type: image/avif
+Vary: Accept</code></pre>
+<p>The <code>Vary: Accept</code> header instructs downstream caches,
+proxies, and browser caches that the returned response is contingent on
+the client's <code>Accept</code> request header. Consequently:</p>
+<ul>
+<li>Requests containing <code>image/avif</code> receive the cached AVIF
+payload.</li>
+<li>Requests lacking <code>image/avif</code> (such as older browsers or
+automated scrapers) are routed to a cache key containing the WebP
+fallback or the original JPEG.</li>
+</ul>
+<h3 id="5-final-delivery">5. Final Delivery</h3>
+<p>The client receives the optimized AVIF payload under the original
+JPEG URL. The browser decodes the AVIF file seamlessly, achieving
+typical file size reductions between 30% and 50% compared to standard
+JPEGs, while preserving high visual fidelity and lowering bandwidth
+consumption. Subsequent requests from other AVIF-capable browsers are
+served directly from the edge cache, bypassing the encoding step
+entirely.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Seismic Sensors Use Modified JPEG Compression - jpeg</title>
+    <meta name="description" content="Seismological networks generate massive, continuous streams of high-frequency ground motion data that must be transmitted reliably across low-bandwidth satellite links or stored on power-constrained edge devices. To overcome these constraints, modern dig">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-seismic-sensors-use-modified-jpeg-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Seismic Sensors Use Modified JPEG Compression - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-seismic-sensors-use-modified-jpeg-compression" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Seismological networks generate massive, continuous streams of high-frequency ground motion data that must be transmitted reliably across low-bandwidth satellite links or stored on power-constrained edge devices. To overcome these constraints, modern dig" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-seismic-sensors-use-modified-jpeg-compression">How Seismic
+Sensors Use Modified JPEG Compression</h1>
+<p>Seismological networks generate massive, continuous streams of
+high-frequency ground motion data that must be transmitted reliably
+across low-bandwidth satellite links or stored on power-constrained edge
+devices. To overcome these constraints, modern digitizers and seismic
+sensors adapt the mathematical framework of JPEG
+compression—traditionally designed for two-dimensional visual imagery—to
+compress continuous one-dimensional time-series waveforms. By modifying
+the Discrete Cosine Transform, tailoring quantization matrices, and
+utilizing entropy encoding, these instruments achieve high compression
+ratios while preserving critical seismic arrival times and phase
+amplitudes.</p>
+<h3 id="translating-1d-waveforms-into-jpeg-frameworks">Translating 1D
+Waveforms into JPEG Frameworks</h3>
+<p>Standard JPEG compression operates on two-dimensional grids of
+pixels, but seismic sensors record continuous, one-dimensional streams
+of acceleration or velocity data. Digitizers bridge this gap in one of
+two ways: they either map consecutive time segments of single- or
+multi-channel data into a two-dimensional pseudo-matrix, or they
+implement a specialized one-dimensional Discrete Cosine Transform (DCT)
+based on the core JPEG mathematical pipeline.</p>
+<p>Continuous streams are segmented into finite, uniform windows (often
+equivalent in length to standard JPEG blocks, such as 64 or 128
+samples). Windowing the data allows real-time processors to apply
+transform mathematics to incoming samples with minimal processing
+latency, ensuring that data buffers can be cleared quickly even during
+high-rate recording intervals.</p>
+<h3 id="applying-the-discrete-cosine-transform">Applying the Discrete
+Cosine Transform</h3>
+<p>Once windowed, the seismic samples are converted from the time domain
+into the frequency domain using the DCT. In undisturbed conditions,
+seismic signals primarily consist of continuous, low-amplitude
+background noise, while tectonic events introduce sharp, high-amplitude
+transients across multiple frequency bands.</p>
+<p>The DCT concentrates the bulk of the signal's energy into a small
+number of transform coefficients. Low-frequency trend components
+collapse into the lowest-order coefficients, while the rapid variations
+settle into higher coefficients. Because ambient seismic noise behaves
+predictably within transformed blocks, large stretches of data can be
+expressed through a sparse set of dominant numbers rather than dense raw
+amplitudes.</p>
+<h3 id="customizing-the-quantization-matrix">Customizing the
+Quantization Matrix</h3>
+<p>Quantization is the primary stage where standard JPEG algorithms are
+fundamentally modified for seismic applications. In standard
+photography, JPEG aggressively discards high-frequency details because
+the human visual system is largely insensitive to them. Applying default
+JPEG quantization tables to seismic data would destroy crucial
+information, such as impulsive P-wave first arrivals, which are
+essential for earthquake localization and early warning alerts.</p>
+<p>Seismological digitizers modify the quantization step by applying
+custom weighting matrices:</p>
+<ul>
+<li><strong>Dynamic Range Preservation:</strong> Large seismic events
+cover a vast dynamic range (often up to 140 dB). Quantization steps are
+dynamically scaled according to the signal's root-mean-square (RMS)
+energy to prevent clipping large earthquakes while capturing
+microseisms.</li>
+<li><strong>Lossless/Near-Lossless Profiles:</strong> While visual JPEG
+operates lossily, seismic algorithms prioritize lossless or tightly
+bounded lossy modes. The quantization matrix ensures that errors
+introduced by rounding coefficients do not exceed the instrument's
+self-noise floor.</li>
+<li><strong>Frequency Priority:</strong> Instead of dampening high
+frequencies, the tables maintain fine resolution across frequency bands
+associated with tectonic activity, ensuring phase onsets and spectral
+ratios remain intact.</li>
+</ul>
+<h3 id="entropy-coding-and-transmission">Entropy Coding and
+Transmission</h3>
+<p>After custom quantization, the resulting transform coefficients
+feature long sequences of zeros, particularly during quiescent periods
+between earthquakes. The algorithm applies run-length encoding (RLE) to
+condense these consecutive zeros into compact coordinate pairs, followed
+by Huffman coding or arithmetic coding.</p>
+<p>Huffman tables can be dynamically generated per transmission packet
+or statically calibrated based on ambient seismic noise models. The
+resulting output is an encoded, byte-efficient bitstream that reduces
+the original raw data volume by up to 80% without masking microseismic
+events.</p>
+<h3 id="implementation-in-edge-devices">Implementation in Edge
+Devices</h3>
+<p>Modern seismometers execute this modified compression directly at the
+sensor level using low-power digital signal processors (DSPs) or
+field-programmable gate arrays (FPGAs). Because the mathematical
+operations behind 1D DCT and Huffman encoding require minimal memory and
+compute overhead compared to complex wavelets, sensors deployed in
+remote borehole installations, ocean-bottom seismometers (OBS), or
+off-grid cellular telemetry stations can maintain continuous, real-time
+data feeds without exhausting limited battery or solar reserves.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

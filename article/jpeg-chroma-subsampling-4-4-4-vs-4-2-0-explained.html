@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Chroma Subsampling: 4:4:4 vs 4:2:0 Explained - jpeg</title>
+    <meta name="description" content="When saving an image as a JPEG, chroma subsampling is a compression technique that reduces color information to decrease file size without drastically affecting perceived image quality. The primary difference between 4:4:4 and 4:2:0 subsampling lies in h">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-chroma-subsampling-4-4-4-vs-4-2-0-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Chroma Subsampling: 4:4:4 vs 4:2:0 Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-chroma-subsampling-4-4-4-vs-4-2-0-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When saving an image as a JPEG, chroma subsampling is a compression technique that reduces color information to decrease file size without drastically affecting perceived image quality. The primary difference between 4:4:4 and 4:2:0 subsampling lies in h" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-chroma-subsampling-444-vs-420-explained">JPEG Chroma
+Subsampling: 4:4:4 vs 4:2:0 Explained</h1>
+<p>When saving an image as a JPEG, chroma subsampling is a compression
+technique that reduces color information to decrease file size without
+drastically affecting perceived image quality. The primary difference
+between 4:4:4 and 4:2:0 subsampling lies in how much color data is
+retained: 4:4:4 preserves complete color fidelity for every single
+pixel, while 4:2:0 discards three-quarters of the color data by sharing
+color samples across two-by-two pixel blocks. Understanding this
+distinction is critical when balancing image quality against storage and
+bandwidth constraints.</p>
+<h3 id="how-chroma-subsampling-works-in-jpeg">How Chroma Subsampling
+Works in JPEG</h3>
+<p>The JPEG format converts standard RGB (Red, Green, Blue) image data
+into the YCbCr color space. In this space:</p>
+<ul>
+<li><strong>Y (Luma):</strong> Represents brightness and detail.</li>
+<li><strong>Cb (Chroma Blue):</strong> Represents blue-difference color
+information.</li>
+<li><strong>Cr (Chroma Red):</strong> Represents red-difference color
+information.</li>
+</ul>
+<p>Because the human visual system is far more sensitive to variations
+in brightness than to subtle variations in color hue and saturation,
+JPEG encoders can discard chroma information while keeping full luma
+resolution.</p>
+<h3 id="444-chroma-subsampling">4:4:4 Chroma Subsampling</h3>
+<p>In a 4:4:4 scheme, no chroma subsampling occurs. For every 4 pixels
+horizontally across a 2-pixel tall block:</p>
+<ul>
+<li>All 4 pixels receive their own brightness sample.</li>
+<li>All 4 pixels receive their own unique Cb and Cr color samples in
+both rows.</li>
+</ul>
+<p><strong>Key Characteristics of 4:4:4:</strong></p>
+<ul>
+<li><strong>Full Color Resolution:</strong> Every pixel has its own
+distinct color value.</li>
+<li><strong>Sharp Edges:</strong> High-contrast color transitions—such
+as red text on a black background or sharp UI elements—remain crisp and
+clear.</li>
+<li><strong>Larger File Size:</strong> Because no color information is
+discarded, 4:4:4 produces larger JPEG files compared to subsampled
+variants at the same quality setting.</li>
+<li><strong>Best Uses:</strong> Screenshots, digital art, images
+containing text, and master copies intended for further editing.</li>
+</ul>
+<h3 id="420-chroma-subsampling">4:2:0 Chroma Subsampling</h3>
+<p>In a 4:2:0 scheme, color information is heavily compressed. Chroma
+resolution is halved both horizontally and vertically:</p>
+<ul>
+<li>In the first row of 4 pixels, only 2 chroma samples are
+recorded.</li>
+<li>In the second row of 4 pixels, no chroma samples are recorded; the
+row reuses the color data from the row above.</li>
+</ul>
+<p>This means a 2x2 grid of four pixels shares a single pair of Cb/Cr
+color samples, resulting in a 75% reduction in color data compared to
+4:4:4.</p>
+<p><strong>Key Characteristics of 4:2:0:</strong></p>
+<ul>
+<li><strong>Optimized Compression:</strong> Discarding three-quarters of
+the color data leads to significantly smaller overall file sizes, often
+reducing file weight by 15% to 30% compared to 4:4:4 without changing
+the quantization quality.</li>
+<li><strong>Color Bleeding:</strong> Sharp, saturated boundaries may
+appear blurry or exhibit pixelated halos around saturated edges.</li>
+<li><strong>Perceptually Lossless on Photos:</strong> Natural scenes,
+portraits, and landscapes have smooth color transitions where the human
+eye cannot distinguish the missing color data.</li>
+<li><strong>Best Uses:</strong> Web photography, mobile delivery, and
+standard camera output where bandwidth and storage efficiency take
+priority.</li>
+</ul>
+<h3 id="summary-of-differences">Summary of Differences</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">4:4:4 Subsampling</th>
+<th style="text-align: left;">4:2:0 Subsampling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Color Data Retained</strong></td>
+<td style="text-align: left;">100%</td>
+<td style="text-align: left;">25%</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Horizontal
+Resolution</strong></td>
+<td style="text-align: left;">Full</td>
+<td style="text-align: left;">Half</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vertical Resolution</strong></td>
+<td style="text-align: left;">Full</td>
+<td style="text-align: left;">Half</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Text/Vector Clarity</strong></td>
+<td style="text-align: left;">Crisp, no color fringing</td>
+<td style="text-align: left;">Prone to color blurring/artifacts</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Relative File Size</strong></td>
+<td style="text-align: left;">Larger</td>
+<td style="text-align: left;">Significantly smaller</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Target</strong></td>
+<td style="text-align: left;">Graphics, UI, typography</td>
+<td style="text-align: left;">Natural photography, web imagery</td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

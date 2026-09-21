@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Progressive JPEGs Crash Legacy Viewers - jpeg</title>
+    <meta name="description" content="Legacy image viewers frequently crash when opening progressive JPEG images due to structural differences in how image data is encoded and decoded compared to standard baseline formats. Older software was often engineered under the strict assumption that">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-progressive-jpe-gs-crash-legacy-viewers">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Progressive JPEGs Crash Legacy Viewers - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-progressive-jpe-gs-crash-legacy-viewers" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Legacy image viewers frequently crash when opening progressive JPEG images due to structural differences in how image data is encoded and decoded compared to standard baseline formats. Older software was often engineered under the strict assumption that" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-progressive-jpegs-crash-legacy-viewers">Why Progressive
+JPEGs Crash Legacy Viewers</h1>
+<p>Legacy image viewers frequently crash when opening progressive JPEG
+images due to structural differences in how image data is encoded and
+decoded compared to standard baseline formats. Older software was often
+engineered under the strict assumption that image data would arrive
+linearly in a single pass. When these programs encounter the multi-scan
+architecture, unfamiliar frame markers, and increased memory demands
+inherent to progressive JPEGs, their rigid decoders experience memory
+corruption, unhandled marker exceptions, or state machine failures.</p>
+<h3 id="baseline-vs-progressive-decoding-mechanics">Baseline vs.
+Progressive Decoding Mechanics</h3>
+<p>Standard baseline JPEGs store data sequentially. The decoder reads
+the image row by row from top to bottom in a single pass, immediately
+rendering each block of pixels. Progressive JPEGs, conversely, compress
+image data across multiple scans. The first scan provides a
+low-resolution or coarse representation of the entire image, and
+subsequent scans iteratively refine the detail, frequency components,
+and color precision until the full-resolution image is
+reconstructed.</p>
+<h3 id="unhandled-frame-markers-sof0-vs-sof2">Unhandled Frame Markers
+(SOF0 vs. SOF2)</h3>
+<p>Every JPEG file contains metadata markers that dictate how the
+decoder should process the bitstream.</p>
+<ul>
+<li>A baseline JPEG uses the <code>SOF0</code> (Start of Frame 0)
+marker.</li>
+<li>A progressive JPEG uses the <code>SOF2</code> (Start of Frame 2)
+marker.</li>
+</ul>
+<p>Many legacy image viewers rely on primitive or hardcoded decoding
+routines that only recognize <code>SOF0</code>. When such a viewer
+encounters an <code>SOF2</code> marker, it may lack the logic to branch
+into a progressive decoding routine. If the software lacks proper
+exception handling, it will attempt to process the non-linear bitstream
+using baseline decoding rules, resulting in an immediate application
+crash, an illegal instruction error, or an abrupt exit.</p>
+<h3 id="unexpected-multiple-start-of-scan-sos-markers">Unexpected
+Multiple Start of Scan (SOS) Markers</h3>
+<p>In a baseline file, there is generally a single <code>SOS</code>
+(Start of Scan) marker that precedes the compressed entropy data,
+followed by an <code>EOI</code> (End of Image) marker. Progressive JPEGs
+feature multiple <code>SOS</code> markers throughout the file, one for
+each refinement pass. Legacy parsers designed with finite state machines
+that expect a linear sequence—Header <span
+class="math inline">\(\rightarrow\)</span> Frame <span
+class="math inline">\(\rightarrow\)</span> Scan <span
+class="math inline">\(\rightarrow\)</span> End—often break down when
+encountering subsequent <code>SOS</code> markers. The parser might
+interpret the additional markers as corrupted data, loop infinitely, or
+dereference null pointers due to misaligned internal states.</p>
+<h3 id="buffer-overflows-and-linear-memory-assumptions">Buffer Overflows
+and Linear Memory Assumptions</h3>
+<p>Because baseline JPEGs decode in a single stream, a viewer only needs
+enough memory to store a few lines of pixels at a time before outputting
+them to the display buffer. Progressive decoding requires holding the
+full intermediate state of all discrete cosine transform (DCT)
+coefficients in memory across every pass.</p>
+<p>Older viewers written for resource-constrained systems often allocate
+static, linear buffers based strictly on the image's width, height, and
+color channels. When a progressive scan attempts to update the existing
+coefficients or re-render passes into an unprepared memory space, it can
+write beyond allocated buffer boundaries. This lack of bounds checking
+triggers buffer overflows, access violations, and segmentation faults
+that terminate the process.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

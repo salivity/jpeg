@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is the JPEG Checkerboard Effect? - jpeg</title>
+    <meta name="description" content="The checkerboard effect is a distinct visual artifact commonly seen in heavily compressed JPEG images, characterized by visible 8x8 pixel grid boundaries and alternating, high-contrast block patterns. This article explains what causes the checkerboard ef">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-is-the-jpeg-checkerboard-effect">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is the JPEG Checkerboard Effect? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-is-the-jpeg-checkerboard-effect" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The checkerboard effect is a distinct visual artifact commonly seen in heavily compressed JPEG images, characterized by visible 8x8 pixel grid boundaries and alternating, high-contrast block patterns. This article explains what causes the checkerboard ef" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-the-jpeg-checkerboard-effect">What Is the JPEG
+Checkerboard Effect?</h1>
+<p>The checkerboard effect is a distinct visual artifact commonly seen
+in heavily compressed JPEG images, characterized by visible 8x8 pixel
+grid boundaries and alternating, high-contrast block patterns. This
+article explains what causes the checkerboard effect during the JPEG
+encoding process, the role of Discrete Cosine Transform (DCT) and
+quantization, and the precise conditions under which these artifacts
+manifest in low-quality image blocks.</p>
+<h3 id="the-mechanics-of-jpeg-compression">The Mechanics of JPEG
+Compression</h3>
+<p>To understand the checkerboard effect, it is necessary to examine how
+standard JPEG compression operates. The algorithm processes images
+through several key stages:</p>
+<ol type="1">
+<li><strong>Color Space Transformation and Subsampling:</strong> RGB
+color data is converted to YCbCr (luminance and two chrominance
+channels), often followed by chroma subsampling (such as 4:2:0) to
+discard color information less noticeable to human eyes.</li>
+<li><strong>Block Division:</strong> The image is partitioned into
+independent grids of 8x8 pixel blocks.</li>
+<li><strong>Discrete Cosine Transform (DCT):</strong> Each 8x8 block is
+transformed from the spatial domain into the frequency domain,
+generating 64 DCT coefficients. The top-left value represents the
+average brightness (DC coefficient), while the remaining 63 represent
+increasing horizontal, vertical, and diagonal frequencies (AC
+coefficients).</li>
+<li><strong>Quantization:</strong> The coefficients are divided by
+values from a quantization matrix and rounded to the nearest integer.
+This is the lossy step where compression occurs.</li>
+<li><strong>Entropy Encoding:</strong> The quantized values are
+compressed losslessly using Huffman or arithmetic coding.</li>
+</ol>
+<h3 id="what-is-the-checkerboard-effect">What Is the Checkerboard
+Effect?</h3>
+<p>The checkerboard effect occurs when individual 8x8 blocks develop
+sharp, contrasting edges against neighboring blocks, or when the pixel
+data inside a block alternates rapidly in an orthogonal grid.</p>
+<p>While general "blocking artifacts" refer to the visibility of flat,
+solid-color 8x8 tiles across an image, the true checkerboard pattern
+occurs when alternating blocks experience disparate quantization errors,
+or when high-frequency diagonal DCT basis functions dominate an isolated
+block. This results in a distinctive patchwork or mosaic appearance
+reminiscent of a checkerboard.</p>
+<h3 id="when-the-checkerboard-effect-appears-in-low-quality-blocks">When
+the Checkerboard Effect Appears in Low-Quality Blocks</h3>
+<p>The checkerboard artifact is not random; it emerges under specific
+conditions during aggressive compression:</p>
+<h4 id="1-coarse-quantization-at-low-quality-settings">1. Coarse
+Quantization at Low Quality Settings</h4>
+<p>When an image is saved at low quality (typically below 30 on a 1–100
+scale), the quantization step divides DCT coefficients by large numbers.
+This forces most subtle high- and mid-frequency AC coefficients to zero.
+When neighboring blocks contain smooth gradients, their DC values may be
+rounded in opposite directions, turning a continuous transition into an
+alternating step pattern across adjacent block borders.</p>
+<h4 id="2-isolated-high-frequency-retention">2. Isolated High-Frequency
+Retention</h4>
+<p>The 8x8 DCT basis function located at the bottom-right corner
+(frequency index 7,7) consists of a pure 8x8 checkerboard pattern of
+alternating positive and negative values. Under certain low-bitrate
+quantization conditions, high-contrast details can cause this specific
+high-frequency diagonal coefficient to survive rounding while
+surrounding mid-frequency coefficients are zeroed out. The decoded block
+then directly displays the basis function's raw checkerboard
+appearance.</p>
+<h4 id="3-sharp-edges-splitting-block-boundaries">3. Sharp Edges
+Splitting Block Boundaries</h4>
+<p>When a high-contrast boundary—such as black text on a white
+background or a sharp architectural line—runs diagonally through 8x8
+boundaries, the DCT must use high-frequency components to represent the
+edge. In low-quality blocks, the loss of precise frequency data causes
+severe truncation. The reconstructed edge "rings" or distorts unevenly,
+creating an alternating light-and-dark pattern along the edge that
+mirrors the 8x8 grid.</p>
+<h4 id="4-aggressive-chroma-subsampling">4. Aggressive Chroma
+Subsampling</h4>
+<p>Because chrominance channels are often downsampled by half
+horizontally and vertically, a single chroma block spans a 16x16 pixel
+area in the original image. When these blocks undergo heavy
+quantization, color discontinuities span across larger boundaries,
+amplifying the perceived checkerboard layout when combined with
+luminance block errors.</p>
+<h3 id="mitigation">Mitigation</h3>
+<p>The checkerboard effect can be reduced during post-processing using
+deblocking filters, which smooth out abrupt mathematical discontinuities
+at 8x8 boundaries without destroying true image edges. However, the most
+effective prevention is maintaining adequate encoding bitrates or
+utilizing modern image formats like WebP or AVIF, which use larger,
+variable transform block sizes and integrated loop filters to prevent
+rigid grid artifacts.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Hints for Dynamic Mobile JPEG Delivery - jpeg</title>
+    <meta name="description" content="HTTP Client Hints are a set of request headers that share details about a user's device, screen dimensions, network conditions, and data preferences directly with the web server. By leveraging these hints, servers can dynamically adjust the compression l">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/client-hints-for-dynamic-mobile-jpeg-delivery">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Client Hints for Dynamic Mobile JPEG Delivery - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/client-hints-for-dynamic-mobile-jpeg-delivery" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="HTTP Client Hints are a set of request headers that share details about a user's device, screen dimensions, network conditions, and data preferences directly with the web server. By leveraging these hints, servers can dynamically adjust the compression l" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="client-hints-for-dynamic-mobile-jpeg-delivery">Client Hints for
+Dynamic Mobile JPEG Delivery</h1>
+<p>HTTP Client Hints are a set of request headers that share details
+about a user's device, screen dimensions, network conditions, and data
+preferences directly with the web server. By leveraging these hints,
+servers can dynamically adjust the compression level, dimensions, and
+quality of JPEG images before serving them to mobile devices. This
+eliminates unnecessary data transfer, speeds up page load times, and
+tailors the browsing experience to the client's real-time
+capabilities.</p>
+<h3 id="save-data">Save-Data</h3>
+<p>The <code>Save-Data</code> header indicates an explicit user
+preference for reduced data consumption. When enabled in a mobile
+browser (such as Chrome's Lite mode or Android's Data Saver), the
+browser sends:</p>
+<pre class="http"><code>Save-Data: on</code></pre>
+<p>When a web server detects <code>Save-Data: on</code>, it can
+aggressively increase JPEG compression—such as lowering the quality
+factor from an 85 to a 50 or 60—or serve lower-resolution fallbacks.</p>
+<h3 id="dpr-and-width">DPR and Width</h3>
+<p>Mobile screens feature varying pixel densities and viewport sizes.
+Two primary hints allow the server to calculate exact image dimensions
+and compression targets:</p>
+<ul>
+<li><strong><code>DPR</code> (Device Pixel Ratio):</strong> Indicates
+the ratio of physical device pixels to CSS pixels (e.g.,
+<code>DPR: 2</code> or <code>DPR: 3</code> on modern smartphones).</li>
+<li><strong><code>Width</code>:</strong> Sent by the browser to declare
+the target layout display width of the image in CSS pixels.</li>
+<li><strong><code>Viewport-Width</code>:</strong> Provides the total
+width of the user's viewport.</li>
+</ul>
+<p>By combining <code>Width</code> and <code>DPR</code>, the server
+computes the exact pixel dimensions required (<code>Width</code> ×
+<code>DPR</code>) and renders a JPEG scaled precisely to the display,
+preventing the transmission of oversized files.</p>
+<h3 id="network-quality-hints-ect-downlink-and-rtt">Network Quality
+Hints (ECT, Downlink, and RTT)</h3>
+<p>Network Client Hints communicate the client's current connection
+performance:</p>
+<ul>
+<li><strong><code>ECT</code> (Effective Connection Type):</strong>
+Classifies the network speed into categories such as
+<code>slow-2g</code>, <code>2g</code>, <code>3g</code>, or
+<code>4g</code>.</li>
+<li><strong><code>Downlink</code>:</strong> Provides an estimated
+download speed in megabits per second (Mbps).</li>
+<li><strong><code>RTT</code> (Round Trip Time):</strong> Measures the
+estimated latency in milliseconds.</li>
+</ul>
+<p>Servers can utilize these metrics to make real-time decisions about
+JPEG compression. For example, if a mobile device reports an
+<code>ECT</code> of <code>3g</code> or a high <code>RTT</code>, the
+server can dynamically apply a higher compression algorithm to minimize
+payload size and maintain render speed.</p>
+<h3 id="enabling-client-hints-on-the-server">Enabling Client Hints on
+the Server</h3>
+<p>Client Hints are opt-in and require the web server to declare which
+headers it needs using the <code>Accept-CH</code> response header:</p>
+<pre class="http"><code>Accept-CH: DPR, Width, Viewport-Width, Save-Data, ECT, Downlink</code></pre>
+<p>Once declared, supporting mobile browsers append these headers to
+subsequent sub-resource requests, enabling dynamic media processing
+pipelines (such as image CDNs or origin image processors) to generate
+and cache optimized JPEGs on the fly.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

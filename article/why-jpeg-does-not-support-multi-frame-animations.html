@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG Does Not Support Multi-Frame Animations - jpeg</title>
+    <meta name="description" content="While JPEG is the dominant standard for static photographic imagery on the web, it is fundamentally unsuitable for multi-frame animations compared to formats like GIF and APNG. This limitation stems from architectural choices in the JPEG specification, i">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-does-not-support-multi-frame-animations">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG Does Not Support Multi-Frame Animations - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-does-not-support-multi-frame-animations" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While JPEG is the dominant standard for static photographic imagery on the web, it is fundamentally unsuitable for multi-frame animations compared to formats like GIF and APNG. This limitation stems from architectural choices in the JPEG specification, i" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-does-not-support-multi-frame-animations">Why JPEG Does
+Not Support Multi-Frame Animations</h1>
+<p>While JPEG is the dominant standard for static photographic imagery
+on the web, it is fundamentally unsuitable for multi-frame animations
+compared to formats like GIF and APNG. This limitation stems from
+architectural choices in the JPEG specification, including a lack of
+multi-frame container support, the absence of transparency, inefficient
+frame storage, and zero native browser rendering pipelines for
+sequential playback. Understanding these structural boundaries clarifies
+why animated alternatives remain necessary.</p>
+<h3 id="no-native-multi-frame-architecture">No Native Multi-Frame
+Architecture</h3>
+<p>The standard JPEG file format (specifically JPEG Interchange Format
+and its common JFIF container) was designed exclusively to encode a
+single, static raster image. It does not include metadata tags to define
+frame sequences, display durations, loop counts, or inter-frame delays.
+In contrast, GIF includes explicit Graphic Control Extension blocks to
+specify timing and looping, while APNG extends the standard PNG chunk
+structure with <code>fcTL</code> (frame control) and <code>fdAT</code>
+(frame data) chunks to manage playback seamlessly.</p>
+<h3 id="absence-of-alpha-transparency">Absence of Alpha
+Transparency</h3>
+<p>Animations on the web frequently require transparent or
+semi-transparent backgrounds to blend with dynamic user interfaces and
+layouts. Standard JPEG operates strictly in color spaces like YCbCr or
+RGB without an alpha channel. Without transparency, every frame in a
+hypothetical animated JPEG must be fully opaque and rectangular. GIF
+supports single-color binary transparency, and APNG provides full 8-bit
+alpha transparency, making them far better suited for graphic overlays
+and web design.</p>
+<h3
+id="inefficient-file-sizes-and-lack-of-temporal-optimization">Inefficient
+File Sizes and Lack of Temporal Optimization</h3>
+<p>GIF and APNG achieve manageable file sizes for simple graphics and
+animations by using frame differencing, where the file only stores the
+pixels that change from one frame to the next. Standard JPEG encodes
+full images using discrete cosine transform (DCT) lossy compression
+designed for continuous-tone photography. If multiple JPEG images are
+bundled sequentially (as in formats like Motion JPEG), each frame must
+be encoded as a complete, independent keyframe. This results in
+excessively large file sizes compared to formats that leverage temporal
+redundancy and palette limitations.</p>
+<h3 id="high-decoding-overhead">High Decoding Overhead</h3>
+<p>Decompressing discrete cosine transforms, inverse quantization, and
+color space conversions across 30 to 60 frames per second introduces
+significant CPU and memory overhead compared to simpler formats. GIF
+relies on simple LZW compression and an 8-bit color lookup table, which
+requires minimal processing to decode. While APNG uses Deflate
+compression, its predictable pixel-based structure is well-optimized in
+modern renderers. Processing full lossy DCT blocks continuously causes
+unnecessary resource strain on user devices.</p>
+<h3 id="lack-of-ecosystem-and-browser-standards">Lack of Ecosystem and
+Browser Standards</h3>
+<p>Although variants like Motion JPEG (M-JPEG) exist for video streams
+in legacy surveillance cameras, it was never standardized as an animated
+web image format. Web browsers never developed rendering engines to
+parse sequential JPEGs as animated image files. Because GIF was already
+entrenched for low-color looping graphics, and APNG—alongside modern
+alternatives like WebP and AVIF—later emerged to provide high-color,
+multi-frame support with superior compression, there was never a
+technical or commercial incentive to adapt standard JPEG for
+animation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How JPEG XT Stores HDR Floating-Point Data - jpeg</title>
+    <meta name="description" content="This article explains the core mechanisms that JPEG XT (ISO/IEC 18477) utilizes to store high dynamic range (HDR) floating-point image data while retaining full backward compatibility with legacy 8-bit JPEG decoders. It covers the two-layer encoding arch">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpeg-xt-stores-hdr-floating-point-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How JPEG XT Stores HDR Floating-Point Data - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpeg-xt-stores-hdr-floating-point-data" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the core mechanisms that JPEG XT (ISO/IEC 18477) utilizes to store high dynamic range (HDR) floating-point image data while retaining full backward compatibility with legacy 8-bit JPEG decoders. It covers the two-layer encoding arch" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpeg-xt-stores-hdr-floating-point-data">How JPEG XT Stores
+HDR Floating-Point Data</h1>
+<p>This article explains the core mechanisms that JPEG XT (ISO/IEC
+18477) utilizes to store high dynamic range (HDR) floating-point image
+data while retaining full backward compatibility with legacy 8-bit JPEG
+decoders. It covers the two-layer encoding architecture, the role of
+application marker segments, the use of inverse tone mapping, and the
+specific residual coding models defined in ISO/IEC 18477-7 for handling
+IEEE floating-point representations.</p>
+<h2 id="dual-layer-architecture-and-backward-compatibility">Dual-Layer
+Architecture and Backward Compatibility</h2>
+<p>JPEG XT handles high dynamic range data through a split dual-layer
+system composed of a base layer and one or more extension layers.</p>
+<ul>
+<li><strong>The Base Layer:</strong> Contains a tone-mapped, standard
+dynamic range (SDR) 8-bit version of the image. It is compressed using
+standard discrete cosine transform (DCT) baseline JPEG algorithms. Any
+legacy JPEG decoder can read and render this layer, completely ignoring
+the HDR data.</li>
+<li><strong>The Extension Layer:</strong> Contains the auxiliary
+information and high-precision residual data required to reconstruct the
+full dynamic range and floating-point precision of the original
+image.</li>
+</ul>
+<h2 id="storage-in-app11-marker-segments">Storage in APP11 Marker
+Segments</h2>
+<p>To ensure that legacy decoders do not fail when reading an HDR file,
+JPEG XT encapsulates all extension data inside standard JPEG application
+marker segments—specifically the <code>APP11</code> marker (payload
+identifier <code>0xFFEB</code>).</p>
+<p>The <code>APP11</code> payload includes a four-byte identifier
+(<code>JPXT</code>), box-structured metadata conforming to ISO/IEC
+18477-3, and the bitstream payloads for the extension layers. Legacy
+decoders encounter the <code>APP11</code> markers, recognize them as
+non-critical application metadata, and skip past them to read only the
+standard frame. Modern JPEG XT decoders parse these segments to extract
+the tone-mapping parameters and residual streams.</p>
+<h2 id="tone-mapping-and-inverse-transform-functions">Tone Mapping and
+Inverse Transform Functions</h2>
+<p>To encode floating-point values into an 8-bit base layer, a tone
+mapping operator (TMO) converts high-range radiance values into standard
+8-bit non-linear sRGB or YCbCr values. JPEG XT does not mandate a single
+TMO, but it requires the encoder to store the mathematical inverse of
+the chosen TMO in the <code>APP11</code> segment.</p>
+<p>JPEG XT Part 7 (ISO/IEC 18477-7), which specifically standardizes
+floating-point coding, defines several inverse tone mapping
+functions:</p>
+<ul>
+<li><strong>Parametric Curves:</strong> Polynomial, rational, or
+exponential curves with encoded coefficients that model the global
+luminance mapping.</li>
+<li><strong>Look-Up Tables (LUTs):</strong> Explicit sample points that
+map 8-bit base layer code values back to normalized floating-point
+luminance or color values.</li>
+</ul>
+<h2 id="residual-coding-models-for-floating-point-precision">Residual
+Coding Models for Floating-Point Precision</h2>
+<p>Once the base layer is mapped back to an intermediate floating-point
+approximation via the inverse tone mapping function, that approximation
+is compared to the original HDR source image. The difference is stored
+as a residual in the extension layer.</p>
+<p>JPEG XT Part 7 provides two primary mechanisms for representing and
+storing floating-point residual data:</p>
+<h3 id="1-multiplicative-residuals-ratio-modeling">1. Multiplicative
+Residuals (Ratio Modeling)</h3>
+<p>Because human vision responds logarithmically to light,
+floating-point luminance spans multiple orders of magnitude. A
+multiplicative model computes a ratio between the original
+floating-point sample <span class="math inline">\(I\)</span> and the
+reconstructed base-layer sample <span
+class="math inline">\(B\)</span>:</p>
+<p><span class="math display">\[R = \frac{I}{f(B)}\]</span></p>
+<p>Where <span class="math inline">\(f(B)\)</span> is the intermediate
+floating-point reconstruction derived from the base layer. The residual
+<span class="math inline">\(R\)</span> represents a gain factor. This
+ratio is typically transformed into a logarithmic representation,
+quantized, and encoded using DCT blocks within the <code>APP11</code>
+stream.</p>
+<h3 id="2-additive-residuals">2. Additive Residuals</h3>
+<p>In certain color spaces or profiles, an additive residual is
+used:</p>
+<p><span class="math display">\[R = I - f(B)\]</span></p>
+<p>Additive residuals are predominantly used when correcting chrominance
+channels or when encoding fine details where absolute differences are
+small.</p>
+<h2 id="floating-point-sample-reconstruction">Floating-Point Sample
+Reconstruction</h2>
+<p>During decoding, JPEG XT reconstructs floating-point data (typically
+conforming to the IEEE 754 half-precision 16-bit or single-precision
+32-bit formats) through the following pipeline:</p>
+<ol type="1">
+<li><strong>Base Layer Decoding:</strong> The primary image is decoded
+using a standard 8-bit IDCT to yield RGB or YCbCr samples.</li>
+<li><strong>Intermediate Floating-Point Expansion:</strong> The decoded
+8-bit samples are passed through the inverse tone mapping function
+retrieved from the <code>APP11</code> marker, lifting the integer values
+into floating-point coordinates.</li>
+<li><strong>Extension Layer Decoding:</strong> The residual stream from
+the <code>APP11</code> segments is entropy-decoded and processed through
+an inverse DCT.</li>
+<li><strong>Synthesis:</strong> The decoder applies the residual
+correction (via multiplication or addition) to the intermediate
+values.</li>
+<li><strong>Color Space Transformation:</strong> The final reconstructed
+values are converted into the target linear floating-point color space
+(such as scRGB or BT.2020) and stored as IEEE 754 floating-point
+samples.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

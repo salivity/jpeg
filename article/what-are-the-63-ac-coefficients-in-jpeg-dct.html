@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Are the 63 AC Coefficients in JPEG DCT? - jpeg</title>
+    <meta name="description" content="In JPEG image compression, an image is divided into 8x8 pixel blocks and converted into frequency space using the Discrete Cosine Transform (DCT), resulting in 64 frequency coefficients per block. While the single Direct Current (DC) coefficient represen">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-are-the-63-ac-coefficients-in-jpeg-dct">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Are the 63 AC Coefficients in JPEG DCT? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-are-the-63-ac-coefficients-in-jpeg-dct" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In JPEG image compression, an image is divided into 8x8 pixel blocks and converted into frequency space using the Discrete Cosine Transform (DCT), resulting in 64 frequency coefficients per block. While the single Direct Current (DC) coefficient represen" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-are-the-63-ac-coefficients-in-jpeg-dct">What Are the 63 AC
+Coefficients in JPEG DCT?</h1>
+<p>In JPEG image compression, an image is divided into 8x8 pixel blocks
+and converted into frequency space using the Discrete Cosine Transform
+(DCT), resulting in 64 frequency coefficients per block. While the
+single Direct Current (DC) coefficient represents the average color or
+brightness across the block, the remaining 63 Alternating Current (AC)
+coefficients represent the specific spatial frequencies, textures,
+edges, and directional patterns within that block. This article explains
+what these 63 AC coefficients capture, how they are structured across
+the 8x8 matrix, and why they are central to the JPEG compression
+process.</p>
+<h3 id="spatial-frequencies-and-gradients">Spatial Frequencies and
+Gradients</h3>
+<p>Each of the 63 AC coefficients corresponds to a specific basic cosine
+wave pattern running at different frequencies across the 8x8 grid:</p>
+<ul>
+<li><strong>Horizontal Frequency (Moving Right):</strong> As you move
+horizontally across the top row from the DC coefficient, the AC
+coefficients represent increasingly rapid changes in color or brightness
+from left to right. High values here signify vertical edges or fine
+vertical stripes.</li>
+<li><strong>Vertical Frequency (Moving Down):</strong> As you move
+vertically down the first column from the DC coefficient, the
+coefficients capture increasingly rapid changes from top to bottom. High
+values here signify horizontal edges or fine horizontal stripes.</li>
+<li><strong>Diagonal Frequency (Moving Diagonally):</strong> The
+remaining coefficients represent combinations of horizontal and vertical
+variations. The bottom-right corner represents the highest diagonal
+spatial frequency—alternating checkered patterns that switch values
+almost every pixel.</li>
+</ul>
+<h3 id="low-vs-high-frequencies">Low vs. High Frequencies</h3>
+<p>The position of an AC coefficient dictates the scale of the visual
+feature it describes:</p>
+<ul>
+<li><strong>Low-Frequency AC Coefficients:</strong> Clustered near the
+top-left (adjacent to the DC coefficient), these values represent broad
+variations, smooth shading, soft gradients, and the general contours of
+objects. Because the human eye is extremely sensitive to these gradual
+transitions, retaining accurate values for these coefficients is
+critical for perceived image quality.</li>
+<li><strong>High-Frequency AC Coefficients:</strong> Located toward the
+bottom-right of the matrix, these values capture fine details, sharp
+boundaries, noise, and complex surface textures. The human visual system
+is significantly less sensitive to subtle errors at these rapid
+frequencies.</li>
+</ul>
+<h3 id="role-in-quantization-and-compression">Role in Quantization and
+Compression</h3>
+<p>The purpose of isolating the 63 AC coefficients by frequency is to
+make compression possible through quantization:</p>
+<ol type="1">
+<li><strong>Quantization:</strong> JPEG applies a quantization matrix
+that divides the high-frequency AC coefficients by larger step sizes
+than the low-frequency ones. This deliberately rounds many
+high-frequency coefficients down to zero.</li>
+<li><strong>Zig-Zag Scanning:</strong> After quantization, the 64
+coefficients are read in a zig-zag order, starting at the DC coefficient
+and traversing from lowest to highest frequency AC coefficients.</li>
+<li><strong>Entropy Encoding:</strong> Because the high-frequency AC
+values are frequently rounded to zero, the zig-zag sequence produces
+long runs of trailing zeros. These sequences are then compressed using
+run-length encoding and Huffman coding, drastically reducing file size
+while preserving the visually essential components of the image.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

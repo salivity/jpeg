@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the Telecom Industry Shaped JPEG Standards - jpeg</title>
+    <meta name="description" content="The development of the Joint Photographic Experts Group (JPEG) standard in the late 1980s and early 1990s was fundamentally driven by the technical and commercial demands of the telecommunications industry. As a collaborative effort between the Internati">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-the-telecom-industry-shaped-jpeg-standards">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How the Telecom Industry Shaped JPEG Standards - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-the-telecom-industry-shaped-jpeg-standards" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The development of the Joint Photographic Experts Group (JPEG) standard in the late 1980s and early 1990s was fundamentally driven by the technical and commercial demands of the telecommunications industry. As a collaborative effort between the Internati" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-the-telecom-industry-shaped-jpeg-standards">How the Telecom
+Industry Shaped JPEG Standards</h1>
+<p>The development of the Joint Photographic Experts Group (JPEG)
+standard in the late 1980s and early 1990s was fundamentally driven by
+the technical and commercial demands of the telecommunications industry.
+As a collaborative effort between the International Organization for
+Standardization (ISO) and the International Telegraph and Telephone
+Consultative Committee (CCITT, now ITU-T), JPEG was engineered to solve
+practical transmission problems over copper wires and early digital
+networks. Telecommunication requirements directly influenced the
+standard's target bitrates, transmission modes, error-handling
+capabilities, and baseline mathematical architecture.</p>
+<h3 id="the-joint-iso-and-ccitt-mandate">The Joint ISO and CCITT
+Mandate</h3>
+<p>Before JPEG, digital image compression was fragmented. The
+telecommunications sector required a unified standard to transmit
+photographic images across telephone networks, digital facsimile (color
+fax) systems, and videotex services. In 1986, the CCITT partnered with
+the ISO to create the Joint Photographic Experts Group. Because the
+CCITT was an international body governed by telecommunications
+operators, the resulting standard was formally published not only as
+ISO/IEC 10918-1, but also as CCITT Recommendation T.81, making it an
+official telecom telematics protocol.</p>
+<h3 id="bandwidth-limits-and-target-compression-ratios">Bandwidth Limits
+and Target Compression Ratios</h3>
+<p>The physical limits of late-1980s telecommunications infrastructure
+dictated JPEG’s compression targets. Early digital lines, particularly
+Integrated Services Digital Network (ISDN) channels, were capped at 64
+kilobits per second (kbps), while analog telephone lines operated at far
+lower dial-up speeds (typically 1.2 to 9.6 kbps).</p>
+<p>To send a standard full-color photograph (24-bit RGB) over a 64 kbps
+line in a commercially viable timeframe—ideally under a few
+seconds—engineers needed compression ratios between 10:1 and 20:1. This
+performance target led the committee to select the Discrete Cosine
+Transform (DCT) coupled with human visual system (HVS) quantization. The
+DCT allowed high-frequency color data that human eyes poorly perceive to
+be discarded, reducing transmission payloads to roughly 0.75 to 1.5 bits
+per pixel with minimal perceived quality loss.</p>
+<h3 id="progressive-transmission-for-slow-connections">Progressive
+Transmission for Slow Connections</h3>
+<p>One of the most visible telecom-driven features in the JPEG
+specification is progressive mode. On low-bandwidth telephone networks,
+decoding a standard "sequential" image meant users had to wait for lines
+of pixels to appear slowly from top to bottom.</p>
+<p>To solve this, the telecom contingent pushed for a progressive
+transmission mode. Under this scheme:</p>
+<ul>
+<li>The image is transmitted in multiple passes.</li>
+<li>The first pass delivers a low-resolution, blocky approximation using
+only low-frequency DCT coefficients.</li>
+<li>Subsequent passes transmit higher-frequency details, progressively
+sharpening the image.</li>
+</ul>
+<p>This enabled users on slow networks to instantly preview an incoming
+image and decide whether to abort the call or wait for the full
+transmission, saving billable network time.</p>
+<h3 id="color-facsimile-and-photovideotex">Color Facsimile and
+Photovideotex</h3>
+<p>The telecommunications industry needed a replacement for the binary
+(black-and-white) Group 3 and Group 4 facsimile standards to enable
+color faxing over public switched telephone networks (PSTN).
+Additionally, national telecom operators were developing photovideotex
+systems (such as France’s Minitel and the UK’s Prestel) that required
+efficient continuous-tone image rendering. JPEG’s color space
+flexibility, specifically its support for <span
+class="math inline">\(YC_bC_r\)</span> downsampling (where color
+channels are sampled at half the resolution of brightness), was
+implemented to halve the data overhead of color fax transmissions
+without noticeable degradation.</p>
+<h3 id="error-resilience-for-noisy-channels">Error Resilience for Noisy
+Channels</h3>
+<p>Analog and early digital telephone connections were prone to line
+noise, packet loss, and transmission bit errors. Because entropy coding
+(such as Huffman coding) relies on variable-length bit sequences, a
+single corrupted bit during transmission can desynchronize the decoder,
+causing the remainder of the image to turn into visual noise.</p>
+<p>To make JPEG robust over telecom circuits, the committee integrated
+"Restart Markers" (RST codes) into the bitstream. RST markers divide the
+image into independently decodable blocks at predetermined intervals. If
+transmission noise corrupted an image segment over a copper telephone
+line, the decoder could resynchronize at the next marker, containing the
+damage to a small strip of the photograph rather than ruining the entire
+transmission.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

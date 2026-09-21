@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Browsers Hesitate to Support JPEG XL - jpeg</title>
+    <meta name="description" content="Despite strong community enthusiasm and compelling technical benchmarks, major web browser vendors have hesitated to enable default support for the JPEG XL image format. JPEG XL promised to revolutionize web imagery with superior compression, high dynami">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-browsers-hesitate-to-support-jpeg-xl">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Browsers Hesitate to Support JPEG XL - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-browsers-hesitate-to-support-jpeg-xl" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Despite strong community enthusiasm and compelling technical benchmarks, major web browser vendors have hesitated to enable default support for the JPEG XL image format. JPEG XL promised to revolutionize web imagery with superior compression, high dynami" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-browsers-hesitate-to-support-jpeg-xl">Why Browsers Hesitate
+to Support JPEG XL</h1>
+<p>Despite strong community enthusiasm and compelling technical
+benchmarks, major web browser vendors have hesitated to enable default
+support for the JPEG XL image format. JPEG XL promised to revolutionize
+web imagery with superior compression, high dynamic range support, and
+lossless legacy JPEG transcoding. However, major vendors—most notably
+Google in the Chromium project—pushed back, citing maintenance burdens,
+overlapping capabilities with competing formats like AVIF and WebP, and
+a perceived lack of industry-wide consensus. This article explains the
+technical, strategic, and ecosystem factors that caused browser vendors
+to stall default JPEG XL adoption.</p>
+<h3 id="competing-standards-and-the-push-for-avif">Competing Standards
+and the Push for AVIF</h3>
+<p>A primary driver behind the hesitation was the industry's prior
+commitment to AVIF (AV1 Image File Format). Backed by the Alliance for
+Open Media (AOMedia)—a consortium that includes Google, Mozilla,
+Microsoft, and other tech giants—AVIF was engineered alongside the AV1
+video codec.</p>
+<p>Because browser engines were already integrating AV1 video decoders,
+adding AVIF support required relatively little additional overhead.
+Browser vendors viewed AVIF as a strategic, royalty-free standard that
+unified video and image delivery. Introducing JPEG XL, a format
+developed outside the AOMedia pipeline by the Joint Photographic Experts
+Group (JPEG committee), created an unwanted format war inside browser
+engines.</p>
+<h3 id="codebase-complexity-and-security-overhead">Codebase Complexity
+and Security Overhead</h3>
+<p>Adding support for an entirely new image codec is not trivial. An
+image decoder operates on untrusted data directly exposed to the web,
+making it a frequent target for memory corruption exploits and security
+vulnerabilities.</p>
+<p>Every new codec introduced into a rendering engine requires
+continuous security auditing, fuzz testing, performance profiling, and
+long-term maintenance. In late 2022, Chromium engineers deprecated and
+subsequently removed experimental JPEG XL support, stating that the
+incremental benefits of the format did not justify the ongoing
+maintenance and attack surface expansion.</p>
+<h3 id="good-enough-existing-formats">"Good Enough" Existing
+Formats</h3>
+<p>From the perspective of browser vendors, the modern web's image
+delivery problems were largely already addressed. Legacy formats like
+standard JPEG and PNG remain universal fallbacks, while WebP provides
+broad, lightweight compression. For cutting-edge compression and
+advanced color spaces, AVIF was deemed sufficient for the majority of
+consumer web use cases.</p>
+<p>While JPEG XL technically outperforms AVIF in areas like
+high-resolution rendering, encoding speed, and lossless transcoding of
+existing JPEGs, vendors evaluated these advantages as niche benefits
+mostly relevant to professional photography and archiving rather than
+typical web browsing.</p>
+<h3 id="lack-of-initial-universal-consensus">Lack of Initial Universal
+Consensus</h3>
+<p>For a new web standard to thrive without fragmenting the web, broad
+consensus among browser engines is crucial. When Google evaluated JPEG
+XL for Chromium, neither Mozilla (Firefox) nor Apple (WebKit/Safari) had
+declared firm intentions to enable it by default. Google cited this lack
+of broad ecosystem interest as a key justification for stepping
+back.</p>
+<p>Without guaranteed cross-browser parity, developers are reluctant to
+deploy a format in production, which in turn reinforces browser vendors'
+beliefs that demand is limited to niche enthusiast communities rather
+than the web at large.</p>
+<h3 id="the-evolving-landscape">The Evolving Landscape</h3>
+<p>The hesitation toward JPEG XL has not remained entirely uniform.
+Apple shifted the narrative in late 2023 by adding support for JPEG XL
+across Safari, iOS, and macOS, prioritizing its advantages in high
+dynamic range and professional imaging pipelines. Mozilla has kept an
+experimental flag for the format in Firefox while tracking ecosystem
+adoption.</p>
+<p>Nevertheless, because Chromium-based browsers control the majority of
+the desktop and mobile browsing market, Google's reluctance to
+reintegrate and enable JPEG XL by default remains the single largest
+barrier to the format becoming a universally accepted web standard.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

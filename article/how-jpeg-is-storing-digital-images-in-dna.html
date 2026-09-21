@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How JPEG Is Storing Digital Images in DNA - jpeg</title>
+    <meta name="description" content="The Joint Photographic Experts Group (JPEG) is actively developing a standardized framework, designated as JPEG DNA, to encode, archive, and retrieve digital images using synthetic DNA. Driven by the exponential growth of visual media and the physical li">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-jpeg-is-storing-digital-images-in-dna">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How JPEG Is Storing Digital Images in DNA - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-jpeg-is-storing-digital-images-in-dna" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Joint Photographic Experts Group (JPEG) is actively developing a standardized framework, designated as JPEG DNA, to encode, archive, and retrieve digital images using synthetic DNA. Driven by the exponential growth of visual media and the physical li" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-jpeg-is-storing-digital-images-in-dna">How JPEG Is Storing
+Digital Images in DNA</h1>
+<p>The Joint Photographic Experts Group (JPEG) is actively developing a
+standardized framework, designated as JPEG DNA, to encode, archive, and
+retrieve digital images using synthetic DNA. Driven by the exponential
+growth of visual media and the physical limitations of conventional
+storage media, this initiative explores how molecular biology can serve
+as an ultra-dense, durable medium for cold-data preservation. This
+article explains the technical motivations behind JPEG DNA, how the
+encoding pipeline functions, and the practical challenges the standard
+aims to solve.</p>
+<h3 id="the-need-for-molecular-storage">The Need for Molecular
+Storage</h3>
+<p>Traditional digital storage media such as magnetic tape, hard drives,
+and optical disks suffer from limited lifespans, typically degrading
+within five to thirty years. They also require climate-controlled
+environments, recurring data migration cycles, and vast amounts of
+energy.</p>
+<p>Synthetic DNA offers unprecedented data density and longevity. A
+single gram of synthetic DNA can theoretically store over 200 petabytes
+of data, and when kept in cool, dry conditions, it can remain stable for
+thousands of years without degradation. Because visual media represents
+the vast majority of globally generated data, establishing an
+image-specific standard for DNA storage is a natural priority for
+archival institutions and tech industries.</p>
+<h3 id="what-is-the-jpeg-dna-initiative">What is the JPEG DNA
+Initiative?</h3>
+<p>Launched as an official standardization project under the ISO/IEC
+umbrella, JPEG DNA aims to define an image coding specification tailored
+specifically to the chemical properties of synthetic DNA. Instead of
+treating synthetic DNA simply as a raw binary container, JPEG DNA
+integrates image compression directly with biochemical coding.</p>
+<p>In a standard workflow, image data is converted into binary (zeros
+and ones). Synthetic DNA, however, operates on a quaternary code
+representing the four nucleotide bases:</p>
+<ul>
+<li>Adenine (A)</li>
+<li>Cytosine (C)</li>
+<li>Guanine (G)</li>
+<li>Thymine (T)</li>
+</ul>
+<p>JPEG DNA designs compression algorithms that translate visual pixel
+data directly into ACGT sequences, bypassing inefficient intermediary
+steps and maximizing information density per synthesized nucleotide.</p>
+<h3 id="overcoming-biochemical-constraints">Overcoming Biochemical
+Constraints</h3>
+<p>Writing and reading DNA—processes known as synthesis and
+sequencing—present distinct physical challenges that JPEG DNA
+addresses:</p>
+<ul>
+<li><strong>Homopolymer Avoidance:</strong> Biochemical synthesis
+equipment frequently introduces errors when the same nucleotide repeats
+consecutively (e.g., AAAAA). JPEG DNA encoding schemes are designed to
+eliminate or strictly limit long runs of identical bases.</li>
+<li><strong>GC Content Balancing:</strong> DNA strands are physically
+more stable and readable when they maintain a roughly equal ratio of
+Guanine-Cytosine (G-C) to Adenine-Thymine (A-T) pairs. The standard
+specifies algorithms that regulate this GC balance across the encoded
+strands.</li>
+<li><strong>Integrated Error Correction:</strong> Chemical synthesis and
+PCR amplification inevitably cause mutations, insertions, or deletions.
+The standard implements specialized Error Correction Coding (ECC), such
+as Reed-Solomon or fountain codes, ensuring that corrupted or missing
+strands do not compromise the retrieved image.</li>
+<li><strong>Random Access and Multi-Resolution:</strong> Sequencing an
+entire DNA library to retrieve a single photo is cost-prohibitive. JPEG
+DNA explores biological indexing methods that allow users to search
+metadata, generate lower-resolution previews, or selectively amplify and
+sequence specific regions of interest without processing the entire
+dataset.</li>
+</ul>
+<h3 id="current-implementation-and-next-steps">Current Implementation
+and Next Steps</h3>
+<p>The JPEG committee is currently evaluating responses to formal Calls
+for Proposals, working alongside biotechnology companies, academic
+researchers, and hardware manufacturers. Benchmark evaluations focus on
+the trade-offs between compression performance, synthesis cost,
+sequencing accuracy, and algorithmic complexity.</p>
+<p>While the cost and speed of synthetic DNA synthesis currently
+restrict the technology to long-term cold storage and deep preservation,
+JPEG DNA provides the foundational protocols required to ensure that
+images archived at the molecular level today remain fully standardized
+and readable by future generations.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

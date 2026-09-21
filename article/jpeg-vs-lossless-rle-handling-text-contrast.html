@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG vs Lossless RLE: Handling Text Contrast - jpeg</title>
+    <meta name="description" content="This article examines how JPEG compression and lossless Run-Length Encoding (RLE) handle text contrast, comparing their underlying algorithms and resulting visual fidelity. While JPEG uses lossy, frequency-based compression that causes blurring and artif">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-vs-lossless-rle-handling-text-contrast">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG vs Lossless RLE: Handling Text Contrast - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-vs-lossless-rle-handling-text-contrast" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how JPEG compression and lossless Run-Length Encoding (RLE) handle text contrast, comparing their underlying algorithms and resulting visual fidelity. While JPEG uses lossy, frequency-based compression that causes blurring and artif" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-vs-lossless-rle-handling-text-contrast">JPEG vs Lossless
+RLE: Handling Text Contrast</h1>
+<p>This article examines how JPEG compression and lossless Run-Length
+Encoding (RLE) handle text contrast, comparing their underlying
+algorithms and resulting visual fidelity. While JPEG uses lossy,
+frequency-based compression that causes blurring and artifacts around
+sharp edges, RLE relies on exact sequence repetition that preserves 100%
+of the original contrast and edge definition in text-heavy imagery.</p>
+<h3 id="how-jpeg-handles-text-contrast">How JPEG Handles Text
+Contrast</h3>
+<p>JPEG was architected specifically for continuous-tone photographic
+imagery, where adjacent pixels typically feature subtle, gradual shifts
+in color and brightness. To compress an image, JPEG divides it into 8x8
+pixel blocks and applies a Discrete Cosine Transform (DCT). The DCT
+converts spatial pixel data into frequency components, separating
+low-frequency broad areas from high-frequency details.</p>
+<p>Text, however, is defined by extreme high spatial frequencies: an
+immediate, binary transition between dark glyphs and light backgrounds.
+During the JPEG quantization stage, high-frequency data is aggressively
+discarded to achieve smaller file sizes, based on the assumption that
+human vision does not easily perceive high-frequency loss. When applied
+to text, this mathematical truncation creates severe side effects:</p>
+<ul>
+<li><strong>Ringing Artifacts (Gibbs Phenomenon):</strong> Discarding
+high-frequency coefficients causes oscillating wave patterns to appear
+around letter outlines, manifesting as noisy halos.</li>
+<li><strong>Loss of Edge Contrast:</strong> Sharp pixel boundaries are
+smoothed out, causing black letters on white backgrounds to appear fuzzy
+or grayed out at the perimeter.</li>
+<li><strong>Chroma Subsampling Degradation:</strong> If text involves
+color, JPEG often downsizes color information (such as 4:2:0
+subsampling), which strips color definition and clarity from character
+strokes.</li>
+</ul>
+<h3 id="how-lossless-rle-handles-text-contrast">How Lossless RLE Handles
+Text Contrast</h3>
+<p>Run-Length Encoding (RLE) is a spatial, lossless compression
+algorithm that condenses data by identifying consecutive identical pixel
+values ("runs") and storing them as a single data value along with a
+count. For example, a row containing twenty white pixels followed by
+five black pixels is simply stored as
+<code>(20, White), (5, Black)</code>.</p>
+<p>Text graphics naturally align with how RLE operates. Standard
+documents, typography, and diagrams consist of large, continuous fields
+of uniform background punctuated by uniform strokes of text color.</p>
+<ul>
+<li><strong>Zero Contrast Degradation:</strong> Because RLE is entirely
+lossless, every single pixel value is restored exactly as it was
+created. The mathematical boundary between a black pixel and a white
+pixel remains completely absolute, preserving maximum dynamic
+contrast.</li>
+<li><strong>Absence of Artifacts:</strong> RLE does not use frequency
+domain approximations, meaning halos, ringing, and color bleed are
+technically impossible.</li>
+<li><strong>High Efficiency on Flat Fields:</strong> On clean,
+non-anti-aliased text or scanned documents with solid color palettes,
+RLE achieves significant file size reduction because long sequences of
+background and character pixels compress into tiny run-count pairs.</li>
+</ul>
+<h3 id="summary-comparison">Summary Comparison</h3>
+<p>JPEG's transform-based approach fails on high-contrast text because
+it treats sharp edges as expendable noise, resulting in blurred
+character boundaries, low contrast, and unsightly compression artifacts.
+Conversely, lossless RLE treats text in its native spatial context,
+maintaining pixel-perfect edge transitions and maximum contrast without
+any degradation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

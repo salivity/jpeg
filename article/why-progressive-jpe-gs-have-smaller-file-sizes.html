@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Progressive JPEGs Have Smaller File Sizes - jpeg</title>
+    <meta name="description" content="Progressive JPEG images often produce smaller file sizes than sequential JPEGs because of how their image data is grouped, structured, and compressed. While sequential JPEGs decode an image block by block from top to bottom in a single pass, progressive">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-progressive-jpe-gs-have-smaller-file-sizes">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Progressive JPEGs Have Smaller File Sizes - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-progressive-jpe-gs-have-smaller-file-sizes" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Progressive JPEG images often produce smaller file sizes than sequential JPEGs because of how their image data is grouped, structured, and compressed. While sequential JPEGs decode an image block by block from top to bottom in a single pass, progressive" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-progressive-jpegs-have-smaller-file-sizes">Why Progressive
+JPEGs Have Smaller File Sizes</h1>
+<p>Progressive JPEG images often produce smaller file sizes than
+sequential JPEGs because of how their image data is grouped, structured,
+and compressed. While sequential JPEGs decode an image block by block
+from top to bottom in a single pass, progressive JPEGs deliver the image
+in multiple full-frame passes of increasing detail. This architectural
+difference allows progressive encoders to group similar frequency data
+together across the entire image, leading to significantly more
+efficient entropy encoding and run-length compression.</p>
+<h3 id="better-statistical-grouping-for-huffman-coding">Better
+Statistical Grouping for Huffman Coding</h3>
+<p>JPEG compression relies on Huffman coding, an entropy encoding
+algorithm that assigns shorter binary codes to frequently occurring data
+values and longer codes to rarer ones.</p>
+<p>In a standard sequential JPEG, the encoder processes the image in 8x8
+pixel blocks. For every single block, it encodes the DC coefficient (the
+average color) followed immediately by all 63 AC coefficients (the
+high-frequency details and textures). Because high-frequency and
+low-frequency data are constantly interleaved from block to block, the
+data distribution fluctuates rapidly.</p>
+<p>In contrast, a progressive JPEG splits the image into distinct scans.
+A typical progressive scan might transmit only the DC coefficients for
+the entire image in the first pass, followed by low-frequency AC
+coefficients in the next pass, and high-frequency AC coefficients in
+subsequent passes. Grouping identical frequency bands together creates
+much more uniform statistical distributions within each scan. This
+uniformity allows the Huffman encoder to generate tighter, more optimal
+prefix codes, reducing the total number of bits required to store the
+data.</p>
+<h3 id="efficient-run-length-encoding-of-high-frequencies">Efficient
+Run-Length Encoding of High Frequencies</h3>
+<p>Most photographic images contain significant areas of flat or
+smoothly transitioning color, such as skies, blurred backgrounds, or
+solid surfaces. In the frequency domain, these areas contain large
+sequences of zero-value AC coefficients.</p>
+<p>JPEG uses Run-Length Encoding (RLE) to compress these consecutive
+zeros. In progressive JPEGs, grouping high-frequency coefficients across
+the entire image results in massive, uninterrupted sequences of zeros.
+The encoder can represent these empty high-frequency regions with
+compact end-of-block markers and long zero-run codes far more
+efficiently than a sequential JPEG, which must reset its run-length
+counters for every individual 8x8 block.</p>
+<h3 id="successive-approximation">Successive Approximation</h3>
+<p>Progressive JPEGs also support successive approximation, where the
+most significant bits of the coefficients are sent first, and the least
+significant bits are refined in later passes. Isolating the lower-order
+bits into separate bit-plane scans removes noise from the initial passes
+and creates highly compressible, predictable bit patterns in later
+scans, further boosting overall compression ratios.</p>
+<h3 id="the-threshold-for-size-reduction">The Threshold for Size
+Reduction</h3>
+<p>While progressive encoding typically saves between 2% and 10% in file
+size on medium-to-large images, it is not universally smaller for every
+image. Progressive JPEGs require additional header markers and scan
+scripts to define how each pass is structured. For very small images
+(typically under 10 kilobytes), this structural overhead can outweigh
+the compression gains, making a sequential JPEG slightly smaller. For
+standard web photographs, however, the statistical gains of grouped
+entropy coding consistently make progressive JPEGs the lighter
+choice.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

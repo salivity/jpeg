@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG 2000 Blurs Instead of Producing Blocks - jpeg</title>
+    <meta name="description" content="JPEG 2000 replaces the severe grid artifacts common in legacy JPEG compression with a soft, gradual blur at low bitrates due to a fundamental difference in mathematical design. While traditional JPEG segments an image into rigid 8x8 pixel grids processed">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-jpeg-2000-blurs-instead-of-producing-blocks">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG 2000 Blurs Instead of Producing Blocks - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-jpeg-2000-blurs-instead-of-producing-blocks" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG 2000 replaces the severe grid artifacts common in legacy JPEG compression with a soft, gradual blur at low bitrates due to a fundamental difference in mathematical design. While traditional JPEG segments an image into rigid 8x8 pixel grids processed" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-2000-blurs-instead-of-producing-blocks">Why JPEG 2000
+Blurs Instead of Producing Blocks</h1>
+<p>JPEG 2000 replaces the severe grid artifacts common in legacy JPEG
+compression with a soft, gradual blur at low bitrates due to a
+fundamental difference in mathematical design. While traditional JPEG
+segments an image into rigid 8x8 pixel grids processed via the Discrete
+Cosine Transform (DCT), JPEG 2000 processes the image as a continuous
+canvas using the Discrete Wavelet Transform (DWT). When aggressive
+compression discards data, the absence of rigid block boundaries
+prevents visual tiling, causing high-frequency textures to fade into a
+smooth blur instead.</p>
+<h3 id="the-mechanics-of-8x8-block-artifacts-in-standard-jpeg">The
+Mechanics of 8x8 Block Artifacts in Standard JPEG</h3>
+<p>Standard JPEG operates on a block-based architecture. Before any
+mathematical compression occurs, the image is divided into
+non-overlapping grids of 8x8 pixels. The Discrete Cosine Transform (DCT)
+is then applied independently to each block, converting spatial pixel
+values into frequency components.</p>
+<p>At low bitrates, quantization aggressively rounds these frequency
+coefficients to zero to save space, preserving only the lowest-frequency
+data in each block. Because adjacent blocks are calculated in total
+isolation, the independent rounding causes the reconstructed pixel
+values at the borders of neighboring blocks to mismatch. The human eye
+easily detects these sharp, artificial discontinuities along horizontal
+and vertical borders, creating the recognizable "checkerboard" or 8x8
+blocking artifact.</p>
+<h3 id="how-the-discrete-wavelet-transform-dwt-prevents-grid-lines">How
+the Discrete Wavelet Transform (DWT) Prevents Grid Lines</h3>
+<p>JPEG 2000 eliminates block boundaries by applying the Discrete
+Wavelet Transform across the entire image, or across much larger
+user-defined tiles. Instead of breaking the image into localized
+squares, DWT analyzes the visual information globally and hierarchically
+across multiple scales.</p>
+<p>Wavelet transforms pass the image through low-pass (smoothing) and
+high-pass (detail) filters, decomposing the scene into multiple
+resolution levels called subbands:</p>
+<ul>
+<li><strong>Low-frequency subbands</strong> capture broad areas of
+color, overall shape, and general luminance.</li>
+<li><strong>High-frequency subbands</strong> contain sharp edges, fine
+textures, and intricate details.</li>
+</ul>
+<p>Because the wavelet basis functions overlap smoothly across the
+spatial dimensions of the image, there are no artificial internal
+seams.</p>
+<h3 id="why-information-loss-results-in-blur">Why Information Loss
+Results in Blur</h3>
+<p>When JPEG 2000 compresses an image down to an extremely low bitrate,
+its rate-allocation algorithms (such as EBCOT) systematically discard
+the least visually significant bit-planes. This truncation predominantly
+impacts the finest high-frequency wavelet subbands.</p>
+<p>When the high-frequency subbands are quantized heavily or eliminated
+entirely, the decoder reconstructs the image using primarily the smooth,
+low-frequency base subbands. Without the high-frequency coefficients to
+define crisp boundaries and fine textures:</p>
+<ol type="1">
+<li><strong>Edges lose sharpness:</strong> Sharp transitions are
+reconstructed using smooth, continuous mathematical curves rather than
+abrupt step-functions.</li>
+<li><strong>Fine details vanish:</strong> Grain, hair, foliage, and
+subtle textures are flattened out because their corresponding frequency
+data has been discarded.</li>
+<li><strong>Smooth continuity remains:</strong> Because the underlying
+basis functions are continuous and overlapping, adjacent pixels
+transition smoothly into one another without abrupt breaks.</li>
+</ol>
+<p>Consequently, instead of breaking into visible square fragments, the
+reconstructed image retains its global structure and natural color flow,
+manifesting visual degradation purely as a loss of focus or soft
+blurriness. In areas of very sharp contrast, this behavior may also
+produce faint, wave-like distortions known as ringing artifacts, but
+rigid block boundaries are entirely avoided.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

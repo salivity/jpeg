@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Quality Factor to Quantization Table Mapping - jpeg</title>
+    <meta name="description" content="The 1 to 100 JPEG quality scale does not represent a direct percentage of image fidelity, but instead serves as an index to scale standard baseline quantization tables dynamically. Most modern JPEG encoders implement the algorithm established by the Inde">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-quality-factor-to-quantization-table-mapping">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Quality Factor to Quantization Table Mapping - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-quality-factor-to-quantization-table-mapping" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The 1 to 100 JPEG quality scale does not represent a direct percentage of image fidelity, but instead serves as an index to scale standard baseline quantization tables dynamically. Most modern JPEG encoders implement the algorithm established by the Inde" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-quality-factor-to-quantization-table-mapping">JPEG Quality
+Factor to Quantization Table Mapping</h1>
+<p>The 1 to 100 JPEG quality scale does not represent a direct
+percentage of image fidelity, but instead serves as an index to scale
+standard baseline quantization tables dynamically. Most modern JPEG
+encoders implement the algorithm established by the Independent JPEG
+Group (libjpeg), which translates the user-selected quality integer into
+a mathematical scaling factor. This scaling factor recalculates each
+element within the standard luminance and chrominance quantization
+matrices, clamping the resulting divisors between 1 and 255 to dictate
+the degree of lossy compression applied to Discrete Cosine Transform
+(DCT) coefficients.</p>
+<h3 id="the-role-of-baseline-quantization-tables">The Role of Baseline
+Quantization Tables</h3>
+<p>JPEG compression operates in the frequency domain. After an image is
+converted to the YCbCr color space and divided into 8x8 pixel blocks, a
+Forward Discrete Cosine Transform (FDCT) generates 64 frequency
+coefficients per block. To reduce file size, these coefficients are
+divided by an 8x8 matrix known as a quantization table, and the results
+are rounded to the nearest integer.</p>
+<p>The JPEG standard (ISO/IEC 10918-1) does not mandate specific
+quantization tables, but Annex K provides reference tables for luminance
+(brightness) and chrominance (color) that reflect human visual
+perception. Lower-frequency coefficients use smaller divisors to
+preserve detail, while higher-frequency coefficients use larger divisors
+because the human eye is less sensitive to fine textural noise.</p>
+<h3 id="the-ijg-quality-scaling-formula">The IJG Quality Scaling
+Formula</h3>
+<p>Because users prefer a simple 1 to 100 setting over manually editing
+64-element matrices, the Independent JPEG Group developed a formula that
+converts a quality rating (<span class="math inline">\(Q\)</span>) into
+a scaling percentage (<span class="math inline">\(S\)</span>).</p>
+<p>The value of <span class="math inline">\(Q\)</span> is constrained
+between 1 and 100 and mapped via a piecewise function:</p>
+<ul>
+<li><p>If <span class="math inline">\(Q &lt; 50\)</span>:<br />
+<span class="math display">\[S = \frac{5000}{Q}\]</span></p></li>
+<li><p>If <span class="math inline">\(Q \ge 50\)</span>:<br />
+<span class="math display">\[S = 200 - (2 \times Q)\]</span></p></li>
+</ul>
+<p>This piecewise structure creates a non-linear transition. Quality
+settings below 50 ramp up the scale factor aggressively to drastically
+reduce file sizes, whereas settings above 50 allow finer control over
+high-fidelity adjustments.</p>
+<h3 id="calculating-the-final-divisors">Calculating the Final
+Divisors</h3>
+<p>Once the scale factor <span class="math inline">\(S\)</span> is
+established, it modifies every value in the baseline quantization table
+(<span class="math inline">\(T_{\text{base}}\)</span>). Each individual
+baseline divisor (<span class="math inline">\(D_{\text{base}}\)</span>)
+is updated using integer arithmetic with rounding:</p>
+<p><span class="math display">\[D_{\text{temp}} = \left\lfloor
+\frac{D_{\text{base}} \times S + 50}{100} \right\rfloor\]</span></p>
+<p>To maintain compliance with the baseline 8-bit JPEG specification and
+prevent mathematical errors (such as division by zero), the resulting
+value is clamped to a fixed range:</p>
+<ul>
+<li>If <span class="math inline">\(D_{\text{temp}} &lt; 1\)</span>, set
+the divisor to <span class="math inline">\(1\)</span>.</li>
+<li>If <span class="math inline">\(D_{\text{temp}} &gt; 255\)</span>,
+set the divisor to <span class="math inline">\(255\)</span>.</li>
+</ul>
+<h3 id="key-anchor-points-across-the-scale">Key Anchor Points Across the
+Scale</h3>
+<ul>
+<li><strong>Quality 50 (<span class="math inline">\(S =
+100\)</span>):</strong> This is the baseline anchor point. When <span
+class="math inline">\(Q = 50\)</span>, the scale factor is 100.
+Multiplying by 100 and dividing by 100 leaves the reference tables
+completely unmodified (<span class="math inline">\(D_{\text{final}} =
+D_{\text{base}}\)</span>).</li>
+<li><strong>Quality 100 (<span class="math inline">\(S =
+0\)</span>):</strong> At maximum quality, <span class="math inline">\(S
+= 0\)</span>. The formula produces <span class="math inline">\((0 + 50)
+/ 100 = 0\)</span>, which is then clamped to the minimum allowable value
+of <span class="math inline">\(1\)</span>. Consequently, all 64 elements
+in both the luminance and chrominance tables become <span
+class="math inline">\(1\)</span>. The DCT coefficients are divided by 1,
+resulting in no quantization loss beyond standard DCT integer rounding
+errors.</li>
+<li><strong>Quality 1 (<span class="math inline">\(S =
+5000\)</span>):</strong> At minimum quality, <span
+class="math inline">\(S = 5000\)</span>. Every baseline divisor is
+multiplied by 50. Most values exceed the upper limit and are clamped to
+255, destroying nearly all high- and mid-frequency details and yielding
+extreme visual compression artifacts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

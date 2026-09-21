@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best JPEG Quality Setting for the Web - jpeg</title>
+    <meta name="description" content="Balancing visual fidelity and website loading speed requires selecting the right JPEG compression level. Saving images at full quality unnecessarily slows page performance, while over-compressing causes noticeable artifacts that degrade user experience.">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/best-jpeg-quality-setting-for-the-web">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best JPEG Quality Setting for the Web - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/best-jpeg-quality-setting-for-the-web" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Balancing visual fidelity and website loading speed requires selecting the right JPEG compression level. Saving images at full quality unnecessarily slows page performance, while over-compressing causes noticeable artifacts that degrade user experience." />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-jpeg-quality-setting-for-the-web">Best JPEG Quality Setting
+for the Web</h1>
+<p>Balancing visual fidelity and website loading speed requires
+selecting the right JPEG compression level. Saving images at full
+quality unnecessarily slows page performance, while over-compressing
+causes noticeable artifacts that degrade user experience. This guide
+identifies the optimal JPEG quality percentage range, explains how image
+compression affects file size and perceived quality, and provides
+actionable guidelines for configuring export settings across different
+web contexts.</p>
+<h3 id="the-sweet-spot-75-to-85-quality">The Sweet Spot: 75% to 85%
+Quality</h3>
+<p>For standard web usage, the optimal JPEG quality setting falls
+between <strong>75% and 85%</strong> (on a 0–100 scale).</p>
+<p>In modern image encoders such as MozJPEG or standard Photoshop
+exports, setting the quality to 100% creates unnecessarily large files
+with negligible visual improvement. The human eye cannot easily
+distinguish between a 100% quality JPEG and an 85% quality JPEG under
+typical viewing conditions. Dropping from 100% to 80% often reduces file
+size by up to 60%–80% without introducing noticeable compression
+artifacts.</p>
+<p>However, reducing the quality below 70% introduces visible banding,
+edge haloing, and pixelation, particularly in areas with smooth color
+gradients or high-contrast lines.</p>
+<h3 id="context-specific-recommendations">Context-Specific
+Recommendations</h3>
+<p>Not all images on a webpage serve the same purpose. Applying a
+uniform compression setting across an entire site can lead to bloated
+assets or compromised branding.</p>
+<ul>
+<li><strong>Hero Banners and Focal Photography (80%–85%):</strong>
+High-impact images positioned above the fold require clean details and
+minimal artifacts. Use an 80%–85% setting to maintain clarity on
+high-resolution displays.</li>
+<li><strong>Inline Content and Blog Images (75%–80%):</strong> Standard
+editorial images can tolerate slightly higher compression without
+harming the reader experience. A 75% setting offers a strong balance
+between clarity and fast data delivery.</li>
+<li><strong>Thumbnails and Background Elements (65%–75%):</strong> Small
+preview images or blurred background textures do not require intricate
+detail. Compressing these assets down to 65%–70% significantly cuts
+payload with virtually zero impact on perceived quality.</li>
+<li><strong>High-Density (Retina / 2x) Displays (60%–70%):</strong> When
+serving double-resolution images displayed at half their physical
+dimensions via HTML, the pixel density naturally masks compression
+flaws. You can safely drop the quality to 60%–65%, resulting in a
+sharper visual presentation than a 1x image at standard compression,
+often with a similar total file size.</li>
+</ul>
+<h3 id="technical-adjustments-for-maximum-efficiency">Technical
+Adjustments for Maximum Efficiency</h3>
+<p>Beyond the primary quality slider, three technical configurations
+improve the delivery of JPEG assets:</p>
+<ol type="1">
+<li><strong>Enable Progressive Encoding:</strong> Progressive JPEGs
+render in multiple passes—starting blurry and refining until fully
+loaded. This improves perceived performance for users on slower
+connections and often reduces file size by an additional 2%–10% for
+images larger than 10KB.</li>
+<li><strong>Strip Metadata:</strong> Digital cameras and design software
+embed EXIF data, color profiles, geolocation, and thumbnail previews
+directly into JPEG files. Stripping this metadata during export can save
+several kilobytes per image without touching the visual data.</li>
+<li><strong>Use Chroma Subsampling (4:2:0):</strong> Human vision is far
+more sensitive to luminance (brightness) than chrominance (color).
+Setting chroma subsampling to 4:2:0 discards redundant color
+information, yielding significant size reductions while leaving edges
+and textures crisp.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

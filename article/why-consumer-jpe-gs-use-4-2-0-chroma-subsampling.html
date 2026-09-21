@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Consumer JPEGs Use 4:2:0 Chroma Subsampling - jpeg</title>
+    <meta name="description" content="Chroma subsampling is a compression method that reduces color information in an image while preserving brightness detail. In consumer JPEG files, the 4:2:0 configuration is the dominant standard because it cuts uncompressed data size by half with virtual">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-consumer-jpe-gs-use-4-2-0-chroma-subsampling">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Consumer JPEGs Use 4:2:0 Chroma Subsampling - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-consumer-jpe-gs-use-4-2-0-chroma-subsampling" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Chroma subsampling is a compression method that reduces color information in an image while preserving brightness detail. In consumer JPEG files, the 4:2:0 configuration is the dominant standard because it cuts uncompressed data size by half with virtual" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-consumer-jpegs-use-420-chroma-subsampling">Why Consumer
+JPEGs Use 4:2:0 Chroma Subsampling</h1>
+<p>Chroma subsampling is a compression method that reduces color
+information in an image while preserving brightness detail. In consumer
+JPEG files, the 4:2:0 configuration is the dominant standard because it
+cuts uncompressed data size by half with virtually no perceived loss in
+image quality for everyday photography. By taking advantage of the
+biological limitations of the human eye, 4:2:0 provides an optimal
+balance among bandwidth efficiency, storage capacity, and visual
+fidelity.</p>
+<h3 id="the-biology-of-human-vision">The Biology of Human Vision</h3>
+<p>The primary reason 4:2:0 subsampling works so well lies in human
+biology. The human retina contains two main types of photoreceptors:
+rods and cones. Rods, which detect brightness (luminance), vastly
+outnumber cones, which detect color (chrominance).</p>
+<p>Because the human visual system is far more sensitive to fine spatial
+details in brightness than in color, images do not need to store color
+at the same resolution as luminance to appear sharp. Converting an image
+from RGB to the YCbCr color space allows an encoder to separate
+luminance (<span class="math inline">\(Y\)</span>) from the
+blue-difference (<span class="math inline">\(Cb\)</span>) and
+red-difference (<span class="math inline">\(Cr\)</span>) chroma
+components. Once separated, the color data can be aggressively
+compressed without the viewer noticing.</p>
+<h3 id="how-420-subsampling-operates">How 4:2:0 Subsampling
+Operates</h3>
+<p>In standard full-resolution imaging (4:4:4), every single pixel
+retains its own dedicated brightness and color values. Subsampling
+schemes alter this ratio:</p>
+<ul>
+<li><strong>Luminance (<span class="math inline">\(Y\)</span>):</strong>
+Kept at 100% full resolution to preserve sharp edges, textures, and
+contours.</li>
+<li><strong>Chrominance (<span class="math inline">\(Cb,
+Cr\)</span>):</strong> Sampled only once for every 2×2 block of four
+pixels.</li>
+</ul>
+<p>In a 4:2:0 configuration, color resolution is halved both
+horizontally and vertically. Instead of storing four individual color
+samples for four adjacent pixels, the image stores just one shared color
+value. This reduces the raw color data by 75%, resulting in a total raw
+image data reduction of 50% before the JPEG algorithm applies Discrete
+Cosine Transform (DCT) and entropy encoding.</p>
+<h3 id="storage-and-bandwidth-optimization">Storage and Bandwidth
+Optimization</h3>
+<p>For consumer devices like smartphones, digital cameras, and web
+platforms, file size is a major constraint. Halving the pre-compression
+data payload allows hardware to process images faster, consume less
+battery during capture, and save space on local storage. On the
+internet, smaller file sizes directly translate into faster page loading
+times and lower content delivery costs.</p>
+<h3 id="why-420-is-ideal-for-photographs">Why 4:2:0 Is Ideal for
+Photographs</h3>
+<p>Natural photographs consist primarily of continuous tones, subtle
+gradients, and soft lighting transitions. In these natural scenes, the
+color bleeding caused by 4:2:0 subsampling is virtually
+undetectable.</p>
+<p>The limitations of 4:2:0 only become obvious in synthetic scenarios,
+such as sharp red text against a black background or fine pixel art,
+where abrupt color transitions occur without a corresponding change in
+brightness. Because consumer JPEG was designed primarily for
+photographic content rather than computer-generated graphics, 4:2:0
+remains the most practical and efficient default choice.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

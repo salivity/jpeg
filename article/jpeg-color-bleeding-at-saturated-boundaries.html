@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Color Bleeding at Saturated Boundaries - jpeg</title>
+    <meta name="description" content="Color bleeding along saturated boundaries in JPEG images is a distinct visual artifact where bold colors appear to spill over sharp edges into neighboring regions. This phenomenon is primarily caused by JPEG’s lossy compression pipeline, specifically t">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-color-bleeding-at-saturated-boundaries">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Color Bleeding at Saturated Boundaries - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-color-bleeding-at-saturated-boundaries" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Color bleeding along saturated boundaries in JPEG images is a distinct visual artifact where bold colors appear to spill over sharp edges into neighboring regions. This phenomenon is primarily caused by JPEG’s lossy compression pipeline, specifically t" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-color-bleeding-at-saturated-boundaries">JPEG Color Bleeding
+at Saturated Boundaries</h1>
+<p>Color bleeding along saturated boundaries in JPEG images is a
+distinct visual artifact where bold colors appear to spill over sharp
+edges into neighboring regions. This phenomenon is primarily caused by
+JPEG’s lossy compression pipeline, specifically the use of chroma
+subsampling, the mathematical transformation into the YCbCr color space,
+and aggressive Discrete Cosine Transform (DCT) quantization. Because
+human vision is far more sensitive to variations in brightness than in
+color, JPEG algorithms prioritize luminance data at the expense of
+chrominance detail, creating noticeable color smearing where highly
+saturated colors meet stark contrast.</p>
+<h3 id="ycbcr-color-conversion-and-human-perception">YCbCr Color
+Conversion and Human Perception</h3>
+<p>Digital displays natively render images using the RGB (Red, Green,
+Blue) color model. To compress an image efficiently, JPEG converts RGB
+data into the YCbCr color space:</p>
+<ul>
+<li><strong>Y (Luminance):</strong> Represents the brightness and detail
+of the image.</li>
+<li><strong>Cb (Chrominance Blue):</strong> Represents the
+blue-difference color information.</li>
+<li><strong>Cr (Chrominance Red):</strong> Represents the red-difference
+color information.</li>
+</ul>
+<p>The human visual system contains vastly more rod cells (which detect
+luminance) than cone cells (which detect color). By isolating color from
+brightness, the compression algorithm can selectively discard fine color
+details without severely degrading perceived overall sharpness.</p>
+<h3 id="chroma-subsampling-the-primary-cause">Chroma Subsampling: The
+Primary Cause</h3>
+<p>Once in the YCbCr space, the image undergoes chroma subsampling, a
+process that intentionally lowers the spatial resolution of the color
+channels while keeping the brightness channel intact.</p>
+<p>Most standard JPEG implementations use <strong>4:2:0
+subsampling</strong>:</p>
+<ul>
+<li>For every 2x2 block of four pixels, four luminance values are
+preserved, but only one Cb and one Cr value are stored.</li>
+<li>This reduces the color data by 75%, effectively cutting the
+horizontal and vertical color resolution in half.</li>
+</ul>
+<p>Along sharp, saturated boundaries—such as pure red text on a blue or
+white background—adjacent pixels possess dramatically different
+chrominance values. Because the subsampling process averages these
+disparate color values across a 2x2 grid, the exact point of transition
+between the colors is lost.</p>
+<h3 id="dct-quantization-and-ringing-artifacts">DCT Quantization and
+Ringing Artifacts</h3>
+<p>After subsampling, the image is divided into 8x8 pixel blocks and
+processed using the Discrete Cosine Transform (DCT). The DCT translates
+spatial pixel data into frequency components.</p>
+<p>Sharp edges represent high spatial frequencies. During the subsequent
+quantization step, JPEG algorithms aggressively round off or completely
+eliminate high-frequency chrominance coefficients because they
+contribute little to basic image recognition.</p>
+<p>When high-frequency data is discarded along sharp edges, a
+mathematical artifact known as the Gibbs phenomenon (or ringing) occurs.
+In chrominance channels, this introduces ripples and imprecise color
+distribution near the boundary, exacerbating the spread of color across
+edge lines.</p>
+<h3 id="chroma-upsampling-and-interpolation">Chroma Upsampling and
+Interpolation</h3>
+<p>When a JPEG is decoded and displayed, the software must reconstruct
+the missing color information to map it back to an RGB image. The
+subsampled chroma channels are upsampled using interpolation algorithms
+(such as bilinear or bicubic filtering).</p>
+<p>Because the algorithm must guess the color values of missing pixels
+based on averaged, quantized data, it smoothly transitions between the
+colors rather than creating an instantaneous step. This smoothing
+appears to the human eye as an obvious chromatic halo or "bleed"
+extending beyond the sharp luminance edge.</p>
+<h3 id="how-to-prevent-color-bleeding">How to Prevent Color
+Bleeding</h3>
+<p>To avoid color bleeding along saturated boundaries:</p>
+<ul>
+<li><strong>Disable Chroma Subsampling:</strong> Save JPEGs using a
+"4:4:4" subsampling profile, which preserves full color resolution for
+every pixel.</li>
+<li><strong>Use Lossless Formats:</strong> Use PNG or TIFF for graphics,
+logos, and high-contrast illustrations where sharp vector-like
+boundaries are essential.</li>
+<li><strong>Modern Lossy Formats:</strong> Switch to WebP or AVIF, which
+handle edge transitions and high-frequency chrominance data more
+effectively than standard JPEG.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

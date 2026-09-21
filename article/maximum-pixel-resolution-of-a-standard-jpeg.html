@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Pixel Resolution of a Standard JPEG - jpeg</title>
+    <meta name="description" content="The maximum pixel resolution supported by a standard JPEG frame header is 65,535 × 65,535 pixels, resulting in an image of approximately 4.29 billion pixels (around 4.3 gigapixels). This constraint is not dictated by file size or compression ratios, but">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/maximum-pixel-resolution-of-a-standard-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Pixel Resolution of a Standard JPEG - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/maximum-pixel-resolution-of-a-standard-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The maximum pixel resolution supported by a standard JPEG frame header is 65,535 × 65,535 pixels, resulting in an image of approximately 4.29 billion pixels (around 4.3 gigapixels). This constraint is not dictated by file size or compression ratios, but" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-pixel-resolution-of-a-standard-jpeg">Maximum Pixel
+Resolution of a Standard JPEG</h1>
+<p>The maximum pixel resolution supported by a standard JPEG frame
+header is 65,535 × 65,535 pixels, resulting in an image of approximately
+4.29 billion pixels (around 4.3 gigapixels). This constraint is not
+dictated by file size or compression ratios, but by the fundamental
+binary structure defined in the JPEG specification (ITU-T T.81 / ISO/IEC
+10918-1).</p>
+<p>Inside a standard JPEG file, image dimensions are declared within the
+Start of Frame (SOF) marker segment. The frame header dedicates specific
+fields to define the dimensions:</p>
+<ul>
+<li><strong>Number of Lines (<span
+class="math inline">\(Y\)</span>):</strong> Stored as a 16-bit unsigned
+integer representing the image height. The maximum value for a 16-bit
+unsigned integer is <span class="math inline">\(2^{16} - 1\)</span>,
+which equals 65,535.</li>
+<li><strong>Number of Samples per Line (<span
+class="math inline">\(X\)</span>):</strong> Stored as a 16-bit unsigned
+integer representing the image width. This value also caps at <span
+class="math inline">\(2^{16} - 1\)</span>, or 65,535.</li>
+</ul>
+<p>Multiplying the maximum width by the maximum height yields:</p>
+<p><span class="math display">\[65,535 \times 65,535 = 4,294,836,225
+\text{ pixels}\]</span></p>
+<p>While the frame header syntax permits this theoretical limit of ~4.29
+gigapixels, practical implementations often encounter separate
+restrictions:</p>
+<ol type="1">
+<li><strong>Software and Library Limits:</strong> Many image processing
+libraries (such as older builds of <code>libjpeg</code>) or viewing
+applications enforce lower default limits to protect against memory
+exhaustion or integer overflow vulnerabilities.</li>
+<li><strong>Buffer and Memory Constraints:</strong> Decoding a full
+65,535 × 65,535 image in raw 24-bit RGB requires approximately 12.88
+gigabytes of uncompressed RAM, which can exceed the memory address space
+of 32-bit systems or constrained environments.</li>
+<li><strong>Application Markers:</strong> While raw JPEG frames
+accommodate up to 65,535 pixels in each dimension, secondary metadata
+wrappers (such as EXIF or specific JFIF implementations) might impose
+their own validation parameters.</li>
+</ol>
+<p>Under the ISO/IEC 10918-1 standard, the binary structure of the frame
+header explicitly sets the absolute limit for standard JPEG images at
+exactly 65,535 × 65,535 pixels.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

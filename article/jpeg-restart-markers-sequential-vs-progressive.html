@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Restart Markers: Sequential vs Progressive - jpeg</title>
+    <meta name="description" content="JPEG images utilize restart markers to enhance error recovery and enable multi-threaded decoding by periodically resetting the entropy-coding state. While both sequential and progressive formats define the frequency of these markers using the Define Rest">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-restart-markers-sequential-vs-progressive">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Restart Markers: Sequential vs Progressive - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-restart-markers-sequential-vs-progressive" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG images utilize restart markers to enhance error recovery and enable multi-threaded decoding by periodically resetting the entropy-coding state. While both sequential and progressive formats define the frequency of these markers using the Define Rest" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-restart-markers-sequential-vs-progressive">JPEG Restart
+Markers: Sequential vs Progressive</h1>
+<p>JPEG images utilize restart markers to enhance error recovery and
+enable multi-threaded decoding by periodically resetting the
+entropy-coding state. While both sequential and progressive formats
+define the frequency of these markers using the Define Restart Interval
+(DRI) header, the structural placement of the markers differs
+significantly. In sequential JPEGs, restart markers are inserted at
+fixed intervals across a single, linear progression of spatial pixel
+blocks. In progressive JPEGs, restart markers are distributed across
+multiple scans, repeating throughout the image across various spectral
+bands and bit-depth layers.</p>
+<h3 id="function-of-restart-markers">Function of Restart Markers</h3>
+<p>A restart marker (ranging from RST0 to RST7) clears the entropy
+decoder’s state, forces bitstream alignment to the next byte boundary,
+and resets DC prediction to zero. This segmentation prevents bit errors
+in one block from corrupting the remainder of the file and allows
+independent decoding of distinct segments. The DRI marker dictates how
+many Minimum Coded Units (MCUs) must be processed between each restart
+marker.</p>
+<h3 id="placement-in-sequential-jpeg-files">Placement in Sequential JPEG
+Files</h3>
+<p>Sequential JPEGs store image data in a single top-to-bottom scan
+where each MCU contains the full set of interleaved color components
+(typically Y, Cb, and Cr) and all 64 DCT coefficients (one DC and 63
+AC).</p>
+<ul>
+<li><strong>Spatial Uniformity:</strong> Restart markers are placed
+strictly after every <em>N</em> spatial MCUs. If a restart interval of
+10 is defined, a marker appears after every 10 complete spatial blocks
+across the image grid.</li>
+<li><strong>Single Linear Sequence:</strong> The restart markers cycle
+continuously from RST0 through RST7 and back to RST0 in a predictable,
+single-pass stream until the entire image is coded.</li>
+<li><strong>Direct Spatial Mapping:</strong> Each restart segment
+corresponds directly to an isolated, contiguous horizontal strip or
+group of pixels in the rendered image.</li>
+</ul>
+<h3 id="placement-in-progressive-jpeg-files">Placement in Progressive
+JPEG Files</h3>
+<p>Progressive JPEGs decompose image data into multiple distinct scans
+covering the entire frame. These scans isolate either specific frequency
+bands (spectral selection) or specific bit-planes of coefficients
+(successive approximation).</p>
+<ul>
+<li><strong>Per-Scan Placement:</strong> The restart interval defined by
+the DRI marker applies individually to each scan. A restart marker
+appears every <em>N</em> MCUs within the active scan, and the marker
+sequence always resets (starting fresh with RST0) at the beginning of
+each new scan header (SOS marker).</li>
+<li><strong>Varying MCU Definitions:</strong> In a progressive scan, an
+MCU does not represent a complete, fully rendered spatial block.
+Depending on the scan parameters, an MCU may consist of only the DC
+coefficient of a single component, or a subset of AC coefficients across
+non-interleaved blocks. Consequently, the restart markers delineate
+subsets of frequency data rather than fully decoded spatial blocks.</li>
+<li><strong>Layered Repetition:</strong> Because the image is
+transmitted in multiple passes, restart markers are placed over the same
+spatial image regions repeatedly. The first scan places restart markers
+between low-frequency approximations, while subsequent scans place
+restart markers between high-frequency detail packets for those
+identical pixel locations.</li>
+</ul>
+<h3 id="key-operational-differences">Key Operational Differences</h3>
+<ol type="1">
+<li><strong>Entropy Scope:</strong> In sequential files, a restart
+marker isolates complete pixel data. In progressive files, a restart
+marker isolates only the specific coefficient band or bit-plane
+belonging to that particular pass.</li>
+<li><strong>Counter Resets:</strong> Sequential files cycle RST0–RST7
+unbroken from the beginning of the image data to the end. Progressive
+files reset the counter to RST0 at the start of every single scan pass,
+regardless of where the previous pass left off.</li>
+<li><strong>Parallel Processing Granularity:</strong> In sequential
+files, decoders can split the bitstream at restart markers to render
+complete horizontal image bands in parallel. In progressive files,
+decoders must track restart markers across separate coefficient layers,
+meaning parallelization operates on frequency refinements rather than
+independent, fully rendered pixel segments.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

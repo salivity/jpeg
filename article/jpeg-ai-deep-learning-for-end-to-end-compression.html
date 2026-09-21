@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG AI: Deep Learning for End-to-End Compression - jpeg</title>
+    <meta name="description" content="The JPEG AI project represents the first standardized image compression framework built from the ground up using deep learning rather than traditional hand-crafted signal processing algorithms. This article explores how JPEG AI replaces conventional modu">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-ai-deep-learning-for-end-to-end-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG AI: Deep Learning for End-to-End Compression - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-ai-deep-learning-for-end-to-end-compression" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The JPEG AI project represents the first standardized image compression framework built from the ground up using deep learning rather than traditional hand-crafted signal processing algorithms. This article explores how JPEG AI replaces conventional modu" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-ai-deep-learning-for-end-to-end-compression">JPEG AI: Deep
+Learning for End-to-End Compression</h1>
+<p>The JPEG AI project represents the first standardized image
+compression framework built from the ground up using deep learning
+rather than traditional hand-crafted signal processing algorithms. This
+article explores how JPEG AI replaces conventional modules like discrete
+cosine transforms, fixed quantization tables, and manual entropy coders
+with an end-to-end trained deep neural network pipeline. By leveraging
+variational autoencoders, learned hyperprior entropy models, and joint
+rate-distortion optimization, the standard achieves unprecedented
+compression efficiency while natively supporting both human viewing and
+downstream computer vision tasks.</p>
+<h3 id="the-autoencoder-framework">The Autoencoder Framework</h3>
+<p>At the heart of the JPEG AI architecture is a deep convolutional or
+transformer-based variational autoencoder (VAE). Traditional codecs
+(like standard JPEG or HEVC/VVC) divide an image into static blocks and
+apply linear mathematical transforms. In contrast, JPEG AI feeds the raw
+pixel data into a non-linear analysis transform (the encoder
+network).</p>
+<p>This encoder compresses high-dimensional pixel data into a
+low-dimensional, highly compact latent representation. Instead of
+preserving raw pixel arrangements, the network learns to retain
+high-level semantic features, structural patterns, and contextual
+textures that are critical to reconstructing the scene.</p>
+<h3 id="quantization-and-differentiable-training">Quantization and
+Differentiable Training</h3>
+<p>To store or transmit this latent representation efficiently,
+continuous values must be mapped to discrete integers through
+quantization. In standard neural network training, traditional rounding
+is non-differentiable, which blocks the backpropagation needed for
+gradient descent.</p>
+<p>JPEG AI frameworks resolve this by using differentiable
+approximations during training—such as replacing hard rounding with
+additive uniform noise or using straight-through estimators (STE). This
+allows the entire pipeline to remain mathematically differentiable,
+enabling simultaneous end-to-end training of all network parameters from
+input image to compressed bitstream and back.</p>
+<h3 id="learned-hyperprior-entropy-modeling">Learned Hyperprior Entropy
+Modeling</h3>
+<p>Once the latent features are quantized, they must be converted into a
+binary bitstream. Traditional codecs use static statistical models like
+Huffman or CABAC. JPEG AI employs a deep learning mechanism known as a
+hyperprior network.</p>
+<p>The hyperprior captures structural dependencies and spatial
+correlations that remain inside the latent representation. It extracts
+"side information" (hyper-latents), which is transmitted along with the
+main latents. An entropy parameter network uses this hyperprior to
+predict the probability distribution (mean and variance) of each latent
+element. Arithmetic coders then compress the latents using these dynamic
+probabilities, driving compression efficiency extremely close to the
+theoretical Shannon entropy limit.</p>
+<h3 id="synthesis-transform-and-perceptual-decoding">Synthesis Transform
+and Perceptual Decoding</h3>
+<p>During decompression, the decoder executes the inverse process. An
+arithmetic decoder unpacks the bitstream into quantized latents using
+the predicted entropy parameters. These latents are then fed into a
+synthesis transform network (the decoder network).</p>
+<p>The synthesis network uses transposed convolutions or upsampling
+modules to reconstruct the original image from the compact latent space.
+Because the decoder is trained alongside the encoder, it learns to
+intelligently synthesize fine textures, eliminate blocking artifacts,
+and restore edge clarity, avoiding the harsh blocking or blurring
+typical of traditional codecs at low bitrates.</p>
+<h3 id="rate-distortion-optimization">Rate-Distortion Optimization</h3>
+<p>JPEG AI relies on joint rate-distortion optimization (RDO) directly
+embedded into its loss function:</p>
+<p><span class="math display">\[\mathcal{L} = R + \lambda D\]</span></p>
+<p>Here, <span class="math inline">\(R\)</span> represents the rate (the
+estimated bits needed to store the latent features and hyperprior),
+<span class="math inline">\(D\)</span> represents the distortion (the
+difference between the original and reconstructed image), and <span
+class="math inline">\(\lambda\)</span> governs the trade-off between
+file size and quality.</p>
+<p>Unlike older codecs restricted to pixel-level metrics like Mean
+Squared Error (MSE) or Peak Signal-to-Noise Ratio (PSNR), JPEG AI can
+integrate complex perceptual loss functions, such as Multi-Scale
+Structural Similarity (MS-SSIM) and learned perceptual metrics (like
+LPIPS), ensuring superior visual quality to the human eye.</p>
+<h3 id="machine-to-machine-task-compatibility">Machine-to-Machine Task
+Compatibility</h3>
+<p>A distinct advantage of JPEG AI’s deep learning structure is
+multi-task functionality. Because the encoder transforms visual data
+into semantically rich latent features, machine learning models can
+perform tasks like object detection, image classification, or
+segmentation directly on the compressed representations. This eliminates
+the need to fully decompress images before processing them in automated
+computer vision pipelines, reducing both computational overhead and
+latency.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

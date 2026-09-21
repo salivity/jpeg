@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Handling of Broken and Truncated JPEGs - jpeg</title>
+    <meta name="description" content="When network instability interrupts an image download, modern web browsers do not simply fail to display the asset; instead, they employ resilient decoding routines to render as much visual data as possible. This article details the underlying mechanisms">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/browser-handling-of-broken-and-truncated-jpe-gs">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Browser Handling of Broken and Truncated JPEGs - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/browser-handling-of-broken-and-truncated-jpe-gs" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When network instability interrupts an image download, modern web browsers do not simply fail to display the asset; instead, they employ resilient decoding routines to render as much visual data as possible. This article details the underlying mechanisms" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="browser-handling-of-broken-and-truncated-jpegs">Browser Handling
+of Broken and Truncated JPEGs</h1>
+<p>When network instability interrupts an image download, modern web
+browsers do not simply fail to display the asset; instead, they employ
+resilient decoding routines to render as much visual data as possible.
+This article details the underlying mechanisms browsers and image
+libraries use to handle missing end-of-file markers, the visual
+differences between truncated baseline and progressive JPEGs, how
+decoders conceal errors, and the network-level implications of
+incomplete data streams.</p>
+<h2 id="jpeg-structure-and-the-missing-end-of-image-marker">JPEG
+Structure and the Missing End-of-Image Marker</h2>
+<p>A standard JPEG data stream begins with a Start of Image (SOI) marker
+(<code>0xFFD8</code>) and concludes with an End of Image (EOI) marker
+(<code>0xFFD9</code>). Between these boundaries lie metadata headers,
+quantization tables, Huffman tables, and scan data encoded in Minimum
+Coded Units (MCUs).</p>
+<p>When a network connection drops, the stream terminates prematurely
+without the final EOI marker. Underlying browser graphics engines (such
+as Skia in Chromium, Core Graphics in WebKit, or MozJPEG/libjpeg-turbo
+in Gecko) monitor incoming bytes. Upon detecting a connection close
+without an EOI marker, the decoder treats the stream as truncated,
+synthesizes an internal EOI marker, and attempts to parse all
+successfully received MCUs up to the point of disconnection.</p>
+<h2 id="baseline-vs-progressive-stream-truncation">Baseline vs.
+Progressive Stream Truncation</h2>
+<p>The visual outcome of a truncated image depends heavily on the
+compression mode used during encoding.</p>
+<h3 id="baseline-jpegs">Baseline JPEGs</h3>
+<p>Baseline JPEGs store scanlines sequentially from top to bottom.</p>
+<ul>
+<li><strong>Partial Display:</strong> The browser decodes each MCU row
+sequentially. If the data stops mid-transfer, the top portion of the
+image renders with full fidelity.</li>
+<li><strong>Padding:</strong> For the remaining unreceived rows,
+decoders commonly fill the missing pixels with a default neutral color
+(typically gray or black) or leave the background canvas exposed.</li>
+</ul>
+<h3 id="progressive-jpegs">Progressive JPEGs</h3>
+<p>Progressive JPEGs store image data in multiple full-frame passes,
+gradually refining frequency coefficients and color detail.</p>
+<ul>
+<li><strong>Full-Frame Rendering:</strong> Even with an early connection
+break, the browser often has enough data to render the entire
+frame.</li>
+<li><strong>Quality Degradation:</strong> Depending on how many passes
+were completed before failure, the truncated image appears blurry,
+pixelated, or lacking high-frequency color detail, but the composition
+remains fully visible rather than sliced off at the bottom.</li>
+</ul>
+<h2 id="error-concealment-and-entropy-decoding-failures">Error
+Concealment and Entropy Decoding Failures</h2>
+<p>Network instability can cause bit corruption rather than a clean
+cut-off. If byte corruption alters the entropy-coded segments (the
+Huffman or arithmetic data), decoders face desynchronization.</p>
+<ul>
+<li><strong>Huffman Desynchronization:</strong> Because Huffman codes
+vary in bit length, a single flipped or missing bit invalidates
+subsequent symbols. This often causes severe horizontal tearing, color
+shifts, or scrambled pixel rows starting at the corruption point.</li>
+<li><strong>Restart Markers (RST):</strong> If the JPEG was encoded with
+restart markers, the browser can resynchronize the decoder at designated
+byte intervals. The decoder drops the corrupted MCU segment and resumes
+normal rendering at the next intact restart boundary, isolating visual
+artifacts to a localized stripe.</li>
+<li><strong>Graceful Degradation:</strong> Production decoders like
+<code>libjpeg-turbo</code> are explicitly configured to suppress
+non-fatal warnings. Rather than throwing an unhandled exception, they
+decode until a fatal structural break occurs, commit the valid scanlines
+to the GPU texture memory, and paint the result.</li>
+</ul>
+<h2 id="network-lifecycle-and-cache-treatment">Network Lifecycle and
+Cache Treatment</h2>
+<p>The browser's network stack coordinates with the renderer to decide
+whether a broken image should be accepted or retried.</p>
+<ul>
+<li><strong>Content-Length Mismatch:</strong> If the server provided a
+<code>Content-Length</code> response header and the TCP/TLS connection
+terminates before reaching that byte count, the browser marks the
+transfer as an error (<code>ERR_CONTENT_LENGTH_MISMATCH</code>).</li>
+<li><strong>Canvas Paint vs. DOM Event:</strong> While the decoder may
+render partial image data on screen during streaming, the
+<code>&lt;img&gt;</code> element will not fire a <code>load</code> event
+if the stream terminates prematurely. Depending on the browser
+implementation, it may trigger an <code>error</code> event instead,
+which can cause scripts or CSS fallbacks to hide the element.</li>
+<li><strong>Cache Rejection:</strong> Browsers do not store truncated
+responses in their standard HTTP disk cache as fully valid resources.
+Incomplete transfers are either purged or marked with range-request
+metadata, ensuring that subsequent page loads attempt to fetch the
+complete image rather than repeatedly serving the broken asset.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

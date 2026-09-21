@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Restart Markers and Memory Corruption Risks - jpeg</title>
+    <meta name="description" content="This article examines whether malformed or invalid restart marker sequences can trigger memory corruption in JPEG decoders. While JPEG restart markers are intentionally designed to isolate transmission errors and aid in stream resynchronization, flawed p">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-restart-markers-and-memory-corruption-risks">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Restart Markers and Memory Corruption Risks - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-restart-markers-and-memory-corruption-risks" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines whether malformed or invalid restart marker sequences can trigger memory corruption in JPEG decoders. While JPEG restart markers are intentionally designed to isolate transmission errors and aid in stream resynchronization, flawed p" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-restart-markers-and-memory-corruption-risks">JPEG Restart
+Markers and Memory Corruption Risks</h1>
+<p>This article examines whether malformed or invalid restart marker
+sequences can trigger memory corruption in JPEG decoders. While JPEG
+restart markers are intentionally designed to isolate transmission
+errors and aid in stream resynchronization, flawed parser
+implementations, unvalidated state transitions, and arithmetic
+calculation errors in handling these markers can directly lead to
+vulnerabilities such as heap buffer overflows, out-of-bounds writes, and
+use-after-free conditions.</p>
+<h3 id="understanding-jpeg-restart-markers">Understanding JPEG Restart
+Markers</h3>
+<p>In baseline JPEG compression, the image data is segmented into
+Minimum Coded Units (MCUs). The entropy-coded bitstream (using Huffman
+or arithmetic coding) makes each block dependent on preceding DC
+coefficient predictions. To prevent a single bit error from corrupting
+an entire image, the JPEG standard allows the insertion of restart
+markers (designated <code>RST0</code> through <code>RST7</code>, byte
+values <code>0xFFD0</code> through <code>0xFFD7</code>).</p>
+<p>Restart markers appear at regular intervals defined by the Define
+Restart Interval (<code>DRI</code>) marker. When an <code>RST</code>
+marker appears, the decoder:</p>
+<ol type="1">
+<li>Resets DC coefficient predictors to zero.</li>
+<li>Resets the internal entropy decoding state (e.g., bit alignment and
+Huffman state machine).</li>
+<li>Resynchronizes decoding to start cleanly at the next MCU
+boundary.</li>
+</ol>
+<h3 id="mechanisms-leading-to-memory-corruption">Mechanisms Leading to
+Memory Corruption</h3>
+<p>Invalid restart markers themselves are just bytes in a stream; memory
+corruption occurs entirely due to implementation vulnerabilities within
+the decoder handling that stream. When a sequence is invalid—such as an
+out-of-order marker, an unexpected marker inside an MCU, or a marker
+appearing after the designated MCU count has completed—flawed decoders
+can fail in several distinct ways:</p>
+<h4 id="1-buffer-overflows-via-desynchronized-mcu-counters">1. Buffer
+Overflows via Desynchronized MCU Counters</h4>
+<p>Decoders allocate destination buffers for reconstructed coefficient
+blocks or decoded pixel rows based on dimensions found in the Frame
+Header (<code>SOF0</code>). The decoder relies on an internal counter to
+track the current MCU position across image coordinates.</p>
+<p>If an unexpected <code>RST</code> marker arrives and forces the
+decoder to skip blocks or reset position coordinates incorrectly without
+bounds checking, the internal write pointer can advance beyond the
+allocated buffer boundaries. Similarly, if the decoder assumes that an
+<code>RST</code> marker guarantees a specific number of remaining MCUs,
+a crafted image containing surplus <code>RST</code> sequences can trick
+the write loop into continuing past the end of the memory buffer,
+causing a heap-based buffer overflow.</p>
+<h4 id="2-entropy-decoder-state-misalignment">2. Entropy Decoder State
+Misalignment</h4>
+<p>The transition between variable-length coded data and byte-aligned
+markers requires careful handling of internal bit-buffers. When an
+<code>RST</code> sequence is encountered, decoders discard leftover bits
+to realign with a byte boundary.</p>
+<p>If a decoder encounters an invalid or misplaced marker and enters an
+unhandled error state, it may fail to refresh the bit-buffer properly.
+Reading from an exhausted or desynchronized bit-buffer can cause the
+entropy decoder to interpret subsequent bytes as invalid run-lengths or
+high-frequency coefficients, which can lead to negative index
+calculations or out-of-bounds writes in quantization and inverse
+discrete cosine transform (IDCT) staging arrays.</p>
+<h4 id="3-premature-scan-termination-and-uninitialized-reads">3.
+Premature Scan Termination and Uninitialized Reads</h4>
+<p>An invalid or duplicated restart sequence might trick a decoder into
+terminating a scan prematurely while still considering the operation
+successful. Subsequent processing steps, such as color conversion,
+upsampling, or post-processing filters, may then operate on
+uninitialized heap memory. While predominantly an information disclosure
+risk, reading uninitialized pointer arrays or structure offsets derived
+from corrupted scan data can lead to arbitrary write primitives or
+control flow hijacking.</p>
+<h4 id="4-logic-flaws-in-marker-emulation-avoidance">4. Logic Flaws in
+Marker Emulation Avoidance</h4>
+<p>The JPEG standard uses byte stuffing (appending <code>0x00</code>
+after any <code>0xFF</code> data byte) to prevent compressed payload
+data from being interpreted as a marker. If a parser improperly
+validates stuffed bytes or encounters an invalid sequence (e.g.,
+<code>0xFF</code> followed by an invalid marker code instead of
+<code>0x00</code>), it may miscalculate stream offsets. An off-by-one
+error during offset recalculation can trigger out-of-bounds reads or
+writes during stream buffering operations.</p>
+<h3 id="real-world-relevance">Real-World Relevance</h3>
+<p>Historically, memory corruption vulnerabilities in image decoders
+(such as <code>libjpeg</code>, <code>libjpeg-turbo</code>, and
+proprietary platform decoders) have frequently stemmed from marker
+parsing logic rather than the mathematical IDCT stages. While modern
+production-grade libraries employ defensive decoding—treating invalid
+<code>RST</code> sequences as non-fatal warnings or strictly aborting
+the scan—embedded decoders, legacy software, and custom parsing engines
+frequently exhibit unsafe memory operations when processing maliciously
+crafted sequences.</p>
+<h3 id="mitigation">Mitigation</h3>
+<p>To prevent memory corruption caused by invalid restart markers:</p>
+<ul>
+<li><strong>Decouple Stream Parsing from Memory Offsets:</strong> Write
+pointers for destination buffers should always be governed strictly by
+hard boundary limits derived from image geometry, never solely by the
+state of the entropy bitstream or marker frequencies.</li>
+<li><strong>Strict State Machine Validation:</strong> Unexpected
+<code>RST</code> markers should either terminate decoding immediately or
+be ignored safely without resetting indices to arbitrary states.</li>
+<li><strong>Fuzz Testing:</strong> Image parsing pipelines should be
+extensively fuzzed with malformed marker sequences using coverage-guided
+tools to identify state-transition bugs before deployment.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

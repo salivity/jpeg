@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed-Point Precision in Hardware JPEG Engines - jpeg</title>
+    <meta name="description" content="Hardware JPEG engines rely on fixed-point arithmetic to maximize throughput, minimize silicon area, and reduce power consumption while processing image data. However, replacing floating-point operations with fixed-point logic introduces quantization nois">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/fixed-point-precision-in-hardware-jpeg-engines">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fixed-Point Precision in Hardware JPEG Engines - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/fixed-point-precision-in-hardware-jpeg-engines" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Hardware JPEG engines rely on fixed-point arithmetic to maximize throughput, minimize silicon area, and reduce power consumption while processing image data. However, replacing floating-point operations with fixed-point logic introduces quantization nois" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fixed-point-precision-in-hardware-jpeg-engines">Fixed-Point
+Precision in Hardware JPEG Engines</h1>
+<p>Hardware JPEG engines rely on fixed-point arithmetic to maximize
+throughput, minimize silicon area, and reduce power consumption while
+processing image data. However, replacing floating-point operations with
+fixed-point logic introduces quantization noise, rounding errors, and
+dynamic range limitations. To maintain image fidelity and comply with
+standards such as ISO/IEC 10918-1 and IEEE 1180, hardware designers must
+enforce strict bit-width constraints, rounding strategies, and
+saturation mechanisms across color space conversion, the Discrete Cosine
+Transform (DCT), and quantization stages.</p>
+<h3 id="color-space-conversion-precision">Color Space Conversion
+Precision</h3>
+<p>The initial stage converts RGB signals to YCbCr (and vice versa
+during decoding). Standard color data consists of 8-bit unsigned
+integers per channel (0–255). The standard conversion matrix uses
+fractional coefficients (such as 0.299 for <span
+class="math inline">\(R\)</span> and 0.587 for <span
+class="math inline">\(G\)</span>). In hardware, these coefficients are
+scaled to fixed-point formats, typically using <span
+class="math inline">\(Q\)</span>-format representations ranging from Q8
+to Q16.</p>
+<p>Using an integer word length of 16 bits (e.g., scaling real values by
+<span class="math inline">\(2^8 = 256\)</span> or <span
+class="math inline">\(2^{13} = 8192\)</span>) prevents perceptible color
+degradation. The output of this stage requires dynamic rounding and
+saturation logic to clamp results back to the standard 8-bit range [0,
+255], preventing underflow or overflow that manifests as false-color
+artifacts.</p>
+<h3 id="forward-and-inverse-dct-bit-width-growth">Forward and Inverse
+DCT Bit-Width Growth</h3>
+<p>The Discrete Cosine Transform (FDCT) and its inverse (IDCT) are the
+most computationally intensive blocks and impose the strictest
+arithmetic constraints:</p>
+<ul>
+<li><strong>Dynamic Range Expansion:</strong> Input samples are
+level-shifted from unsigned 8-bit values to signed 8-bit values in the
+range [−128, 127]. A 1D 8-point DCT introduces a dynamic range growth of
+<span class="math inline">\(\sqrt{8}\)</span>, or approximately 3 bits.
+Over a 2D separable transform (row-column decomposition), the dynamic
+range expands by up to 6 bits. Consequently, the DC coefficient requires
+at least 11 to 12 bits of dynamic range prior to quantization.</li>
+<li><strong>Internal Coefficient Precision:</strong> Transform
+coefficients (cosines) are typically quantized to fixed-point values
+using 12 to 16 bits of fractional precision (often Q12 to Q15).
+Sub-12-bit precision results in high-frequency truncation and blocking
+artifacts.</li>
+<li><strong>Intermediate Transpose Buffer:</strong> Separable 2D-DCT
+architectures implement a transpose memory between the horizontal and
+vertical passes. To preserve accuracy without excessive memory area,
+intermediate values are generally stored with a precision of 16 signed
+bits.</li>
+<li><strong>IEEE 1180 Compliance for IDCT:</strong> For decoders, the
+IDCT must satisfy the IEEE 1180-1990 specification (and the
+corresponding ITU-T/ISO requirements) to prevent cumulative error drift
+in video or sequential processing. The standard specifies:
+<ul>
+<li>Peak Absolute Error: <span class="math inline">\(\le 1\)</span></li>
+<li>Mean Square Error (MSE): <span class="math inline">\(\le
+0.06\)</span></li>
+<li>Overall Mean Error (OME): <span class="math inline">\(\le
+0.015\)</span></li>
+<li>Overall Mean Square Error: <span class="math inline">\(\le
+0.02\)</span> To meet these metrics, the internal datapaths of the IDCT
+must maintain at least 16-bit to 20-bit internal accumulation before
+final truncation.</li>
+</ul></li>
+</ul>
+<h3 id="quantization-and-dequantization-precision">Quantization and
+Dequantization Precision</h3>
+<p>Quantization divides transform coefficients by scale factors from an
+8-bit quantization matrix (values from 1 to 255). Because hardware
+division is costly in area and latency, encoders implement quantization
+as multiplication by a precomputed reciprocal:</p>
+<p><span class="math display">\[\text{Quantized Value} =
+\text{round}\left( \text{Coeff} \times \frac{2^N}{Q} \right) \gg
+N\]</span></p>
+<p>To avoid division errors that alter run-length coding efficiency, the
+reciprocal scale parameter <span class="math inline">\(N\)</span> is
+typically chosen between 14 and 16 bits.</p>
+<p>In the decoder (dequantization), the operation is an integer
+multiplication between the quantized coefficient (which fits within 11
+to 12 bits for 8-bit baseline JPEG) and the 8-bit quantization table
+value. The multiplier must support at least a 16-bit signed output to
+prevent coefficient truncation before the IDCT stage.</p>
+<h3 id="rounding-and-saturation-requirements">Rounding and Saturation
+Requirements</h3>
+<p>Fixed-point precision constraints also dictate how hardware handles
+bit-width reduction after multiplication:</p>
+<ul>
+<li><strong>Truncation vs. Convergent Rounding:</strong> Simple
+truncation (dropping lower bits) introduces a negative DC bias, causing
+visible brightness shifts across blocks. Hardware engines use
+round-to-nearest (<span class="math inline">\(\text{value} +
+2^{N-1}\)</span>) or convergent rounding (round-to-nearest-even) to
+eliminate DC offsets.</li>
+<li><strong>Saturation Logic:</strong> After final reconstruction in the
+decoder IDCT and color conversion pipelines, results must pass through
+hardware limiters (saturation blocks) that restrict values to the valid
+[0, 255] range. Wrap-around arithmetic must be avoided, as an overflow
+from 255 to 0 produces severe black pixels in bright image regions.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

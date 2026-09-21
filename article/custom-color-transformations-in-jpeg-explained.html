@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Color Transformations in JPEG Explained - jpeg</title>
+    <meta name="description" content="While the traditional JPEG standard relies almost exclusively on the ITU-R BT.601 conversion matrix to translate RGB data into $YCbCr$, the format's underlying architecture does not technically forbid alternative representations. Standard decoders adheri">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/custom-color-transformations-in-jpeg-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Custom Color Transformations in JPEG Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/custom-color-transformations-in-jpeg-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While the traditional JPEG standard relies almost exclusively on the ITU-R BT.601 conversion matrix to translate RGB data into $YCbCr$, the format's underlying architecture does not technically forbid alternative representations. Standard decoders adheri" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="custom-color-transformations-in-jpeg-explained">Custom Color
+Transformations in JPEG Explained</h1>
+<p>While the traditional JPEG standard relies almost exclusively on the
+ITU-R BT.601 conversion matrix to translate RGB data into <span
+class="math inline">\(YC_bC_r\)</span>, the format's underlying
+architecture does not technically forbid alternative representations.
+Standard decoders adhering to the common JFIF specification expect
+BT.601 by default, meaning that injecting a fully custom matrix will
+cause standard viewers to render incorrect colors. However, through
+embedded ICC color profiles, generic multi-component encoding, or modern
+extensions like JPEG XT, workflows can circumvent the fixed BT.601
+matrix to achieve custom color transformations.</p>
+<h3 id="the-role-of-bt601-in-standard-jpeg-jfif">The Role of BT.601 in
+Standard JPEG (JFIF)</h3>
+<p>The primary reason JPEG is tied to ITU-R BT.601 is the JPEG File
+Interchange Format (JFIF) specification. When the Joint Photographic
+Experts Group created the core standard (ISO/IEC 10918-1), it defined
+the compression algorithm for multi-component data without enforcing
+specific color spaces.</p>
+<p>To ensure cross-platform interoperability, JFIF established that:</p>
+<ul>
+<li>Three-component images must be encoded as <span
+class="math inline">\(YC_bC_r\)</span>.</li>
+<li>The conversion from RGB to <span
+class="math inline">\(YC_bC_r\)</span> must follow the ITU-R BT.601
+standard with full-range scaling (<span class="math inline">\([0,
+255]\)</span>).</li>
+</ul>
+<p>Because almost every mainstream image viewer and web browser
+implements JFIF or assumes JFIF-compliant color handling, BT.601 remains
+the hardcoded default for standard three-component files.</p>
+<h3 id="limitations-of-classic-jpeg-isoiec-10918-1">Limitations of
+Classic JPEG (ISO/IEC 10918-1)</h3>
+<p>The core ISO/IEC 10918-1 standard allows an image to contain up to
+255 separate components. It does not dictate that components 1, 2, and 3
+must represent luma and chroma.</p>
+<p>Technically, an encoder can multiply RGB data by an arbitrary <span
+class="math inline">\(3 \times 3\)</span> matrix and store the resulting
+channels as components in the file. However, classic JPEG does not
+include a standardized metadata header field to define that custom <span
+class="math inline">\(3 \times 3\)</span> matrix for decoders. A
+compliant decoder reading such a file will simply decompress the DCT
+blocks and output raw numerical components, leaving it completely
+unaware of how to invert the matrix back to RGB unless proprietary
+sidecar metadata or non-standard application markers are used.</p>
+<h3
+id="implementing-custom-transformations-via-icc-profiles">Implementing
+Custom Transformations via ICC Profiles</h3>
+<p>The standard industry mechanism for deviating from standard color
+spaces in JPEG is the use of ICC profiles embedded within APP2
+markers.</p>
+<ul>
+<li><strong>Indirect Customization:</strong> An ICC profile does not
+replace the internal RGB-to-<span class="math inline">\(YC_bC_r\)</span>
+BT.601 matrix directly. Instead, the encoder applies the BT.601
+transform to intermediate RGB values, while the ICC profile instructs
+the target display or operating system how to map those RGB values into
+an absolute reference space (such as CIELAB or CIE XYZ).</li>
+<li><strong>Wide Gamuts:</strong> This approach enables wide-gamut
+workflows (such as Display P3 or Adobe RGB) while remaining compatible
+with the baseline JPEG pipeline.</li>
+</ul>
+<h3 id="modern-alternative-jpeg-xt-isoiec-18477">Modern Alternative:
+JPEG XT (ISO/IEC 18477)</h3>
+<p>For applications strictly requiring mathematical customization of the
+decorrelation matrix, JPEG XT provides a standardized solution.</p>
+<p>Specifically, ISO/IEC 18477-8 (Lossless and Lossy Coding of Arbitrary
+Color Spaces) extends baseline JPEG to support:</p>
+<ul>
+<li>Custom color transformation matrices directly inside the bitstream
+metadata.</li>
+<li>Non-linear transformations beyond standard luma/chroma
+matrices.</li>
+<li>High dynamic range (HDR) and integer/floating-point sample
+precision.</li>
+</ul>
+<p>JPEG XT maintains backwards compatibility by embedding an active base
+layer that standard decoders render using standard conversions,
+alongside an extension layer holding the custom transformation data for
+advanced decoders.</p>
+<h3 id="summary">Summary</h3>
+<p>Standard JPEG viewers cannot dynamically parse custom transformation
+matrices natively; they expect BT.601 <span
+class="math inline">\(YC_bC_r\)</span> or uncompressed RGB. To use
+alternative transformations, applications must rely on ICC profiles via
+APP2 markers to redefine the RGB space, utilize custom multi-component
+pipelines within closed proprietary software, or adopt the newer JPEG XT
+(Part 8) standard designed explicitly for arbitrary color spaces.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

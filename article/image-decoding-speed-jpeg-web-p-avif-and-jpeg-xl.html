@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Decoding Speed: JPEG, WebP, AVIF, and JPEG XL - jpeg</title>
+    <meta name="description" content="As digital media shifts toward modern compression standards, decoding performance on desktop CPUs plays a critical role in system responsiveness, rendering latency, and energy efficiency. While compression ratios often dominate the conversation, the comp">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/image-decoding-speed-jpeg-web-p-avif-and-jpeg-xl">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Image Decoding Speed: JPEG, WebP, AVIF, and JPEG XL - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/image-decoding-speed-jpeg-web-p-avif-and-jpeg-xl" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="As digital media shifts toward modern compression standards, decoding performance on desktop CPUs plays a critical role in system responsiveness, rendering latency, and energy efficiency. While compression ratios often dominate the conversation, the comp" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="image-decoding-speed-jpeg-webp-avif-and-jpeg-xl">Image Decoding
+Speed: JPEG, WebP, AVIF, and JPEG XL</h1>
+<p>As digital media shifts toward modern compression standards, decoding
+performance on desktop CPUs plays a critical role in system
+responsiveness, rendering latency, and energy efficiency. While
+compression ratios often dominate the conversation, the computational
+cost of decompressing an image directly influences page rendering times
+and UI fluidity. This article compares the decoding speeds of JPEG,
+WebP, AVIF, and JPEG XL on desktop processors, detailing how their
+architectural designs and software decoders perform in practice.</p>
+<h3 id="jpeg-the-established-baseline">JPEG: The Established
+Baseline</h3>
+<p>Standard JPEG remains the performance benchmark for single-threaded
+raw decoding speed. Modern implementations, primarily
+<code>libjpeg-turbo</code>, utilize highly tuned SIMD (Single
+Instruction, Multiple Data) instructions—such as AVX2 and SSE2 on x86
+architectures—to accelerate Discrete Cosine Transform (DCT) calculations
+and Huffman decoding. Because JPEG was designed around simple
+mathematical operations, desktop CPUs can decompress JPEG files with
+negligible latency and minimal CPU overhead. It consistently delivers
+the fastest decode times for standard-resolution images.</p>
+<h3 id="webp-moderate-and-balanced">WebP: Moderate and Balanced</h3>
+<p>Developed from the VP8 video codec, WebP offers roughly 25% to 34%
+better compression than JPEG, but this comes with an increased decoding
+cost. In desktop environments using <code>libwebp</code>, decoding is
+typically 1.5 to 2 times slower than optimized JPEG implementations.
+Although WebP supports basic SIMD optimizations, its entropy decoding
+and spatial prediction filters require more sequential processing per
+block, limiting its throughput relative to JPEG. Nonetheless, on modern
+desktop hardware, WebP decoding remains fast enough to avoid noticeable
+UI lag.</p>
+<h3 id="avif-high-efficiency-high-computational-cost">AVIF: High
+Efficiency, High Computational Cost</h3>
+<p>AVIF is derived from the AV1 video keyframe format, offering superior
+compression efficiency at the expense of decoding complexity. Modern
+desktop decoders, such as VideoLAN's <code>dav1d</code>, are heavily
+optimized with AVX-512 and AVX2 routines, but the underlying codec
+relies on directional intra-prediction, complex transform blocks, and
+extensive in-loop filtering (such as deblocking, CDEF, and loop
+restoration).</p>
+<p>Consequently, AVIF is the slowest format to decode among the four. On
+a single desktop CPU core, AVIF decoding can be anywhere from 4 to 10
+times slower than JPEG and significantly slower than WebP. To mitigate
+this latency, decoders depend heavily on multi-threading and tiled
+rendering, which increases overall CPU utilization.</p>
+<h3 id="jpeg-xl-modern-design-optimized-for-concurrency">JPEG XL: Modern
+Design Optimized for Concurrency</h3>
+<p>JPEG XL (JXL) was engineered specifically to replace legacy JPEG,
+prioritizing both high compression efficiency and ultra-fast decoding.
+Unlike video-derived formats like AVIF, JPEG XL's architecture is
+explicitly designed for desktop CPU parallelism. Its reference
+implementation, <code>libjxl</code>, leverages the Highway library to
+maximize SIMD performance dynamically across SSE4, AVX2, and
+AVX-512.</p>
+<p>JPEG XL features native multi-threading capability within the format
+itself, allowing large images to be decoded across multiple CPU cores
+simultaneously with minimal overhead. On modern desktop CPUs, JPEG XL
+matches or occasionally outperforms <code>libjpeg-turbo</code> on
+high-resolution images when multi-threading is active, while decoding
+significantly faster than WebP and orders of magnitude faster than
+AVIF.</p>
+<h3 id="performance-ranking">Performance Ranking</h3>
+<p>When evaluated on multi-core desktop CPUs with modern SIMD
+support:</p>
+<ol type="1">
+<li><strong>JPEG (libjpeg-turbo):</strong> Fastest single-core decoding;
+minimal CPU overhead.</li>
+<li><strong>JPEG XL (libjxl):</strong> Extremely fast; rivals or exceeds
+JPEG on multi-core architectures and high-resolution assets.</li>
+<li><strong>WebP (libwebp):</strong> Moderately fast; roughly half the
+speed of JPEG, but adequately lightweight.</li>
+<li><strong>AVIF (dav1d):</strong> Slowest; highly compute-intensive,
+requiring multi-threading to achieve acceptable real-time decoding.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

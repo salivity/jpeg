@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Compression and Human Color Perception - jpeg</title>
+    <meta name="description" content="The JPEG compression standard achieves drastically reduced image file sizes by taking direct advantage of biological limitations in human vision, specifically our tendency to notice changes in brightness far more readily than changes in color. By separat">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-compression-and-human-color-perception">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Compression and Human Color Perception - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-compression-and-human-color-perception" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The JPEG compression standard achieves drastically reduced image file sizes by taking direct advantage of biological limitations in human vision, specifically our tendency to notice changes in brightness far more readily than changes in color. By separat" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-compression-and-human-color-perception">JPEG Compression
+and Human Color Perception</h1>
+<p>The JPEG compression standard achieves drastically reduced image file
+sizes by taking direct advantage of biological limitations in human
+vision, specifically our tendency to notice changes in brightness far
+more readily than changes in color. By separating brightness from color
+information through the YCbCr color space, JPEG selectively discards
+fine color detail via a process known as chroma subsampling and
+aggressive frequency quantization. The result is a significantly smaller
+file size that appears virtually identical to the uncompressed original
+to the human eye.</p>
+<h2 id="the-biology-luminance-vs-chrominance">The Biology: Luminance vs.
+Chrominance</h2>
+<p>The human retina relies on two primary types of photoreceptor cells:
+rods and cones. Rods, which detect brightness (luminance), outnumber
+cones, which detect color (chrominance), by roughly twenty to one.
+Furthermore, rods are wired to perceive fine spatial detail, sharp
+edges, and rapid shifts in light intensity. Cones provide rich color
+perception, but our brains blend high-frequency color variations
+together, making us relatively blind to color fidelity when an object's
+edges and brightness remain sharp.</p>
+<p>Traditional digital image formats represent pictures in RGB (Red,
+Green, Blue), where each channel carries both brightness and color
+information intertwined. Because human eyes cannot tolerate lost detail
+in luminance, compressing raw RGB channels leads to noticeable artifacts
+and blurriness.</p>
+<h2 id="separating-light-from-color-rgb-to-ycbcr">Separating Light from
+Color: RGB to YCbCr</h2>
+<p>To target only the information human eyes struggle to see, JPEG first
+converts the RGB pixel data into the YCbCr color space:</p>
+<ul>
+<li><strong>Y (Luma):</strong> Represents brightness and greyscale
+detail.</li>
+<li><strong>Cb (Chroma Blue):</strong> Represents the difference between
+blue and the luma component.</li>
+<li><strong>Cr (Chroma Red):</strong> Represents the difference between
+red and the luma component.</li>
+</ul>
+<p>By isolating the light intensity into the Y channel, the encoder
+separates the critical visual information that the human eye demands
+from the less critical chrominance data stored in Cb and Cr.</p>
+<h2 id="chroma-subsampling-discarding-the-invisible-detail">Chroma
+Subsampling: Discarding the Invisible Detail</h2>
+<p>Once color is separated from brightness, JPEG executes <strong>chroma
+subsampling</strong>. Because human vision does not register fine
+spatial resolution in color, the encoder can reduce the resolution of
+the Cb and Cr channels without degrading the user's perception of the
+image.</p>
+<p>The most common implementation is <strong>4:2:0
+subsampling</strong>:</p>
+<ul>
+<li>The <strong>Y (luminance)</strong> channel is preserved at full
+resolution (every pixel keeps its original brightness data).</li>
+<li>The <strong>Cb and Cr (color)</strong> channels are sampled at half
+resolution both horizontally and vertically.</li>
+</ul>
+<p>In practice, a block of 2x2 pixels (four pixels total) keeps four
+distinct brightness values, but shares a single averaged color value.
+This step alone reduces the raw color data by 75% and the overall
+uncompressed data footprint of the image by 50% before any mathematical
+compression algorithms are applied.</p>
+<h2
+id="quantization-eliminating-high-frequency-color-variations">Quantization:
+Eliminating High-Frequency Color Variations</h2>
+<p>Following subsampling, the image is divided into 8x8 pixel blocks and
+processed using the Discrete Cosine Transform (DCT), which separates the
+image data into low-frequency components (broad gradients and large
+shapes) and high-frequency components (fine textures, rapid changes, and
+noise).</p>
+<p>During the subsequent <strong>quantization</strong> stage,
+high-frequency details are rounded off to zero or low-precision values
+to save space. Because humans are exceptionally poor at perceiving
+subtle color transitions in tight, complex patterns, JPEG applies far
+more aggressive quantization matrices to the Cb and Cr channels than it
+does to the Y channel. Fine color noise and minute hue variations are
+permanently eliminated, while the sharp structural lines maintained by
+the luma channel keep the image crisp.</p>
+<p>Through this coordinated approach—converting color space, subsampling
+chromatic data, and aggressively quantizing high-frequency color
+variations—JPEG successfully reduces image weight while remaining
+indistinguishable from the original to the human visual system.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

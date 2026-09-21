@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Is the Forward DCT in JPEG Lossy or Lossless? - jpeg</title>
+    <meta name="description" content="The forward Discrete Cosine Transform (FDCT) used in JPEG compression is mathematically lossless because it is a fully invertible, one-to-one transformation. While JPEG is widely known as a lossy image format, the data loss does not occur during the FDCT">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/is-the-forward-dct-in-jpeg-lossy-or-lossless">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Is the Forward DCT in JPEG Lossy or Lossless? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/is-the-forward-dct-in-jpeg-lossy-or-lossless" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The forward Discrete Cosine Transform (FDCT) used in JPEG compression is mathematically lossless because it is a fully invertible, one-to-one transformation. While JPEG is widely known as a lossy image format, the data loss does not occur during the FDCT" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="is-the-forward-dct-in-jpeg-lossy-or-lossless">Is the Forward DCT
+in JPEG Lossy or Lossless?</h1>
+<p>The forward Discrete Cosine Transform (FDCT) used in JPEG compression
+is mathematically lossless because it is a fully invertible, one-to-one
+transformation. While JPEG is widely known as a lossy image format, the
+data loss does not occur during the FDCT phase itself. This article
+explains the mathematical nature of the FDCT, identifies where
+information loss actually happens in the JPEG pipeline, and addresses
+the minor practical impact of finite computer precision.</p>
+<h3 id="the-mathematical-nature-of-fdct">The Mathematical Nature of
+FDCT</h3>
+<p>The forward Discrete Cosine Transform converts spatial pixel data
+(color and brightness values arranged in an 8x8 grid) into the frequency
+domain. It expresses this block of pixels as a sum of cosine functions
+oscillating at different frequencies.</p>
+<p>Mathematically, the transform is orthogonal and linear. Every forward
+transform has an exact mathematical counterpart: the Inverse Discrete
+Cosine Transform (IDCT). If you compute the FDCT of an 8x8 block of
+pixels and immediately run the resulting 64 frequency coefficients
+through the IDCT using exact arithmetic, you retrieve the original 64
+pixel values without any degradation. Therefore, the transform itself is
+inherently lossless.</p>
+<h3 id="where-jpeg-actually-loses-data-quantization">Where JPEG Actually
+Loses Data: Quantization</h3>
+<p>The misconception that the FDCT is lossy arises because JPEG is
+predominantly a lossy format. In the JPEG compression pipeline, data
+loss occurs in the step immediately following the FDCT:
+<strong>quantization</strong>.</p>
+<ol type="1">
+<li><strong>FDCT:</strong> Transforms the image data from spatial values
+to frequency coefficients (Lossless).</li>
+<li><strong>Quantization:</strong> Divides each frequency coefficient by
+a predetermined value from a quantization table and rounds the result to
+the nearest integer (Lossy).</li>
+<li><strong>Entropy Coding:</strong> Compresses the quantized integers
+using run-length and Huffman coding (Lossless).</li>
+</ol>
+<p>During quantization, higher-frequency components—which human vision
+struggles to detect—are heavily divided and rounded to zero. This
+rounding discards information permanently. The FDCT merely prepares the
+data so that the quantization step can selectively discard irrelevant
+details.</p>
+<h3 id="theoretical-vs-practical-implementation">Theoretical vs.
+Practical Implementation</h3>
+<p>While the FDCT is mathematically lossless, real-world digital
+implementations can introduce tiny discrepancies due to finite-precision
+computing:</p>
+<ul>
+<li><strong>Floating-Point Rounding:</strong> Standard FDCT algorithms
+use irrational numbers (such as cosines of fractional angles). When a
+computer calculates these values using 32-bit or 64-bit floating-point
+numbers, minuscule rounding errors occur.</li>
+<li><strong>Integer Approximations:</strong> Fast DCT algorithms (such
+as the Arai, Agui, and Nakajima algorithm) often use scaled integer
+arithmetic to optimize processing speed, which introduces slight
+approximations.</li>
+</ul>
+<p>These computational variations are classified as numerical round-off
+noise rather than an inherent lossiness of the transform algorithm
+itself. In practice, this machine-level rounding error is visually
+undetectable and distinct from the intentional data reduction produced
+during quantization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

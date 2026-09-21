@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecting JPEG Composites Using Chroma Subsampling - jpeg</title>
+    <meta name="description" content="Inconsistencies in chroma subsampling are a reliable forensic indicator for detecting composite JPEG images. When elements from two different sources are combined, differences in how color data was initially compressed, downsampled, or re-interpolated of">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/detecting-jpeg-composites-using-chroma-subsampling">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Detecting JPEG Composites Using Chroma Subsampling - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/detecting-jpeg-composites-using-chroma-subsampling" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Inconsistencies in chroma subsampling are a reliable forensic indicator for detecting composite JPEG images. When elements from two different sources are combined, differences in how color data was initially compressed, downsampled, or re-interpolated of" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="detecting-jpeg-composites-using-chroma-subsampling">Detecting
+JPEG Composites Using Chroma Subsampling</h1>
+<p>Inconsistencies in chroma subsampling are a reliable forensic
+indicator for detecting composite JPEG images. When elements from two
+different sources are combined, differences in how color data was
+initially compressed, downsampled, or re-interpolated often leave
+permanent mathematical traces. Digital image forensics experts analyze
+these disparities in the chrominance channels, grid alignments, and
+quantization levels to determine whether an image is authentic or an
+altered composite.</p>
+<h3 id="understanding-chroma-subsampling">Understanding Chroma
+Subsampling</h3>
+<p>JPEG compression separates image data into luminance (brightness,
+denoted as Y) and chrominance (color information, denoted as Cb and Cr).
+Because the human visual system is significantly more sensitive to
+variations in brightness than in color, encoders exploit this by
+reducing the spatial resolution of the color channels. This process is
+known as chroma subsampling.</p>
+<p>Common subsampling schemes include:</p>
+<ul>
+<li><strong>4:4:4:</strong> No subsampling; full resolution for both
+luminance and chrominance.</li>
+<li><strong>4:2:2:</strong> Color resolution is halved
+horizontally.</li>
+<li><strong>4:2:0:</strong> Color resolution is halved both horizontally
+and vertically, which is the default for most smartphones, consumer
+cameras, and web images.</li>
+</ul>
+<p>Different devices, cameras, and editing programs use varying
+subsampling profiles depending on their optimization for quality or file
+size.</p>
+<h3 id="how-inconsistencies-reveal-composites">How Inconsistencies
+Reveal Composites</h3>
+<p>When an attacker cuts an object from a donor image and splices it
+into a host image, discrepancies in chroma subsampling appear in several
+ways:</p>
+<ol type="1">
+<li><strong>Interpolation and Resampling Disparities:</strong> If an
+object from a 4:2:0 JPEG is pasted into an uncompressed canvas or a
+4:4:4 image, the missing color pixels must be interpolated (upsampled).
+This creates localized smoothing and correlation patterns across the
+color channels of the spliced region that do not match the sharper,
+native color information present in the surrounding host image.</li>
+<li><strong>Minimum Coded Unit (MCU) Misalignment:</strong> JPEG
+algorithms group pixels into Minimum Coded Units (MCUs)—typically 8x8
+pixels for 4:4:4 images and 16x16 pixels for 4:2:0 images. If a spliced
+segment is pasted across MCU boundaries, rotated, or resized, the native
+compression grid of the chroma component will not align with the host
+image's grid.</li>
+<li><strong>Double Compression Traces in Color Channels:</strong>
+Re-saving a composite image applies a secondary round of compression. If
+the donor element previously underwent 4:2:0 compression and is
+subsequently saved again, the Cb and Cr channels will exhibit periodic
+double-quantization artifacts in their Discrete Cosine Transform (DCT)
+coefficients that differ from elements that have only been compressed
+once.</li>
+</ol>
+<h3 id="forensic-detection-methods">Forensic Detection Methods</h3>
+<p>Analysts use several specialized methods to isolate chroma
+anomalies:</p>
+<ul>
+<li><strong>Channel-Isolated Inspection:</strong> Separating the Y, Cb,
+and Cr channels allows investigators to inspect color data
+independently. Spliced objects often look seamless in the luminance
+channel but reveal harsh edges, unexpected blurriness, or unnatural
+noise patterns in the Cb and Cr planes.</li>
+<li><strong>DCT Coefficient Analysis:</strong> Histogram analysis of DCT
+coefficients can detect periodic peaks caused by multiple compression
+passes, specifically targeting the downsampled color channels.</li>
+<li><strong>Grid Inconsistency Mapping:</strong> Algorithms can detect
+the underlying 8x8 or 16x16 MCU block structure across the image to
+locate areas where the color compression grid is fractured or
+shifted.</li>
+</ul>
+<h3 id="practical-limitations">Practical Limitations</h3>
+<p>While chroma subsampling analysis is a powerful tool, it has
+limitations. If the final composited image is re-encoded with aggressive
+compression and low-quality 4:2:0 subsampling, the resulting high
+quantization loss can mask prior interpolation traces. In such cases,
+forensic examiners combine chroma subsampling analysis with other
+techniques, such as Error Level Analysis (ELA), lighting consistency
+checks, and noise pattern analysis, to confirm tampering.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

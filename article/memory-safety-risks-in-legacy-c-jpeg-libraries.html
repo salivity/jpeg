@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Safety Risks in Legacy C JPEG Libraries - jpeg</title>
+    <meta name="description" content="Legacy C-based JPEG parsing libraries form the backbone of image processing across modern operating systems, browsers, and embedded devices, yet their reliance on manual memory management poses critical security challenges. This article explores the prim">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/memory-safety-risks-in-legacy-c-jpeg-libraries">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Memory Safety Risks in Legacy C JPEG Libraries - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/memory-safety-risks-in-legacy-c-jpeg-libraries" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Legacy C-based JPEG parsing libraries form the backbone of image processing across modern operating systems, browsers, and embedded devices, yet their reliance on manual memory management poses critical security challenges. This article explores the prim" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="memory-safety-risks-in-legacy-c-jpeg-libraries">Memory Safety
+Risks in Legacy C JPEG Libraries</h1>
+<p>Legacy C-based JPEG parsing libraries form the backbone of image
+processing across modern operating systems, browsers, and embedded
+devices, yet their reliance on manual memory management poses critical
+security challenges. This article explores the primary memory safety
+vulnerabilities inherent to these decoders—including heap and stack
+buffer overflows, integer wrap-arounds, out-of-bounds reads, and
+use-after-free bugs—driven by the complex decompression of untrusted
+input data, and outlines the risks these flaws present to modern
+systems.</p>
+<h3 id="the-problem-with-c-based-image-decoders">The Problem with
+C-Based Image Decoders</h3>
+<p>The JPEG standard is inherently complex, relying on markers,
+variable-length Huffman coding, quantization tables, and Discrete Cosine
+Transform (DCT) algorithms. Parsing these structures requires dynamic
+memory allocation and intricate pointer arithmetic. Because C lacks
+automatic memory bounds checking, any mismatch between an image's
+declared metadata and its actual compressed payload can lead to
+catastrophic memory corruption.</p>
+<h3 id="integer-overflows-and-mismatched-allocations">Integer Overflows
+and Mismatched Allocations</h3>
+<p>One of the most prevalent vulnerabilities in legacy decoders stems
+from integer arithmetic errors during memory allocation calculations.
+When calculating buffer size for uncompressed pixel data, libraries
+typically compute:</p>
+<p><span class="math display">\[\text{Allocation Size} = \text{Width}
+\times \text{Height} \times \text{Components}\]</span></p>
+<p>If an attacker supplies an image with crafted dimensions (such as
+<span class="math inline">\(65535 \times 65535\)</span> pixels), a
+32-bit integer overflow can occur. The calculation wraps around to a
+small number, causing the program to allocate an undersized heap buffer.
+When the decoding engine subsequently decompresses the actual scanlines,
+it writes far more data than the allocated buffer can hold, causing a
+catastrophic heap-based buffer overflow that can lead to remote code
+execution (RCE).</p>
+<h3 id="out-of-bounds-reads-and-information-disclosure">Out-of-Bounds
+Reads and Information Disclosure</h3>
+<p>Parsing malformed or truncated JPEG streams often leads to
+out-of-bounds (OOB) memory reads. A JPEG file contains variable-length
+segments, such as Define Huffman Table (DHT) or Start of Scan (SOS)
+markers. If the parser does not rigorously validate that the declared
+payload length matches the physical file boundary, the decoding pointer
+will read past the allocated input buffer.</p>
+<p>OOB reads typically manifest in two ways:</p>
+<ul>
+<li><strong>Denial of Service (DoS):</strong> Accessing unmapped memory
+pages triggers a segmentation fault, terminating the parent
+process.</li>
+<li><strong>Information Leakage:</strong> Decoders handling multi-tenant
+or server-side workflows can inadvertently copy adjacent heap memory
+into the output image, leaking sensitive data such as cryptographic
+keys, session tokens, or other users' data.</li>
+</ul>
+<h3 id="use-after-free-and-error-handling-flaws">Use-After-Free and
+Error-Handling Flaws</h3>
+<p>Image decoders must handle corrupted files gracefully by falling back
+to error-cleanup routines. In legacy C libraries, cleanup logic is
+historically prone to state-synchronization errors:</p>
+<ul>
+<li><strong>Double Free Vulnerabilities:</strong> If an error occurs
+during an intermediate decompression phase, an uninitialized or
+already-freed pointer may be passed to <code>free()</code> again within
+a generic cleanup handler.</li>
+<li><strong>Use-After-Free (UAF):</strong> If a parsing error
+deallocates a component structure (such as a color conversion context or
+scanline buffer) but fails to nullify the reference pointer, downstream
+processing routines may still attempt to read from or write to that
+stale pointer. Attackers can exploit this via heap-grooming techniques
+to gain control of the execution flow.</li>
+</ul>
+<h3 id="stack-and-heap-buffer-overflows-via-malformed-tables">Stack and
+Heap Buffer Overflows via Malformed Tables</h3>
+<p>JPEG relies on metadata markers to define color components, sampling
+factors, and quantization matrices. Legacy implementations frequently
+allocate fixed-size stack arrays or small heap structs based on the
+maximum values allowed by the specification (e.g., up to four
+quantization tables).</p>
+<p>When parsers do not strictly reject non-compliant markers, a
+malicious image containing duplicated or excessive table definitions can
+overwrite adjacent stack variables or heap metadata. Overwriting return
+addresses or function pointers in this manner allows attackers to bypass
+standard execution defenses and execute arbitrary code.</p>
+<h3 id="modern-mitigations">Modern Mitigations</h3>
+<p>Securing legacy C decoders requires rigorous defense-in-depth
+strategies:</p>
+<ul>
+<li><strong>Continuous Fuzzing:</strong> Using coverage-guided fuzzers
+like AFL++ and AddressSanitizer (ASan) to discover edge-case panics and
+corruptions.</li>
+<li><strong>Process Sandboxing:</strong> Isolating parsing engines in
+restricted user namespaces or WebAssembly (Wasm) runtimes to limit blast
+radius.</li>
+<li><strong>Adopting Memory-Safe Languages:</strong> Replacing aging C
+libraries with modern implementations written in languages like Rust,
+which enforce spatial and temporal memory safety at compile time without
+sacrificing decoding performance.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

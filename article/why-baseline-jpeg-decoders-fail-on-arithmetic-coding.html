@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Baseline JPEG Decoders Fail on Arithmetic Coding - jpeg</title>
+    <meta name="description" content="Baseline JPEG decoders fail when encountering an arithmetic-coded JPEG stream primarily because they are engineered to support only Huffman entropy coding, which is the mandatory algorithm defined for the JPEG baseline standard. When presented with an ar">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-baseline-jpeg-decoders-fail-on-arithmetic-coding">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Baseline JPEG Decoders Fail on Arithmetic Coding - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-baseline-jpeg-decoders-fail-on-arithmetic-coding" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Baseline JPEG decoders fail when encountering an arithmetic-coded JPEG stream primarily because they are engineered to support only Huffman entropy coding, which is the mandatory algorithm defined for the JPEG baseline standard. When presented with an ar" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-baseline-jpeg-decoders-fail-on-arithmetic-coding">Why
+Baseline JPEG Decoders Fail on Arithmetic Coding</h1>
+<p>Baseline JPEG decoders fail when encountering an arithmetic-coded
+JPEG stream primarily because they are engineered to support only
+Huffman entropy coding, which is the mandatory algorithm defined for the
+JPEG baseline standard. When presented with an arithmetic-coded stream,
+these decoders encounter incompatible frame markers, missing Huffman
+definitions, and an entirely different mathematical method of bitstream
+representation that they lack the algorithmic logic to interpret.</p>
+<h3 id="1-incompatible-frame-markers-sof">1. Incompatible Frame Markers
+(SOF)</h3>
+<p>The JPEG standard (ITU-T T.81 / ISO/IEC 10918-1) defines different
+Start of Frame (SOF) markers to identify the encoding process used in
+the image:</p>
+<ul>
+<li><strong><code>SOF0</code> (<code>0xFFC0</code>):</strong> Indicates
+baseline DCT with Huffman coding.</li>
+<li><strong><code>SOF9</code> (<code>0xFFC9</code>):</strong> Indicates
+extended sequential DCT with arithmetic coding.</li>
+<li><strong><code>SOF10</code> (<code>0xFFCA</code>):</strong> Indicates
+progressive DCT with arithmetic coding.</li>
+</ul>
+<p>A strict baseline decoder specifically checks for the
+<code>SOF0</code> marker. When it encounters <code>SOF9</code>,
+<code>SOF10</code>, or other arithmetic variants, it rejects the file
+immediately as an unsupported format to prevent reading invalid data
+structures.</p>
+<h3 id="2-missing-dht-markers-and-the-presence-of-dac-markers">2.
+Missing DHT Markers and the Presence of DAC Markers</h3>
+<p>In a baseline JPEG, the decoder expects Define Huffman Table
+(<code>DHT</code>, <code>0xFFC4</code>) markers to reconstruct the
+prefix code trees needed to parse the quantized discrete cosine
+transform (DCT) coefficients.</p>
+<p>Arithmetic-coded streams do not contain <code>DHT</code> markers.
+Instead, they use Define Arithmetic Coding Conditioning
+(<code>DAC</code>, <code>0xFFCC</code>) markers. These markers specify
+context binning, statistical conditioning, and parameters for the
+probability estimation machines. Baseline decoders do not have parsers
+for <code>DAC</code> segments. If a decoder attempts to continue parsing
+without finding the required <code>DHT</code> segments, it fails because
+it has no symbol tables to decode the entropy-coded segments.</p>
+<h3 id="3-incompatible-entropy-decoding-engines">3. Incompatible Entropy
+Decoding Engines</h3>
+<p>Even if a baseline decoder could bypass the marker checks, it lacks
+the execution engine required to process the compressed bitstream:</p>
+<ul>
+<li><strong>Huffman Coding (Baseline):</strong> Maps discrete quantized
+coefficients to fixed-length or variable-length prefix code words.
+Decoding is a deterministic lookup-tree traversal.</li>
+<li><strong>Arithmetic Coding (QM-Coder):</strong> Encodes the entire
+stream as a single fractional value within an interval between 0 and 1.
+It relies on a binary adaptive arithmetic coder known as the QM-coder.
+The QM-coder tracks dynamic intervals, performs bit-level
+renormalization, and constantly updates statistical probability models
+across multiple contexts.</li>
+</ul>
+<p>Because the underlying data structures, registers, and state machines
+of a Huffman decoder cannot process interval-based probability states,
+feeding arithmetic-compressed bytes into a Huffman engine results in
+corrupted output, buffer overflows, or termination.</p>
+<h3 id="4-historical-and-licensing-causes">4. Historical and Licensing
+Causes</h3>
+<p>This functional divide exists because of intellectual property
+conditions present when the original JPEG specification was ratified in
+1992. Arithmetic coding offered 5% to 15% better compression efficiency
+than Huffman coding, but it was heavily encumbered by patents held by
+IBM, AT&amp;T, and Mitsubishi.</p>
+<p>To ensure that JPEG could be freely and universally implemented
+without royalty burdens, the committee mandated Huffman coding for the
+baseline profile and relegated arithmetic coding to optional, extended
+profiles. Consequently, open-source reference implementations, such as
+early versions of the Independent JPEG Group’s <code>libjpeg</code>,
+disabled or completely omitted arithmetic coding logic. Decoders derived
+from these reference codebases remain strictly Huffman-based and reject
+arithmetic-coded streams by design.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

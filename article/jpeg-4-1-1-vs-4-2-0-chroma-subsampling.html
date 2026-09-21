@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG 4:1:1 vs 4:2:0 Chroma Subsampling - jpeg</title>
+    <meta name="description" content="This article examines whether the JPEG standard permits 4:1:1 chroma subsampling and details the technical differences between the 4:1:1 and 4:2:0 sampling schemes. Readers will learn about the structural flexibility of the JPEG specification, how each f">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-4-1-1-vs-4-2-0-chroma-subsampling">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG 4:1:1 vs 4:2:0 Chroma Subsampling - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-4-1-1-vs-4-2-0-chroma-subsampling" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines whether the JPEG standard permits 4:1:1 chroma subsampling and details the technical differences between the 4:1:1 and 4:2:0 sampling schemes. Readers will learn about the structural flexibility of the JPEG specification, how each f" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-411-vs-420-chroma-subsampling">JPEG 4:1:1 vs 4:2:0 Chroma
+Subsampling</h1>
+<p>This article examines whether the JPEG standard permits 4:1:1 chroma
+subsampling and details the technical differences between the 4:1:1 and
+4:2:0 sampling schemes. Readers will learn about the structural
+flexibility of the JPEG specification, how each format allocates color
+resolution across image axes, and why 4:2:0 emerged as the universal
+standard for digital still imagery despite both formats requiring
+identical storage overhead.</p>
+<h3 id="does-the-jpeg-standard-permit-411">Does the JPEG Standard Permit
+4:1:1?</h3>
+<p>Yes, the JPEG standard (ISO/IEC 10918-1 / ITU-T T.81) fully permits
+4:1:1 chroma subsampling. The specification does not restrict color
+sampling strictly to standard industry ratios like 4:4:4 or 4:2:0.
+Instead, it defines component dimensions using independent horizontal
+(<span class="math inline">\(H\)</span>) and vertical (<span
+class="math inline">\(V\)</span>) sampling factors ranging from 1 to 4
+for each color component (<span class="math inline">\(Y\)</span>, <span
+class="math inline">\(C_b\)</span>, and <span
+class="math inline">\(C_r\)</span>).</p>
+<p>To achieve 4:1:1, an encoder assigns the luminance (<span
+class="math inline">\(Y\)</span>) channel a horizontal factor of 4 and a
+vertical factor of 1, while the chrominance channels (<span
+class="math inline">\(C_b, C_r\)</span>) receive horizontal and vertical
+factors of 1. While fully compliant with the specification, 4:1:1 JPEG
+files are relatively rare because modern decoders and encoders
+standardise almost entirely on 4:2:0, 4:2:2, or 4:4:4.</p>
+<h3 id="structural-differences-411-vs-420">Structural Differences: 4:1:1
+vs. 4:2:0</h3>
+<p>Both 4:1:1 and 4:2:0 reduce the uncompressed color data rate to an
+average of 12 bits per pixel (down from 24 bits per pixel in standard
+RGB or 4:4:4), representing an identical 50% total reduction in color
+data. However, they achieve this reduction by downsampling across
+different geometric axes:</p>
+<ul>
+<li><strong>4:1:1 Subsampling (Horizontal Prioritisation):</strong> The
+chrominance channels are downsampled by a factor of 4 horizontally,
+while maintaining full vertical resolution. In a <span
+class="math inline">\(4 \times 1\)</span> grid of pixels, there are 4
+luma samples, 1 <span class="math inline">\(C_b\)</span> sample, and 1
+<span class="math inline">\(C_r\)</span> sample.</li>
+<li><strong>4:2:0 Subsampling (Balanced 2D Prioritisation):</strong> The
+chrominance channels are downsampled by a factor of 2 horizontally and a
+factor of 2 vertically. In a <span class="math inline">\(2 \times
+2\)</span> grid of 4 pixels, there are 4 luma samples, 1 <span
+class="math inline">\(C_b\)</span> sample, and 1 <span
+class="math inline">\(C_r\)</span> sample.</li>
+</ul>
+<h3 id="minimum-coded-unit-mcu-layout">Minimum Coded Unit (MCU)
+Layout</h3>
+<p>JPEG compresses image data in discrete blocks called Minimum Coded
+Units (MCUs), each composed of <span class="math inline">\(8 \times
+8\)</span> discrete cosine transform (DCT) blocks:</p>
+<ul>
+<li><strong>4:1:1 MCU Structure:</strong> Because the horizontal factor
+for luma is 4, an MCU in a 4:1:1 JPEG is 32 pixels wide and 8 pixels
+tall (<span class="math inline">\(32 \times 8\)</span>). It consists of
+four horizontal <span class="math inline">\(8 \times 8\)</span> luma
+blocks, one <span class="math inline">\(8 \times 8\)</span> <span
+class="math inline">\(C_b\)</span> block, and one <span
+class="math inline">\(8 \times 8\)</span> <span
+class="math inline">\(C_r\)</span> block (6 total blocks per MCU).</li>
+<li><strong>4:2:0 MCU Structure:</strong> Because both horizontal and
+vertical factors are 2, an MCU in a 4:2:0 JPEG is a square of 16 pixels
+by 16 pixels (<span class="math inline">\(16 \times 16\)</span>). It
+consists of a <span class="math inline">\(2 \times 2\)</span> grid of
+four <span class="math inline">\(8 \times 8\)</span> luma blocks, one
+<span class="math inline">\(8 \times 8\)</span> <span
+class="math inline">\(C_b\)</span> block, and one <span
+class="math inline">\(8 \times 8\)</span> <span
+class="math inline">\(C_r\)</span> block (6 total blocks per MCU).</li>
+</ul>
+<h3 id="visual-impact-and-practical-use-cases">Visual Impact and
+Practical Use Cases</h3>
+<p>The human visual system is generally symmetric in its perception of
+horizontal and vertical spatial details. Because 4:2:0 downsamples color
+uniformly along both the X and Y axes, it produces far fewer visible
+compression artifacts across natural photographic imagery.</p>
+<p>In contrast, 4:1:1 heavily degrades horizontal color transitions,
+creating noticeable color smearing along vertical edges while preserving
+sharp color transitions horizontally across scan lines. While 4:1:1 was
+widely adopted in legacy digital video formats like NTSC DV, 4:2:0
+remains the industry default for still photography and web JPEG delivery
+due to its superior spatial balance.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

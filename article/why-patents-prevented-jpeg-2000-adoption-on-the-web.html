@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Patents Prevented JPEG 2000 Adoption on the Web - jpeg</title>
+    <meta name="description" content="When JPEG 2000 was introduced at the turn of the millennium, it promised vastly superior compression, lossless scaling, and artifact-free imagery, yet it completely failed to become the universal image standard for the open web. The primary barrier was n">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/why-patents-prevented-jpeg-2000-adoption-on-the-web">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Patents Prevented JPEG 2000 Adoption on the Web - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/why-patents-prevented-jpeg-2000-adoption-on-the-web" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When JPEG 2000 was introduced at the turn of the millennium, it promised vastly superior compression, lossless scaling, and artifact-free imagery, yet it completely failed to become the universal image standard for the open web. The primary barrier was n" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-patents-prevented-jpeg-2000-adoption-on-the-web">Why Patents
+Prevented JPEG 2000 Adoption on the Web</h1>
+<p>When JPEG 2000 was introduced at the turn of the millennium, it
+promised vastly superior compression, lossless scaling, and
+artifact-free imagery, yet it completely failed to become the universal
+image standard for the open web. The primary barrier was not technical
+capability, but rather the severe threat of patent litigation and legal
+ambiguity surrounding its underlying technologies. Fearing catastrophic
+intellectual property lawsuits similar to the Unisys GIF controversy,
+browser vendors and open-source developers refused to natively implement
+JPEG 2000, leaving the legacy 1992 JPEG format entrenched across the
+internet.</p>
+<p>During the late 1990s, the web development ecosystem was severely
+disrupted by the enforcement of Unisys’s patent on the LZW compression
+algorithm used in GIF files. This dispute left software developers and
+web browser companies hyper-vigilant about intellectual property
+encumbrances. When the Joint Photographic Experts Group finalized JPEG
+2000 (ISO/IEC 15444-1), they claimed that Part 1 of the standard could
+be implemented without paying royalties. However, the standard relied
+heavily on complex mathematical methods, notably the Discrete Wavelet
+Transform (DWT) and MQ arithmetic coding, both of which were surrounded
+by a minefield of proprietary patents held by various tech
+corporations.</p>
+<p>The core issue was the danger of "submarine patents." Even though
+companies participating in the standardization process agreed to license
+their essential patents royalty-free, third parties who had no role in
+the committee retained patents that arguably covered the standard's
+implementation. In the proprietary software world, commercial entities
+could negotiate cross-licensing deals, but the open web relied heavily
+on open-source browsers like Mozilla Firefox. Open-source maintainers
+could not accept standards that might trigger royalties or infringement
+claims for end users and downstream distributors.</p>
+<p>The legal ambiguity around arithmetic coding was particularly
+problematic. Arithmetic coding provided significantly better compression
+than traditional Huffman coding, but it had long been encumbered by
+patents owned by companies like IBM, AT&amp;T, and Mitsubishi. While the
+baseline JPEG format had also included an arithmetic coding option, it
+was avoided for web use for the exact same reason: patent holders
+actively enforced their rights, forcing the web to stick with unpatented
+Huffman encoding. Browser developers were unwilling to risk baking
+arithmetic coding decoders into their software without ironclad
+guarantees of legal indemnity.</p>
+<p>This licensing anxiety directly influenced major browser vendors.
+Microsoft, Mozilla, and eventually Google systematically refused to ship
+native JPEG 2000 decoders out of the box. Safari eventually added
+support within Apple's closed ecosystem, where the company already had
+enterprise patent protection, but without cross-browser consensus, web
+developers could not deploy the format publicly. Serving
+<code>.jp2</code> files risked rendering blank spaces for the vast
+majority of web traffic.</p>
+<p>The legal risks also exacerbated JPEG 2000's secondary technical
+drawbacks. Decoding wavelet-based images required significantly more
+processing power and memory than the original Discrete Cosine Transform
+(DCT) used by JPEG. For browser vendors, accepting elevated CPU
+consumption in exchange for a format that carried severe legal
+liabilities was an untenable trade-off.</p>
+<p>Ultimately, JPEG 2000 found a secure home in specialized, closed
+industries where organizations could afford specialized licensing and
+high compute overhead, such as digital cinema (DCI), medical imaging
+(DICOM), and institutional archiving. For the open web, however, the
+fear of intellectual property liability ensured that JPEG 2000 was dead
+on arrival, leaving the door open decades later for explicitly
+royalty-free, modern alternatives like WebP and AVIF.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

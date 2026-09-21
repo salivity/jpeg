@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is Ringing Noise in JPEG Images? - jpeg</title>
+    <meta name="description" content="Ringing noise, often referred to as ringing artifacts or the Gibbs phenomenon, is a type of visual distortion that manifests as faint, halo-like ripples or ghost lines parallel to sharp transitions and high-contrast boundaries in digital images. This art">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/what-is-ringing-noise-in-jpeg-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is Ringing Noise in JPEG Images? - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/what-is-ringing-noise-in-jpeg-images" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Ringing noise, often referred to as ringing artifacts or the Gibbs phenomenon, is a type of visual distortion that manifests as faint, halo-like ripples or ghost lines parallel to sharp transitions and high-contrast boundaries in digital images. This art" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-ringing-noise-in-jpeg-images">What Is Ringing Noise in
+JPEG Images?</h1>
+<p>Ringing noise, often referred to as ringing artifacts or the Gibbs
+phenomenon, is a type of visual distortion that manifests as faint,
+halo-like ripples or ghost lines parallel to sharp transitions and
+high-contrast boundaries in digital images. This article breaks down
+what ringing noise looks like, examines the mathematical and compression
+processes within the JPEG standard that cause it, and explores practical
+ways to minimize or avoid it.</p>
+<h3 id="what-ringing-noise-looks-like">What Ringing Noise Looks
+Like</h3>
+<p>Ringing noise appears almost exclusively around abrupt changes in
+brightness or color—such as dark text on a light background,
+silhouettes, hard geometric lines, or contrasting graphic elements.
+Instead of transitioning cleanly from one tone to another, the edge
+exhibits an artificial oscillation: repeated, fading bands or "waves" of
+discoloration echoing outward from the boundary.</p>
+<h3 id="why-jpeg-compression-causes-ringing">Why JPEG Compression Causes
+Ringing</h3>
+<p>The root cause of ringing noise lies in the way the JPEG compression
+algorithm processes visual information through the Discrete Cosine
+Transform (DCT) and subsequent quantization.</p>
+<ol type="1">
+<li><strong>The Discrete Cosine Transform (DCT):</strong> The JPEG
+standard divides an image into 8x8 pixel blocks. It converts the spatial
+pixel data in each block into a collection of cosine wave frequencies,
+separating broad color patterns (low frequencies) from fine details and
+hard lines (high frequencies).</li>
+<li><strong>The Math of Sharp Edges:</strong> Mathematically, an abrupt,
+instantaneous step change in tone (a sharp edge) requires an infinite
+sum of high-frequency waves to be rendered perfectly without
+overshoot.</li>
+<li><strong>Lossy Quantization:</strong> Because human vision is far
+less sensitive to subtle changes in high-frequency detail than to
+broader shifts in color and brightness, JPEG achieves smaller file sizes
+by discarding or aggressively rounding down these high-frequency
+values.</li>
+<li><strong>The Gibbs Phenomenon:</strong> When the image is
+decompressed, the decoder reconstructs the pixels using only the
+surviving low and medium frequencies. Without the omitted high-frequency
+components needed to cancel out the peaks of the cosine waves at the
+boundary, the reconstructed signal overshoots and undershoots the true
+values. This mathematical oscillation produces the visible ripple effect
+along the edge.</li>
+</ol>
+<h3 id="ringing-vs-blocking-artifacts">Ringing vs. Blocking
+Artifacts</h3>
+<p>While both stem from JPEG compression, they are distinct:</p>
+<ul>
+<li><strong>Blocking artifacts</strong> produce a visible checkerboard
+pattern across the entire image because the 8x8 pixel blocks are
+compressed independently, causing their boundaries to misalign.</li>
+<li><strong>Ringing artifacts</strong> are localized directly alongside
+high-contrast lines and sharp edges within those blocks due to truncated
+frequency components.</li>
+</ul>
+<h3 id="how-to-prevent-and-reduce-ringing-artifacts">How to Prevent and
+Reduce Ringing Artifacts</h3>
+<ul>
+<li><strong>Increase Quality Settings:</strong> Lowering the compression
+ratio preserves more high-frequency DCT coefficients, significantly
+reducing oscillation around edges.</li>
+<li><strong>Use Lossless Formats for Graphic Content:</strong> Content
+containing sharp transitions, such as line art, typography, and
+screenshots, should be saved using lossless formats like PNG, which do
+not discard frequency data.</li>
+<li><strong>Switch to Modern Image Formats:</strong> Modern codecs such
+as AVIF, WebP, and JPEG XL utilize more advanced transform methods,
+directional filtering, and in-loop de-ringing filters to prevent
+high-frequency oscillations from appearing in the final output.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

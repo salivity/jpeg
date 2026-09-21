@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Compression and Stellar Photometry Accuracy - jpeg</title>
+    <meta name="description" content="Lossy JPEG compression significantly degrades the photometric accuracy required for scientific stellar brightness calculations. Astronomical photometry relies on the precise, linear preservation of photon counts across a detector, whereas JPEG encoding i">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-compression-and-stellar-photometry-accuracy">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Compression and Stellar Photometry Accuracy - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-compression-and-stellar-photometry-accuracy" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Lossy JPEG compression significantly degrades the photometric accuracy required for scientific stellar brightness calculations. Astronomical photometry relies on the precise, linear preservation of photon counts across a detector, whereas JPEG encoding i" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-compression-and-stellar-photometry-accuracy">JPEG
+Compression and Stellar Photometry Accuracy</h1>
+<p>Lossy JPEG compression significantly degrades the photometric
+accuracy required for scientific stellar brightness calculations.
+Astronomical photometry relies on the precise, linear preservation of
+photon counts across a detector, whereas JPEG encoding is fundamentally
+designed to discard high-frequency spatial data and non-perceptible
+variations to reduce file size. Applying lossy JPEG compression to
+astronomical imagery alters pixel flux values, introduces spatial
+artifacts, and destroys the linear relationship between recorded sensor
+counts and actual stellar brightness, rendering precision photometry
+impossible.</p>
+<h2 id="the-principles-of-stellar-photometry">The Principles of Stellar
+Photometry</h2>
+<p>Stellar photometry measures the flux (apparent brightness) of
+astronomical targets by integrating pixel values corresponding to a
+star's point-spread function (PSF) and subtracting the local sky
+background. Because the physics of light detection dictates that the
+recorded electron count is directly proportional to incoming photons,
+scientific imaging requires linear data with high dynamic range
+(typically 16-bit or 32-bit depth). Even sub-percent changes in pixel
+values can lead to severe errors when measuring stellar variability,
+exoplanetary transits, or standard reference stars.</p>
+<h2 id="how-lossy-jpeg-compression-distorts-astronomical-data">How Lossy
+JPEG Compression Distorts Astronomical Data</h2>
+<p>Lossy JPEG compression damages scientific imaging through several
+distinct processes:</p>
+<h3 id="1-bit-depth-reduction-and-non-linear-tone-curves">1. Bit-Depth
+Reduction and Non-Linear Tone Curves</h3>
+<p>Standard JPEG formats compress data into 8 bits per channel (values
+from 0 to 255). Scientific astronomical cameras output 12-bit to 16-bit
+linear data. Converting raw scientific frames to an 8-bit JPEG truncates
+the dynamic range, immediately saturating brighter stars and crushing
+faint stars into the noise floor. Furthermore, standard JPEG pipelines
+apply a non-linear gamma curve optimized for human vision, which
+permanently breaks the linear relationship between pixel values and
+incoming photon counts.</p>
+<h3 id="2-discrete-cosine-transform-and-quantization">2. Discrete Cosine
+Transform and Quantization</h3>
+<p>JPEG divides images into 8x8 pixel blocks and converts spatial data
+into frequency components using the Discrete Cosine Transform (DCT).
+High-frequency components, which represent sharp changes in brightness,
+are aggressively discarded through quantization. Because stars appear as
+concentrated, high-frequency point sources that often span only a few
+pixels across, the quantization step discards the very data that defines
+the star's core brightness and profile.</p>
+<h3 id="3-block-artifacts-and-background-estimation">3. Block Artifacts
+and Background Estimation</h3>
+<p>The division of the image into 8x8 blocks produces artificial
+boundary discontinuities. In aperture photometry, an annulus around the
+star is sampled to estimate and subtract the background sky brightness.
+If an 8x8 block boundary intersects this annulus or the stellar
+aperture, the local background estimate becomes biased, leading to
+systematic errors in net flux calculations.</p>
+<h2 id="magnitude-of-photometric-error">Magnitude of Photometric
+Error</h2>
+<p>While professional astronomical research often requires
+millimagnitude (0.001 mag) or even micromagnitude precision, lossy JPEG
+compression can introduce errors ranging from several tenths of a
+magnitude (0.1–0.5 mag) to complete failure of the measurement
+algorithms. Faint stars near the detection threshold can disappear
+entirely, while crowded star fields suffer severe cross-contamination
+between adjacent PSFs.</p>
+<h2 id="standard-alternatives-for-astronomical-imaging">Standard
+Alternatives for Astronomical Imaging</h2>
+<p>To preserve photometric integrity, astronomical data must be stored
+in uncompressed formats or using mathematically lossless compression
+algorithms:</p>
+<ul>
+<li><strong>FITS (Flexible Image Transport System):</strong> The
+universal standard in professional astronomy, preserving 16-bit, 32-bit,
+or 64-bit integer and floating-point data along with extensive
+metadata.</li>
+<li><strong>Lossless Compression Algorithms:</strong> Compression
+techniques such as Rice compression, Gzip, or Hcompress (configured
+losslessly) reduce file sizes without altering a single pixel
+value.</li>
+</ul>
+<p>Lossy JPEG compression is suitable only for public outreach displays
+and visual previews, and it should never be used in any scientific
+pipeline intended for stellar brightness measurements.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

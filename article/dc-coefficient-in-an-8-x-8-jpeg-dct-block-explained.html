@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC Coefficient in an 8x8 JPEG DCT Block Explained - jpeg</title>
+    <meta name="description" content="In JPEG compression, the Discrete Cosine Transform (DCT) converts an 8x8 block of spatial pixel data into 64 frequency coefficients. The DC coefficient is the single value located at the top-left corner of this matrix, representing the zero-frequency com">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/dc-coefficient-in-an-8-x-8-jpeg-dct-block-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DC Coefficient in an 8x8 JPEG DCT Block Explained - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/dc-coefficient-in-an-8-x-8-jpeg-dct-block-explained" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In JPEG compression, the Discrete Cosine Transform (DCT) converts an 8x8 block of spatial pixel data into 64 frequency coefficients. The DC coefficient is the single value located at the top-left corner of this matrix, representing the zero-frequency com" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dc-coefficient-in-an-8x8-jpeg-dct-block-explained">DC
+Coefficient in an 8x8 JPEG DCT Block Explained</h1>
+<p>In JPEG compression, the Discrete Cosine Transform (DCT) converts an
+8x8 block of spatial pixel data into 64 frequency coefficients. The DC
+coefficient is the single value located at the top-left corner of this
+matrix, representing the zero-frequency component or the average
+intensity of all 64 pixels in that block. This article breaks down what
+the DC coefficient represents mathematically, how it differs from the
+surrounding AC coefficients, and why it plays a fundamental role in
+image compression.</p>
+<h3 id="the-zero-frequency-baseline">The Zero-Frequency Baseline</h3>
+<p>The term "DC" is borrowed from electrical engineering, where it
+stands for "Direct Current"—a signal with zero frequency. In the context
+of the two-dimensional DCT used in JPEG encoding, the DC coefficient
+corresponds to zero horizontal and zero vertical frequency (<span
+class="math inline">\(u = 0, v = 0\)</span>).</p>
+<p>Because it lacks any frequency variation, the DC coefficient does not
+describe patterns, edges, or textures. Instead, it measures the baseline
+energy of the block. Mathematically, it is directly proportional to the
+sum—and therefore the average value—of the luminance or chrominance
+samples across the entire 8x8 pixel grid. If an 8x8 block consists of a
+completely solid, uniform color, the DC coefficient holds all the
+signal's energy, while all other coefficients evaluate to zero.</p>
+<h3 id="dc-vs-ac-coefficients">DC vs. AC Coefficients</h3>
+<p>The remaining 63 positions in the 8x8 DCT matrix are called AC
+(Alternating Current) coefficients. These values represent varying
+levels of spatial frequencies:</p>
+<ul>
+<li><strong>Low-frequency AC coefficients</strong> capture gradual
+gradients and broad directional changes.</li>
+<li><strong>High-frequency AC coefficients</strong> capture sharp
+transitions, fine details, and rapid color changes.</li>
+</ul>
+<p>While the human visual system is relatively insensitive to the loss
+of high-frequency details represented by AC coefficients, it is
+exceptionally sensitive to overall luminance and brightness shifts.
+Consequently, the DC coefficient carries the most visually critical
+information within the block.</p>
+<h3 id="quantization-and-differential-encoding">Quantization and
+Differential Encoding</h3>
+<p>Because the DC coefficient contains the foundation of the block's
+visual content, JPEG handles it differently than the AC coefficients
+during the compression pipeline:</p>
+<ol type="1">
+<li><strong>Light Quantization:</strong> During the quantization step,
+where lossy compression occurs, high-frequency AC coefficients are
+divided by large quantization values (often rounding them to zero). The
+DC coefficient is divided by a much smaller step size to preserve its
+precision and prevent noticeable brightness banding across blocks.</li>
+<li><strong>Differential Pulse Code Modulation (DPCM):</strong> Adjacent
+8x8 blocks in an image usually have similar average brightness levels.
+To capitalize on this redundancy, the JPEG algorithm does not store the
+absolute value of each DC coefficient. Instead, it encodes the
+difference between the current block's DC coefficient and that of the
+previously processed block. This differential encoding significantly
+reduces the number of bits required to store the baseline color data
+across the entire image.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

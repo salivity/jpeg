@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Buffer Overflows and Code Execution - jpeg</title>
+    <meta name="description" content="Buffer overflow vulnerabilities in JPEG parsers occur when an image processing library fails to validate data boundaries before copying file contents into allocated memory. By crafting a malformed JPEG file containing manipulated metadata lengths or over">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-buffer-overflows-and-code-execution">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Buffer Overflows and Code Execution - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-buffer-overflows-and-code-execution" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Buffer overflow vulnerabilities in JPEG parsers occur when an image processing library fails to validate data boundaries before copying file contents into allocated memory. By crafting a malformed JPEG file containing manipulated metadata lengths or over" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-buffer-overflows-and-code-execution">JPEG Buffer Overflows
+and Code Execution</h1>
+<p>Buffer overflow vulnerabilities in JPEG parsers occur when an image
+processing library fails to validate data boundaries before copying file
+contents into allocated memory. By crafting a malformed JPEG file
+containing manipulated metadata lengths or oversized image dimensions,
+attackers can trigger heap or stack overflows. This memory corruption
+allows an adversary to alter program execution flow, redirect pointers,
+and execute arbitrary code with the privileges of the parsing
+process.</p>
+<h3 id="anatomy-of-jpeg-structure">Anatomy of JPEG Structure</h3>
+<p>The JPEG format is organized into sequential segments demarcated by
+two-byte markers, each beginning with <code>0xFF</code> followed by a
+type byte:</p>
+<ul>
+<li><strong>SOI (<code>0xFFD8</code>):</strong> Start of Image.</li>
+<li><strong>SOF (<code>0xFFC0</code> - <code>0xFFC3</code>):</strong>
+Start of Frame, containing dimensions, color components, and
+precision.</li>
+<li><strong>COM (<code>0xFFFE</code>) / APPn (<code>0xFFE0</code> -
+<code>0xFFEF</code>):</strong> Comment and Application-specific segments
+holding metadata such as EXIF data.</li>
+<li><strong>SOS (<code>0xFFDA</code>):</strong> Start of Scan, signaling
+the beginning of the compressed entropy-coded image data.</li>
+</ul>
+<p>Most segments include a 16-bit length indicator immediately following
+the marker. This value dictates the size of the payload associated with
+that specific marker.</p>
+<h3 id="triggering-the-overflow">Triggering the Overflow</h3>
+<p>JPEG parsers written in low-level languages like C and C++ rely on
+manual memory management. Vulnerabilities usually arise during the
+parsing of metadata or during the decompression stage.</p>
+<h4 id="1-metadata-and-marker-overflows-stackheap">1. Metadata and
+Marker Overflows (Stack/Heap)</h4>
+<p>A parser often reads the two-byte segment length field to determine
+how many bytes to read into a buffer. If the parser allocates a
+fixed-size stack buffer (e.g., 256 bytes for a comment string) but
+trusts the file's specified 16-bit length (up to 65,535 bytes) without
+verification, reading the segment payload will overwrite adjacent memory
+on the stack. Similarly, if the parser copies EXIF tags into dynamic
+memory without verifying boundaries, it can cause an off-by-one or
+linear heap overflow.</p>
+<h4 id="2-integer-wrap-arounds-in-dimension-calculations">2. Integer
+Wrap-Arounds in Dimension Calculations</h4>
+<p>Before decompressing pixel data, parsers calculate the buffer size
+required to store the raw bitmap:</p>
+<p><span class="math display">\[\text{Buffer Size} = \text{Width} \times
+\text{Height} \times \text{Bytes Per Pixel}\]</span></p>
+<p>An attacker can specify massive dimensions in the Start of Frame
+(SOF) marker, such as a width of <span
+class="math inline">\(65,535\)</span> and a height of <span
+class="math inline">\(65,535\)</span>. On systems using 32-bit
+arithmetic, multiplying these numbers can cause an integer overflow,
+wrapping the calculated value around to a small positive number. The
+parser allocates heap memory based on this small wrapped value. When the
+decompression routine proceeds to decode the actual pixel data, it
+writes far more data than the allocated buffer can hold, causing a
+massive heap-based buffer overflow.</p>
+<h3 id="transitioning-from-overflow-to-code-execution">Transitioning
+from Overflow to Code Execution</h3>
+<p>Once the buffer boundary is breached, attackers can leverage the
+corrupted memory to achieve arbitrary code execution through several
+mechanisms:</p>
+<h4 id="overwriting-return-addresses-stack-overflows">Overwriting Return
+Addresses (Stack Overflows)</h4>
+<p>When an overflow occurs on the call stack, the contiguous memory
+overwrite reaches the saved frame pointer and the function's return
+address. By replacing the legitimate return address with a pointer to
+injected shellcode or a Return-Oriented Programming (ROP) chain, control
+flows directly to attacker-controlled instructions once the parsing
+function attempts to return.</p>
+<h4
+id="corrupting-function-pointers-and-vtables-heap-overflows">Corrupting
+Function Pointers and Vtables (Heap Overflows)</h4>
+<p>Modern parser architectures frequently store function pointers,
+callback handlers, or C++ objects containing virtual method tables
+(vtables) on the heap. By overwriting an adjacent C++ object's vtable
+pointer, an attacker points it to a forged vtable containing pointers to
+malicious payloads. When the parser calls an image decoding or cleanup
+method on that object, it inadvertently transfers execution to the
+attacker's addresses.</p>
+<h4 id="bypassing-modern-mitigations">Bypassing Modern Mitigations</h4>
+<p>Executing code through image parsing usually requires overcoming
+platform defenses:</p>
+<ul>
+<li><strong>DEP/NX (Data Execution Prevention):</strong> Modern
+operating systems prevent code execution in memory segments marked as
+data (heap and stack). Attackers circumvent this using ROP chains,
+chaining existing snippets of executable binary code (gadgets) to call
+APIs like <code>VirtualProtect</code> (Windows) or <code>mprotect</code>
+(Linux) to mark the payload area as executable.</li>
+<li><strong>ASLR (Address Space Layout Randomization):</strong>
+Attackers combine the buffer overflow with an information disclosure
+vulnerability to determine memory offsets, or they utilize heap spraying
+techniques to place their payload at predictable locations within a
+32-bit address space.</li>
+</ul>
+<h3 id="remediation-and-prevention">Remediation and Prevention</h3>
+<p>Securing JPEG parsers requires multiple defensive layers:</p>
+<ul>
+<li><strong>Strict Bounds Checking:</strong> Ensure that all segment
+lengths read from the file match the actual bytes remaining in the
+stream and do not exceed pre-allocated destination buffers.</li>
+<li><strong>Safe Integer Arithmetic:</strong> Use checked arithmetic
+libraries to detect overflows when computing memory allocation sizes for
+image dimensions.</li>
+<li><strong>Sandboxing:</strong> Isolate image parsing routines within
+restricted, low-privilege sandbox environments using mechanisms such as
+Linux <code>seccomp</code> or Windows AppContainers to limit the impact
+of code execution.</li>
+<li><strong>Memory-Safe Languages:</strong> Re-implement parsing engines
+in memory-safe languages like Rust, which prevent memory corruption
+vulnerabilities at compile time.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

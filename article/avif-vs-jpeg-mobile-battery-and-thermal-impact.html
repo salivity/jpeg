@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVIF vs JPEG: Mobile Battery and Thermal Impact - jpeg</title>
+    <meta name="description" content="While AVIF delivers drastically smaller file sizes than traditional JPEG, it requires considerably more computational power to decode, resulting in measurable impacts on mobile device thermals and battery endurance. On devices lacking dedicated AV1 hardw">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/avif-vs-jpeg-mobile-battery-and-thermal-impact">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AVIF vs JPEG: Mobile Battery and Thermal Impact - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/avif-vs-jpeg-mobile-battery-and-thermal-impact" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While AVIF delivers drastically smaller file sizes than traditional JPEG, it requires considerably more computational power to decode, resulting in measurable impacts on mobile device thermals and battery endurance. On devices lacking dedicated AV1 hardw" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="avif-vs-jpeg-mobile-battery-and-thermal-impact">AVIF vs JPEG:
+Mobile Battery and Thermal Impact</h1>
+<p>While AVIF delivers drastically smaller file sizes than traditional
+JPEG, it requires considerably more computational power to decode,
+resulting in measurable impacts on mobile device thermals and battery
+endurance. On devices lacking dedicated AV1 hardware decoding,
+processing AVIF images relies on the central processing unit (CPU),
+accelerating battery depletion and elevating device temperatures during
+image-heavy workloads. This performance discrepancy highlights the
+fundamental trade-off between modern bandwidth compression and mobile
+hardware efficiency.</p>
+<h3 id="algorithmic-complexity-and-decoding-mechanics">Algorithmic
+Complexity and Decoding Mechanics</h3>
+<p>The core difference in energy consumption stems from the underlying
+architectures of the two formats. JPEG relies on a straightforward
+Discrete Cosine Transform (DCT) pipeline that has been standardized and
+optimized for decades. It uses simple 8x8 block sizes and minimal
+predictive processing, making it computationally light to parse and
+reconstruct.</p>
+<p>In contrast, AVIF is derived from the AV1 video codec's intra-frame
+compression tools. It employs variable block sizes ranging from 4x4 to
+128x128, multi-directional spatial prediction, non-linear transforms,
+and advanced in-loop filtering (such as deblocking, Constrained
+Directional Enhancement Filtering, and restoration filtering). These
+complex mathematical steps demand substantially more floating-point
+operations and memory bandwidth per frame, directly increasing the
+processor's active workload during decoding.</p>
+<h3 id="the-role-of-dedicated-hardware-vs-software-decoding">The Role of
+Dedicated Hardware vs. Software Decoding</h3>
+<p>Thermal and power outcomes on mobile devices are dictated primarily
+by whether decoding is handled by dedicated hardware or executed in
+software via the CPU.</p>
+<ul>
+<li><strong>JPEG Decoding:</strong> Almost every modern mobile
+System-on-Chip (SoC) contains dedicated, low-power fixed-function
+hardware blocks to decode standard JPEGs. These discrete blocks execute
+decoding tasks with minimal energy consumption and nearly imperceptible
+thermal dissipation.</li>
+<li><strong>AVIF Decoding:</strong> Hardware-accelerated AV1 decoding
+has only recently arrived in flagship mobile silicon (such as the Apple
+A17 Pro, Snapdragon 8 Gen 2 and newer, and MediaTek Dimensity 9200 and
+newer). When hardware decoders are present, AVIF decoding runs cool and
+efficiently. However, on the vast majority of older or mid-range
+devices, AVIF must be unpacked via software decoders like
+<code>dav1d</code>. Software decoding drives CPU cores to higher clock
+frequencies and sustained states of maximum utilization, rapidly
+generating heat and drawing significantly more milliwatts per decoded
+image.</li>
+</ul>
+<h3 id="battery-consumption-in-image-heavy-workflows">Battery
+Consumption in Image-Heavy Workflows</h3>
+<p>In isolated single-image rendering, the difference in battery
+consumption between AVIF and JPEG is negligible. The disparity becomes
+pronounced in data-dense scenarios, such as social media feeds,
+e-commerce product catalogs, and photo galleries featuring infinite
+scrolling.</p>
+<p>When a mobile browser or application decodes dozens of AVIF images
+sequentially using software:</p>
+<ol type="1">
+<li>The CPU remains in high-performance power states for extended
+periods, preventing the processor from dropping into low-power idle
+states.</li>
+<li>Total platform power draw rises, often consuming between two to four
+times more energy for the decode phase alone compared to
+hardware-accelerated JPEG.</li>
+<li>The power savings gained from downloading fewer bytes over the
+cellular modem or Wi-Fi radio can be fully offset—and frequently
+exceeded—by the energy consumed by the CPU during the decode
+process.</li>
+</ol>
+<h3 id="thermal-buildup-and-performance-throttling">Thermal Buildup and
+Performance Throttling</h3>
+<p>Mobile devices rely exclusively on passive cooling to dissipate heat
+through the chassis, display, and internal heat spreaders. When an
+application continuously decodes AVIF files without hardware
+acceleration, the sustained CPU activity concentrates heat directly over
+the SoC package.</p>
+<p>This continuous thermal output leads to:</p>
+<ul>
+<li><strong>Elevated Surface Temperatures:</strong> The device becomes
+warm to the touch, specifically around the motherboard and processor
+area.</li>
+<li><strong>Dynamic Thermal Throttling:</strong> As internal junction
+temperatures approach thermal safety ceilings, the operating system
+limits maximum CPU frequencies. This reduction in clock speed slows down
+subsequent image decoding tasks and can degrade general interface
+responsiveness, causing dropped frames and stutter during
+scrolling.</li>
+</ul>
+<h3 id="the-efficiency-trade-off">The Efficiency Trade-Off</h3>
+<p>The net impact of AVIF versus JPEG depends on network conditions
+versus processing capabilities. On slow, power-intensive cellular
+connections (such as poor 4G/5G signal areas), the reduced byte count of
+AVIF minimizes radio transmit time, occasionally balancing out the
+computational cost. However, in environments with strong Wi-Fi or fast
+data links, decoding JPEG remains substantially more energy-efficient
+and thermally benign for any device relying on software-based AV1
+parsing.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

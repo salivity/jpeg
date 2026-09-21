@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open-Source Licenses and the Reference JPEG Library - jpeg</title>
+    <meta name="description" content="This article examines how the Independent JPEG Group (IJG) established the reference codebase for the JPEG image standard and governed its distribution through open-source licensing. It covers the creation of the custom IJG license, the legal and patent">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/open-source-licenses-and-the-reference-jpeg-library">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Open-Source Licenses and the Reference JPEG Library - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/open-source-licenses-and-the-reference-jpeg-library" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how the Independent JPEG Group (IJG) established the reference codebase for the JPEG image standard and governed its distribution through open-source licensing. It covers the creation of the custom IJG license, the legal and patent" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="open-source-licenses-and-the-reference-jpeg-library">Open-Source
+Licenses and the Reference JPEG Library</h1>
+<p>This article examines how the Independent JPEG Group (IJG)
+established the reference codebase for the JPEG image standard and
+governed its distribution through open-source licensing. It covers the
+creation of the custom IJG license, the legal and patent challenges the
+project navigated—such as software patents on arithmetic coding—and how
+this permissive licensing model paved the way for ubiquitous commercial
+adoption and modern high-performance forks like libjpeg-turbo.</p>
+<h3 id="the-independent-jpeg-group-and-libjpeg">The Independent JPEG
+Group and libjpeg</h3>
+<p>When the Joint Photographic Experts Group finalized the JPEG image
+compression standard (ISO/IEC 10918-1) in the early 1990s, the standard
+specified the mathematics of the compression algorithm rather than a
+turnkey software implementation. To prevent fragmentation and ensure
+universal interoperability, the Independent JPEG Group—an informal
+community led by Tom Lane—developed <code>libjpeg</code>, a free,
+portable C library implementing the standard.</p>
+<p>Because <code>libjpeg</code> was intended to act as the de facto
+reference implementation, its licensing model was critical to its
+adoption. The IJG chose not to adopt copyleft licenses such as the GNU
+General Public License (GPL), which would have required proprietary
+software vendors to disclose their own source code. Instead, the authors
+crafted a custom, highly permissive open-source notice commonly referred
+to as the IJG License.</p>
+<h3 id="characteristics-of-the-ijg-license">Characteristics of the IJG
+License</h3>
+<p>The IJG License predates the standard taxonomy of modern open-source
+licenses like MIT or Apache 2.0, but its terms closely mirror the spirit
+of the 2-Clause BSD license. Key provisions of the IJG license
+include:</p>
+<ul>
+<li><strong>Unrestricted Use:</strong> Users are permitted to use, copy,
+modify, and distribute the software or documentation for any purpose,
+without paying royalties.</li>
+<li><strong>Attribution and Disclaimers:</strong> Distributable binaries
+or documentation must acknowledge the IJG, retain original copyright
+notices, and clearly disclaim any warranty.</li>
+<li><strong>Liability Limitations:</strong> The authors disclaim all
+legal liability for damages resulting from the use of the code.</li>
+</ul>
+<p>By removing financial and legal barriers, the IJG License allowed
+commercial vendors to embed JPEG support directly into web browsers,
+commercial graphics suites, operating systems, and consumer electronics
+like digital cameras without licensing fees or reciprocal
+source-disclosure obligations.</p>
+<h3 id="navigating-patent-obstacles">Navigating Patent Obstacles</h3>
+<p>The JPEG specification defined multiple compression modes. The
+baseline mode used Huffman coding, while an optional, more efficient
+mode relied on arithmetic coding. However, arithmetic coding was heavily
+encumbered by patents held by companies such as IBM, AT&amp;T, and
+Mitsubishi.</p>
+<p>To protect open-source users and downstream vendors from patent
+infringement litigation, the IJG made a deliberate design choice: they
+omitted or disabled arithmetic coding by default in the reference
+implementation. The software was strictly scoped around Huffman coding,
+ensuring that distributions of <code>libjpeg</code> remained legally
+safe for developers globally. Only after key arithmetic coding patents
+expired in the late 2000s did reference implementations begin
+reintroducing native support for these modes.</p>
+<h3 id="legacy-and-the-transition-to-modern-forks">Legacy and the
+Transition to Modern Forks</h3>
+<p>The permissiveness of the original reference codebase eventually
+created governance challenges. In the late 2000s, the IJG released
+versions (libjpeg v7 through v9) that introduced non-standard
+extensions, such as SmartScale, which were incompatible with the broader
+software ecosystem and ISO standards.</p>
+<p>Because the IJG code was openly licensed, the open-source community
+exercised its legal right to fork the software. Projects like
+<code>libjpeg-turbo</code> and Mozilla’s <code>mozjpeg</code> branched
+from the stable, backward-compatible <code>libjpeg v6b</code> branch.
+<code>libjpeg-turbo</code> combined the original IJG codebase with SIMD
+acceleration instructions, dual-licensing the resulting software under
+the IJG License, the modified BSD License, and the zlib License. Today,
+these modernized forks serve as the dominant JPEG reference
+implementations across modern computing environments.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

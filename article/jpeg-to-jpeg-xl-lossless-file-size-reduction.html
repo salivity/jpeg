@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG to JPEG XL Lossless File Size Reduction - jpeg</title>
+    <meta name="description" content="JPEG XL introduces a built-in lossless transcoding feature designed specifically for legacy JPEG files. By repacking existing JPEG data into the JPEG XL format without re-compressing the image, users can instantly reduce file storage and bandwidth needs">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-to-jpeg-xl-lossless-file-size-reduction">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG to JPEG XL Lossless File Size Reduction - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-to-jpeg-xl-lossless-file-size-reduction" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG XL introduces a built-in lossless transcoding feature designed specifically for legacy JPEG files. By repacking existing JPEG data into the JPEG XL format without re-compressing the image, users can instantly reduce file storage and bandwidth needs" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-to-jpeg-xl-lossless-file-size-reduction">JPEG to JPEG XL
+Lossless File Size Reduction</h1>
+<p>JPEG XL introduces a built-in lossless transcoding feature designed
+specifically for legacy JPEG files. By repacking existing JPEG data into
+the JPEG XL format without re-compressing the image, users can instantly
+reduce file storage and bandwidth needs while maintaining the exact
+visual data. This article covers the specific file size reduction
+achieved through this process, how it operates, and why it provides a
+significant advantage for digital media delivery.</p>
+<p>When transcoding an existing JPEG into JPEG XL, the format achieves
+an average file size reduction of <strong>20%</strong> (typically
+ranging between 16% and 22%). This reduction occurs without any decoding
+and re-encoding of the image pixels, meaning there is zero generation
+loss or visual degradation.</p>
+<p>The compression advantage stems from how JPEG XL handles the original
+JPEG's data:</p>
+<ul>
+<li><strong>Advanced Entropy Coding:</strong> Legacy JPEGs rely on older
+Huffman coding. JPEG XL takes the original 8x8 Discrete Cosine Transform
+(DCT) coefficients from the JPEG and compresses them using Asymmetric
+Numeral Systems (ANS), a much more efficient entropy coding
+technique.</li>
+<li><strong>Lossless and Reversible:</strong> Because the underlying DCT
+coefficients are preserved exactly, this process is completely
+reversible. A file transcoded to JPEG XL can be converted back into the
+bit-for-bit identical original JPEG file at any time.</li>
+<li><strong>Rapid Processing:</strong> Since the image pixels do not
+need to be reconstructed or re-quantized, transcoding legacy JPEGs to
+JPEG XL requires minimal computational power compared to standard format
+conversions.</li>
+</ul>
+<p>For servers, image CDNs, and photo archives hosting terabytes of
+legacy media, this 20% saving translates into substantial storage and
+bandwidth reductions without sacrificing compatibility, as the assets
+can be served as modern JPEG XL files or seamlessly unpacked back into
+standard JPEGs on demand.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

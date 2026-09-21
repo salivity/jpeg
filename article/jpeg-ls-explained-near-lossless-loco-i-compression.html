@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG-LS Explained: Near-Lossless LOCO-I Compression - jpeg</title>
+    <meta name="description" content="JPEG-LS is an international standard for lossless and near-lossless image compression based on the LOCO-I (Low Complexity Lossless Compression for Images) algorithm. Developed to bridge the gap between high-performance, computationally heavy algorithms a">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-ls-explained-near-lossless-loco-i-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG-LS Explained: Near-Lossless LOCO-I Compression - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-ls-explained-near-lossless-loco-i-compression" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="JPEG-LS is an international standard for lossless and near-lossless image compression based on the LOCO-I (Low Complexity Lossless Compression for Images) algorithm. Developed to bridge the gap between high-performance, computationally heavy algorithms a" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-ls-explained-near-lossless-loco-i-compression">JPEG-LS
+Explained: Near-Lossless LOCO-I Compression</h1>
+<p>JPEG-LS is an international standard for lossless and near-lossless
+image compression based on the LOCO-I (Low Complexity Lossless
+Compression for Images) algorithm. Developed to bridge the gap between
+high-performance, computationally heavy algorithms and simpler, less
+efficient methods, JPEG-LS provides superior compression ratios while
+maintaining minimal computational overhead. This article explains the
+fundamentals of JPEG-LS, the core mechanisms of the LOCO-I algorithm,
+and precisely how it achieves controlled near-lossless compression.</p>
+<h3 id="what-is-jpeg-ls">What is JPEG-LS?</h3>
+<p>JPEG-LS (ISO/IEC 14495-1 / ITU-T Recommendation T.87) is specifically
+designed for continuous-tone still images, such as medical scans,
+satellite imagery, and high-fidelity photography. Unlike the traditional
+DCT-based lossy JPEG standard, JPEG-LS focuses on exact data
+preservation or strictly bounded reconstruction errors.</p>
+<p>Unlike JPEG 2000, which relies on complex wavelet transforms and
+computationally expensive arithmetic coding, JPEG-LS utilizes a
+low-complexity framework that can be easily implemented in hardware and
+low-power devices without sacrificing compression performance.</p>
+<h3 id="the-loco-i-algorithm">The LOCO-I Algorithm</h3>
+<p>The engine behind JPEG-LS is LOCO-I, developed by Hewlett-Packard
+Laboratories. LOCO-I is designed around the premise that context-based
+predictive coding can approach the compression performance of much more
+complex methods if prediction and context modeling are handled
+effectively.</p>
+<p>The algorithm operates in two primary modes:</p>
+<ol type="1">
+<li><strong>Regular Mode:</strong> Applied to standard, continuously
+varying image regions using predictive modeling and Golomb-Rice entropy
+coding.</li>
+<li><strong>Run Mode:</strong> Applied to flat or low-entropy regions,
+switching to run-length coding to bypass prediction and accelerate
+processing.</li>
+</ol>
+<h3 id="how-loco-i-achieves-near-lossless-compression">How LOCO-I
+Achieves Near-Lossless Compression</h3>
+<p>Near-lossless compression in JPEG-LS means that every reconstructed
+pixel is guaranteed to differ from the original pixel by no more than a
+user-defined absolute error threshold, denoted as <span
+class="math inline">\(\delta\)</span> (or <code>NEAR</code>). When <span
+class="math inline">\(\delta = 0\)</span>, the algorithm operates in
+pure lossless mode. When <span class="math inline">\(\delta &gt;
+0\)</span>, LOCO-I introduces controlled distortion to substantially
+reduce file size through a four-step pipeline.</p>
+<h4 id="1-context-modeling-and-prediction">1. Context Modeling and
+Prediction</h4>
+<p>To predict a target pixel <span class="math inline">\(x\)</span>,
+LOCO-I examines its causal neighbors (previously encoded adjacent
+pixels): left (<span class="math inline">\(a\)</span>), above (<span
+class="math inline">\(b\)</span>), and above-left (<span
+class="math inline">\(c\)</span>).</p>
+<p>It employs a Median Edge Detection (MED) predictor, also known as the
+LOCO-I predictor:</p>
+<ul>
+<li>If <span class="math inline">\(c \ge \max(a, b)\)</span>, then
+predicted value <span class="math inline">\(\hat{x} = \min(a,
+b)\)</span> (detects a vertical edge)</li>
+<li>If <span class="math inline">\(c \le \min(a, b)\)</span>, then
+predicted value <span class="math inline">\(\hat{x} = \max(a,
+b)\)</span> (detects a horizontal edge)</li>
+<li>Otherwise, <span class="math inline">\(\hat{x} = a + b - c\)</span>
+(detects a smooth gradient)</li>
+</ul>
+<p>This simple non-linear predictor handles directional edges without
+complex matrix calculations.</p>
+<h4 id="2-error-calculation-and-quantization">2. Error Calculation and
+Quantization</h4>
+<p>In strictly lossless mode, the prediction error is simply <span
+class="math inline">\(e = x - \hat{x}\)</span>.</p>
+<p>In near-lossless mode (<span class="math inline">\(\delta &gt;
+0\)</span>), the error must be quantized so that the reconstructed value
+satisfies <span class="math inline">\(|x - x_{rec}| \le \delta\)</span>.
+The prediction error <span class="math inline">\(e\)</span> is quantized
+into a quantized error <span class="math inline">\(Q(e)\)</span> using
+uniform scalar quantization:</p>
+<p><span class="math display">\[Q(e) = \left\lfloor \frac{e +
+\delta}{2\delta + 1} \right\rfloor\]</span></p>
+<p>The dequantized prediction error <span
+class="math inline">\(\tilde{e}\)</span> used for reconstructing the
+pixel is:</p>
+<p><span class="math display">\[\tilde{e} = Q(e) \times (2\delta +
+1)\]</span></p>
+<p>The reconstructed pixel value is then clamped to the valid sample
+range:</p>
+<p><span class="math display">\[x_{rec} = \text{clamp}(\hat{x} +
+\tilde{e})\]</span></p>
+<p>Crucially, both the encoder and the decoder update their internal
+state using <span class="math inline">\(x_{rec}\)</span> rather than the
+original pixel <span class="math inline">\(x\)</span>. This ensures that
+both sides remain strictly synchronized without drift.</p>
+<h4 id="3-context-dependent-bias-correction">3. Context-Dependent Bias
+Correction</h4>
+<p>Local gradients around pixel <span class="math inline">\(x\)</span>
+determine the "context" of the prediction. LOCO-I tracks average
+prediction errors within each context. If a context exhibits a
+systematic bias (an average error consistently above or below zero), the
+algorithm dynamically offsets <span
+class="math inline">\(\hat{x}\)</span> before computing the error. This
+adaptively removes residual correlation from the prediction step.</p>
+<h4 id="4-golomb-rice-entropy-coding">4. Golomb-Rice Entropy Coding</h4>
+<p>After quantization and bias correction, the non-negative mapped error
+values are encoded using Golomb-Rice coding. LOCO-I dynamically
+estimates the optimal Golomb parameter <span
+class="math inline">\(k\)</span> for each context on the fly,
+eliminating the need for multi-pass statistical analysis. Because
+Golomb-Rice codes represent values using simple bit-shifts and unary
+prefixes, this step requires minimal CPU cycles compared to binary
+arithmetic coding while still yielding near-optimal entropy limits.</p>
+<h3 id="advantages-of-jpeg-ls-near-lossless-mode">Advantages of JPEG-LS
+Near-Lossless Mode</h3>
+<ul>
+<li><strong>Guaranteed Error Bounds:</strong> Unlike transform-based
+methods where error is distributed unevenly across frequencies, JPEG-LS
+enforces a strict, pixel-level maximum difference constraint.</li>
+<li><strong>High Visual Fidelity:</strong> For small values of <span
+class="math inline">\(\delta\)</span> (such as <span
+class="math inline">\(\delta = 1\)</span> or <span
+class="math inline">\(\delta = 2\)</span>), the reconstructed image is
+visually indistinguishable from the source, yet file sizes are often
+reduced by 40% to 60% compared to lossless compression.</li>
+<li><strong>Speed and Efficiency:</strong> By using MED prediction,
+uniform scalar quantization, and Golomb-Rice coding, JPEG-LS avoids
+floating-point operations, making it extremely fast in real-time and
+embedded applications.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

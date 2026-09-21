@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Save-Data Mode Instructs CDNs for Low-Res JPEGs - jpeg</title>
+    <meta name="description" content="Save-Data mode in mobile browsers reduces data consumption by signaling network constraints directly to web servers and Content Delivery Networks (CDNs) through specialized HTTP request headers. When enabled by the user, the browser includes a Save-Data:">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/how-save-data-mode-instructs-cd-ns-for-low-res-jpe-gs">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Save-Data Mode Instructs CDNs for Low-Res JPEGs - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/how-save-data-mode-instructs-cd-ns-for-low-res-jpe-gs" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Save-Data mode in mobile browsers reduces data consumption by signaling network constraints directly to web servers and Content Delivery Networks (CDNs) through specialized HTTP request headers. When enabled by the user, the browser includes a Save-Data:" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-save-data-mode-instructs-cdns-for-low-res-jpegs">How
+Save-Data Mode Instructs CDNs for Low-Res JPEGs</h1>
+<p>Save-Data mode in mobile browsers reduces data consumption by
+signaling network constraints directly to web servers and Content
+Delivery Networks (CDNs) through specialized HTTP request headers. When
+enabled by the user, the browser includes a <code>Save-Data: on</code>
+header with every outgoing resource request. Edge servers within a CDN
+detect this directive, intercept incoming image requests, and
+dynamically rewrite them to generate and serve lower-fidelity JPEG files
+with increased compression, stripped metadata, and reduced dimensions,
+ultimately reducing the payload transferred over cellular networks.</p>
+<h3 id="1-the-client-side-signal-save-data-on">1. The Client-Side
+Signal: <code>Save-Data: on</code></h3>
+<p>When a user enables "Data Saver" or "Lite Mode" in a mobile browser
+(such as Chromium-based browsers), the client automatically appends the
+<code>Save-Data</code> Client Hint to all HTTP and HTTPS request
+headers:</p>
+<pre class="http"><code>GET /images/hero.jpg HTTP/1.1
+Host: example.com
+Save-Data: on</code></pre>
+<p>This single token explicitly informs downstream network
+infrastructure that the client requests a data-conserving version of the
+requested asset.</p>
+<h3 id="2-cdn-edge-detection-and-request-rewriting">2. CDN Edge
+Detection and Request Rewriting</h3>
+<p>Modern CDNs utilize edge computing or integrated image optimization
+engines (such as Cloudflare Polish, Fastly Image Optimizer, or Akamai
+Image &amp; Video Manager). When a request for an image arrives at the
+CDN edge node, the edge server evaluates incoming headers:</p>
+<ol type="1">
+<li><strong>Header Parsing:</strong> The CDN checks for
+<code>Save-Data: on</code>.</li>
+<li><strong>Dynamic Parameter Injection:</strong> If detected, the CDN
+rewrites the image transformation parameters either through internal
+service workers, VCL (Varnish Configuration Language), or edge logic.
+For example, a default request for <code>hero.jpg</code> can be mapped
+to an internal transformation query such as
+<code>hero.jpg?quality=40&amp;strip=all</code>.</li>
+<li><strong>JPEG Re-compression:</strong> The CDN’s image processor
+compresses the JPEG using a higher quantization matrix (e.g., lowering
+the visual quality metric from a default 80–85 down to 40–50), removes
+all unnecessary EXIF and color profile metadata, and can optionally
+downscale the image pixel dimensions to match standard mobile viewport
+widths.</li>
+</ol>
+<h3 id="3-edge-caching-and-the-vary-save-data-header">3. Edge Caching
+and the <code>Vary: Save-Data</code> Header</h3>
+<p>To ensure that compressed, low-fidelity assets are not delivered to
+standard users, the CDN partitions its cache using the <code>Vary</code>
+HTTP response header.</p>
+<p>When the CDN processes or origins the asset, it marks the response
+with:</p>
+<pre class="http"><code>HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Vary: Save-Data, Accept
+Cache-Control: public, max-age=31536000</code></pre>
+<p>The <code>Vary: Save-Data</code> header instructs both the CDN cache
+and intermediary proxies to store two distinct versions of the exact
+same URL:</p>
+<ul>
+<li><strong>Standard Cache Entry:</strong> Served when
+<code>Save-Data</code> is absent or set to <code>off</code>.</li>
+<li><strong>Low-Fidelity Cache Entry:</strong> Served exclusively when
+<code>Save-Data: on</code> is present.</li>
+</ul>
+<h3 id="4-delivery-to-the-device">4. Delivery to the Device</h3>
+<p>Once the low-fidelity JPEG is processed and cached at the edge, the
+CDN streams the significantly smaller binary payload to the mobile
+device. Because JPEGs compress efficiently at lower quality factors,
+this process typically yields a 50% to 70% reduction in total byte size
+without completely degrading the core structure of the image, allowing
+pages to render faster while respecting the user's data limits.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

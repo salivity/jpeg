@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPEG Signature Bytes for Data Recovery File Carving - jpeg</title>
+    <meta name="description" content="File carving is a forensic and data recovery technique that reconstructs lost files directly from raw storage blocks without relying on filesystem metadata. When recovering deleted JPEG photographs, recovery tools scan unallocated disk space for unique b">
+    <link rel="canonical" href="https://salivity.github.io/jpeg/article/jpeg-signature-bytes-for-data-recovery-file-carving">
+    <link rel="search" type="application/opensearchdescription+xml" title="jpeg" href="/jpeg/opensearch.xml">
+    <link rel="icon" href="/jpeg/favicon.ico">
+    <link rel="stylesheet" href="/jpeg/css/style.css">
+    <link media="print" rel="stylesheet" href="/jpeg/css/print.css">
+    <script src="/jpeg/js/fuse.min.js"></script>
+    <script src="/jpeg/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JPEG Signature Bytes for Data Recovery File Carving - jpeg" />
+    <meta property="og:url" content="https://salivity.github.io/jpeg/article/jpeg-signature-bytes-for-data-recovery-file-carving" />
+    <meta property="og:image" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/jpeg/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="File carving is a forensic and data recovery technique that reconstructs lost files directly from raw storage blocks without relying on filesystem metadata. When recovering deleted JPEG photographs, recovery tools scan unallocated disk space for unique b" />
+    <link rel="manifest" href="/jpeg/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/jpeg/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>jpeg</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/jpeg/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="jpeg-signature-bytes-for-data-recovery-file-carving">JPEG
+Signature Bytes for Data Recovery File Carving</h1>
+<p>File carving is a forensic and data recovery technique that
+reconstructs lost files directly from raw storage blocks without relying
+on filesystem metadata. When recovering deleted JPEG photographs,
+recovery tools scan unallocated disk space for unique binary patterns
+known as magic bytes or file signatures. This article covers the
+specific hexadecimal markers that define the start and end of JPEG
+files, the secondary headers used for validation, and the technical
+mechanisms tools use to extract intact images.</p>
+<h3 id="the-start-of-image-soi-marker">The Start of Image (SOI)
+Marker</h3>
+<p>Data recovery tools begin carving a JPEG by scanning storage clusters
+for the Start of Image (SOI) marker. In raw hexadecimal, every standard
+JPEG file starts with the two-byte sequence:</p>
+<ul>
+<li><strong>Hex Signature:</strong> <code>FF D8</code></li>
+</ul>
+<p>Because <code>FF D8</code> can occasionally appear at random in
+non-JPEG raw binary data, carving algorithms rarely rely on those two
+bytes alone. Immediately following the SOI marker, modern cameras and
+image editors append a marker segment indicating the specific metadata
+format used—most commonly JFIF or Exif. Consequently, carving tools
+typically scan for three- or four-byte sequences:</p>
+<ul>
+<li><strong>Exif Header (Digital Cameras/Smartphones):</strong>
+<code>FF D8 FF E1</code></li>
+<li><strong>JFIF Header (Standard Web/Software JPEGs):</strong>
+<code>FF D8 FF E0</code></li>
+<li><strong>Raw JPEG Stream:</strong> <code>FF D8 FF DB</code> (Directly
+starting with a Quantization Table)</li>
+</ul>
+<p>To prevent false positives, advanced carving utilities also inspect
+the ASCII string located a few bytes after the header. For an Exif file,
+the tool expects to see the ASCII string <code>Exif</code>
+(<code>45 78 69 66 00 00</code> in hex) at offset 6. For a JFIF file,
+the tool looks for the ASCII string <code>JFIF</code>
+(<code>4A 46 49 46 00</code> in hex) at offset 6.</p>
+<h3 id="the-end-of-image-eoi-marker">The End of Image (EOI) Marker</h3>
+<p>Once a valid header is located, the recovery tool assumes it has
+found the beginning of a photograph and continues reading contiguous
+sectors until it reaches the End of Image (EOI) marker:</p>
+<ul>
+<li><strong>Hex Signature:</strong> <code>FF D9</code></li>
+</ul>
+<p>When the carving engine encounters <code>FF D9</code>, it halts
+extraction, marks that offset as the end of the file, and saves the
+bytes between <code>FF D8</code> and <code>FF D9</code> as a
+<code>.jpg</code> or <code>.jpeg</code> file.</p>
+<h3 id="challenges-in-carving-jpeg-signatures">Challenges in Carving
+JPEG Signatures</h3>
+<p>While searching for <code>FF D8</code> and <code>FF D9</code> is
+straightforward, carving tools must account for structural complexities
+within the JPEG standard:</p>
+<ol type="1">
+<li><p><strong>Embedded Thumbnails:</strong> Modern digital cameras
+embed a low-resolution thumbnail inside the main image's Exif metadata.
+Because this thumbnail is also a valid JPEG, it contains its own
+<code>FF D8</code> and <code>FF D9</code> markers. A basic carver that
+stops at the first <code>FF D9</code> it encounters will extract only
+the thumbnail or a corrupted header. Robust carvers parse the Exif
+length tags to skip past embedded thumbnails before looking for the
+terminal <code>FF D9</code>.</p></li>
+<li><p><strong>File Fragmentation:</strong> File carving assumes that
+data is stored in contiguous clusters. If a deleted photograph was
+fragmented across non-sequential sectors, simply extracting everything
+between the SOI and the next available EOI will yield a corrupt or
+partially rendered photograph. Advanced tools validate internal JPEG
+markers—such as Define Quantization Table (<code>FF DB</code>), Define
+Huffman Table (<code>FF C4</code>), and Start of Scan
+(<code>FF DA</code>)—to detect missing or out-of-order data blocks
+during reconstruction.</p></li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/jpeg'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/jpeg/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/jpeg/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
